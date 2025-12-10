@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VAULT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/dashboard.css">
+    <style>
+        /* Dashboard specific styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .balance-card .stat-icon {
+            background: linear-gradient(45deg, #4cc9f0, #4361ee);
+        }
+        
+        .deposit-card .stat-icon {
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+        }
+        
+        .withdrawal-card .stat-icon {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+        
+        .interest-card .stat-icon {
+            background: linear-gradient(45deg, #ff9a00, #ff5e00);
+        }
+        
+        .stat-content h3 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1a1a2e;
+        }
+        
+        .stat-trend {
+            font-size: 0.85rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        
+        .stat-trend.positive {
+            background: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+        }
+        
+        .stat-trend.negative {
+            background: rgba(247, 37, 133, 0.1);
+            color: #f72585;
+        }
+        
+        .recent-transactions {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recent-transactions h2 {
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        
+        .transaction-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .transaction-item.deposit .transaction-icon {
+            background: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+        }
+        
+        .transaction-item.withdrawal .transaction-icon {
+            background: rgba(247, 37, 133, 0.1);
+            color: #f72585;
+        }
+        
+        .transaction-details h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .transaction-date {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .transaction-amount {
+            margin-left: auto;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .transaction-amount.deposit {
+            color: #4cc9f0;
+        }
+        
+        .transaction-amount.withdrawal {
+            color: #f72585;
+        }
+        
+        .no-transactions {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-university"></i>
+                <h2>VAULT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item" data-section="deposit">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Deposit</span>
+                    </li>
+                    <li class="nav-item" data-section="withdrawal">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span>Withdrawal</span>
+                    </li>
+                    <li class="nav-item" data-section="profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                    </li>
+                    <li class="nav-item" data-section="history">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </li>
+                    <li class="nav-item" data-section="partnership">
+                        <i class="fas fa-handshake"></i>
+                        <span>Partnership</span>
+                    </li>
+                    <li class="nav-item" data-section="accounts">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Accounts</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <h4 id="sidebar-username">Loading...</h4>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-description">Welcome to your banking dashboard</p>
+                </div>
+                <div class="header-right">
+                    <button class="logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">0</span>
+                    </div>
+                    <div class="current-time" id="current-time"></div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboard-section">
+                    <div class="dashboard-grid">
+                        <div class="stat-card balance-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Current Balance</h3>
+                                <p class="stat-number" id="current-balance">$0.00</p>
+                                <span class="stat-trend positive">+5.2% from last week</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card deposit-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Total Deposits</h3>
+                                <p class="stat-number" id="total-deposits">$0.00</p>
+                                <span class="stat-trend positive">+$0 this month</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card withdrawal-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Total Withdrawals</h3>
+                                <p class="stat-number" id="total-withdrawals">$0.00</p>
+                                <span class="stat-trend negative">-0% from last month</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card interest-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Interest Earned</h3>
+                                <p class="stat-number" id="total-interest">$0.00</p>
+                                <span class="stat-trend positive">50% weekly rate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-transactions">
+                        <h2><i class="fas fa-clock"></i> Recent Transactions</h2>
+                        <div class="transactions-list" id="recent-transactions">
+                            <div class="no-transactions">No recent transactions</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Deposit Section -->
+                <section class="content-section" id="deposit-section">
+                    <!-- Your deposit section content here -->
+                    <div class="section-header">
+                        <h2><i class="fas fa-money-bill-wave"></i> Make a Deposit</h2>
+                        <p>Earn 50% weekly interest on your deposits</p>
+                    </div>
+                    <!-- Add your deposit form here -->
+                </section>
+
+                <!-- Withdrawal Section -->
+                <section class="content-section" id="withdrawal-section">
+                    <!-- Your withdrawal section content here -->
+                </section>
+
+                <!-- Profile Section -->
+                <section class="content-section" id="profile-section">
+                    <!-- Your profile section content here -->
+                </section>
+
+                <!-- History Section -->
+                <section class="content-section" id="history-section">
+                    <!-- Your history section content here -->
+                </section>
+
+                <!-- Partnership Section -->
+                <section class="content-section" id="partnership-section">
+                    <!-- Your partnership section content here -->
+                </section>
+
+                <!-- Accounts Section -->
+                <section class="content-section" id="accounts-section">
+                    <!-- Your accounts section content here -->
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../JAVASCRIPT/dasboard.js"></script>
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Load user data on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user data from database
+            const { data: userData, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', user.email)
+                .single();
+            
+            if (userData) {
+                // Update UI with user data
+                document.getElementById('sidebar-username').textContent = 
+                    `${userData.first_name} ${userData.last_name}`;
+                
+                document.getElementById('current-balance').textContent = 
+                    formatCurrency(userData.balance || 0);
+                document.getElementById('total-deposits').textContent = 
+                    formatCurrency(userData.total_deposits || 0);
+                document.getElementById('total-withdrawals').textContent = 
+                    formatCurrency(userData.total_withdrawals || 0);
+                document.getElementById('total-interest').textContent = 
+                    formatCurrency(userData.total_interest || 0);
+            }
+            
+            // Load transactions
+            loadTransactions(userData.user_id);
+            
+            // Update time
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Setup logout
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            });
+        });
+        
+        function formatCurrency(amount) {
+            return '$' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+        
+        async function loadTransactions(userId) {
+            const { data: transactions, error } = await supabase
+                .from('transactions')
+                .select('*')
+                .eq('user_id', userId)
+                .order('transaction_date', { ascending: false })
+                .limit(5);
+            
+            if (transactions && transactions.length > 0) {
+                const container = document.getElementById('recent-transactions');
+                container.innerHTML = transactions.map(transaction => `
+                    <div class="transaction-item ${transaction.type}">
+                        <div class="transaction-icon">
+                            <i class="fas fa-${transaction.type === 'deposit' ? 'arrow-down' : 'arrow-up'}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${transaction.description}</h4>
+                            <span class="transaction-date">${transaction.transaction_date}</span>
+                        </div>
+                        <div class="transaction-amount ${transaction.type}">
+                            ${transaction.type === 'deposit' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('current-time').textContent = 
+                `${dateString} • ${timeString}`;
+        }
+    </script>
+</body>
+</html>
