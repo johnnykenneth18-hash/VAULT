@@ -6,6 +6,12 @@
     <title>Login - VAULT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./CSS/auth.css">
+    <!-- FAVICON ADDED -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    
+    <!-- SUPABASE LIBRARY - MUST BE LOADED FIRST -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #4361ee;
@@ -242,24 +248,66 @@
     </div>
     
     <script>
-        // Supabase Configuration - REPLACE WITH YOUR KEYS
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        // DEBUG: Check if Supabase is loaded
+        console.log('Supabase loaded:', !!window.supabase);
         
-        // Initialize Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Supabase Configuration - REPLACE WITH YOUR KEYS
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';  // e.g., 'https://abcdefghijklmnop.supabase.co'
+        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY_HERE';  // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        
+        // Initialize Supabase with error handling
+        let supabase;
+        try {
+            if (!window.supabase) {
+                throw new Error('Supabase library not loaded. Please refresh the page.');
+            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('Supabase initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize Supabase:', error);
+            document.getElementById('message').textContent = 'Authentication service unavailable. Please refresh the page.';
+            document.getElementById('message').className = 'message error';
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('loginBtn').disabled = true;
+        }
         
         // Check if user is already logged in
         async function checkExistingSession() {
-            const { data: { user } } = await supabase.auth.getUser();
+            if (!supabase) return;
             
-            if (user) {
-                // User is already logged in, redirect based on role
-                if (user.email === 'admin@vault.com') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'dashboard.html';
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) {
+                    console.log('Session check error:', error.message);
+                    return;
                 }
+                
+                if (user) {
+                    // User is already logged in, redirect based on role
+                    console.log('User already logged in:', user.email);
+                    
+                    // Get user role from database
+                    const { data: userData, error: dbError } = await supabase
+                        .from('users')
+                        .select('role')
+                        .eq('email', user.email)
+                        .single();
+                    
+                    if (dbError) {
+                        console.warn('Could not fetch user role:', dbError.message);
+                    }
+                    
+                    const isAdmin = user.email === 'admin@vault.com' || (userData && userData.role === 'admin');
+                    
+                    if (isAdmin) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
             }
         }
         
@@ -267,24 +315,51 @@
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            if (!supabase) {
+                alert('Authentication service not available. Please refresh the page.');
+                return;
+            }
+            
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
             const messageDiv = document.getElementById('message');
             
+            // Basic validation
+            if (!email || !email.includes('@')) {
+                messageDiv.textContent = 'Please enter a valid email address';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (!password) {
+                messageDiv.textContent = 'Please enter your password';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
             // Show loading
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
             messageDiv.style.display = 'none';
             
             try {
+                console.log('Attempting login for:', email);
+                
                 // Sign in with Supabase
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Login error:', error);
+                    throw error;
+                }
+                
+                console.log('Login successful, checking database...');
                 
                 // Check if user exists in database
                 const { data: userData, error: userError } = await supabase
@@ -295,6 +370,7 @@
                 
                 if (userError && userError.code === 'PGRST116') {
                     // User doesn't exist in database, create them
+                    console.log('User not in database, creating...');
                     const userId = 'USER_' + Date.now();
                     const referralCode = email.split('@')[0].substring(0, 3).toUpperCase() + 
                                       Date.now().toString().slice(-4);
@@ -315,6 +391,10 @@
                                 updated_at: new Date().toISOString()
                             }
                         ]);
+                    
+                    console.log('User created in database');
+                } else if (userError) {
+                    console.warn('Database check warning:', userError.message);
                 }
                 
                 // Show success message
@@ -322,11 +402,17 @@
                 messageDiv.className = 'message success';
                 messageDiv.style.display = 'block';
                 
-                // Redirect based on role
+                console.log('Determining redirect path...');
+                
+                // Determine where to redirect
+                const isAdmin = email === 'admin@vault.com' || (userData && userData.role === 'admin');
+                
                 setTimeout(() => {
-                    if (email === 'admin@vault.com') {
+                    if (isAdmin) {
+                        console.log('Redirecting to admin dashboard');
                         window.location.href = 'admin.html';
                     } else {
+                        console.log('Redirecting to user dashboard');
                         window.location.href = 'dashboard.html';
                     }
                 }, 1000);
@@ -334,33 +420,63 @@
             } catch (error) {
                 console.error('Login error:', error);
                 
-                // Show error message
-                messageDiv.textContent = error.message || 'Invalid email or password';
+                // Show user-friendly error message
+                let errorMessage = 'Invalid email or password';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMessage = 'Invalid email or password. Please try again.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = 'Please confirm your email address before logging in.';
+                } else if (error.message.includes('rate limit')) {
+                    errorMessage = 'Too many login attempts. Please try again in a few minutes.';
+                } else if (error.message.includes('network')) {
+                    errorMessage = 'Network error. Please check your connection and try again.';
+                } else {
+                    errorMessage = error.message || 'Login failed. Please try again.';
+                }
+                
+                messageDiv.textContent = errorMessage;
                 messageDiv.className = 'message error';
                 messageDiv.style.display = 'block';
                 
                 // Reset button
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
             }
         });
         
         // Forgot password
         document.getElementById('forgotPassword').addEventListener('click', async function(e) {
             e.preventDefault();
+            
+            if (!supabase) {
+                alert('Authentication service not available.');
+                return;
+            }
+            
             const email = prompt('Enter your email to reset password:');
             if (email) {
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                if (error) {
-                    alert('Error: ' + error.message);
-                } else {
-                    alert('Password reset email sent! Check your inbox.');
+                try {
+                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                        redirectTo: window.location.origin + '/reset-password.html'
+                    });
+                    
+                    if (error) {
+                        alert('Error: ' + error.message);
+                    } else {
+                        alert('Password reset email sent! Check your inbox. If you don\'t see it, check your spam folder.');
+                    }
+                } catch (error) {
+                    alert('Failed to send reset email: ' + error.message);
                 }
             }
         });
         
         // Check session on page load
-        document.addEventListener('DOMContentLoaded', checkExistingSession);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Login page loaded');
+            checkExistingSession();
+        });
     </script>
 </body>
 </html>

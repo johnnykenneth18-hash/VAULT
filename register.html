@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - VAULT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="./CSS/auth.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <!-- FAVICON ADDED -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    
+    <!-- SUPABASE LIBRARY - MUST BE LOADED FIRST -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #4361ee;
@@ -314,20 +320,48 @@
     </div>
     
     <script>
-        // Supabase Configuration - REPLACE WITH YOUR KEYS
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        // DEBUG: Check if Supabase is loaded
+        console.log('Supabase loaded:', !!window.supabase);
         
-        // Initialize Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Supabase Configuration - REPLACE WITH YOUR KEYS
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';  // e.g., 'https://abcdefghijklmnop.supabase.co'
+        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY_HERE';  // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        
+        // Initialize Supabase with error handling
+        let supabase;
+        try {
+            if (!window.supabase) {
+                throw new Error('Supabase library not loaded. Please refresh the page.');
+            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('Supabase initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize Supabase:', error);
+            document.getElementById('message').textContent = 'Authentication service unavailable. Please refresh the page.';
+            document.getElementById('message').className = 'message error';
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('registerBtn').disabled = true;
+        }
         
         // Check if user is already logged in
         async function checkExistingSession() {
-            const { data: { user } } = await supabase.auth.getUser();
+            if (!supabase) return;
             
-            if (user) {
-                // User is already logged in, redirect to dashboard
-                window.location.href = 'dashboard.html';
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) {
+                    console.log('Session check error:', error.message);
+                    return;
+                }
+                
+                if (user) {
+                    // User is already logged in, redirect to dashboard
+                    console.log('User already logged in, redirecting to dashboard');
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
             }
         }
         
@@ -353,10 +387,15 @@
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
+            if (!supabase) {
+                alert('Authentication service not available. Please refresh the page.');
+                return;
+            }
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const phone = document.getElementById('phone').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const terms = document.getElementById('terms').checked;
@@ -364,6 +403,20 @@
             const messageDiv = document.getElementById('message');
             
             // Validation
+            if (!firstName || !lastName) {
+                messageDiv.textContent = 'Please enter your first and last name';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (!email || !email.includes('@')) {
+                messageDiv.textContent = 'Please enter a valid email address';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
             if (password !== confirmPassword) {
                 messageDiv.textContent = 'Passwords do not match';
                 messageDiv.className = 'message error';
@@ -387,10 +440,12 @@
             
             // Show loading
             registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-            registerBtn.classList.add('loading');
+            registerBtn.disabled = true;
             messageDiv.style.display = 'none';
             
             try {
+                console.log('Starting registration for:', email);
+                
                 // Sign up with Supabase Auth
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
@@ -400,11 +455,17 @@
                             first_name: firstName,
                             last_name: lastName,
                             phone: phone
-                        }
+                        },
+                        emailRedirectTo: window.location.origin + '/dashboard.html'
                     }
                 });
                 
-                if (authError) throw authError;
+                if (authError) {
+                    console.error('Auth error:', authError);
+                    throw authError;
+                }
+                
+                console.log('Auth successful, creating user in database...');
                 
                 // Create user in database
                 const userId = 'USER_' + Date.now();
@@ -436,14 +497,16 @@
                     ]);
                 
                 if (dbError) {
-                    // If there's an error with database, still allow login
-                    console.warn('Database insert error (user may already exist):', dbError);
+                    console.warn('Database insert warning:', dbError.message);
+                    // Continue even if database insert has issues
                 }
                 
                 // Show success message
                 messageDiv.textContent = 'Account created successfully! Logging you in...';
                 messageDiv.className = 'message success';
                 messageDiv.style.display = 'block';
+                
+                console.log('Attempting auto-login...');
                 
                 // Auto-login after registration
                 const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
@@ -452,12 +515,14 @@
                 });
                 
                 if (loginError) {
+                    console.log('Auto-login failed, redirecting to login page:', loginError.message);
                     // If auto-login fails, redirect to login page
                     messageDiv.textContent = 'Account created! Please login now.';
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 2000);
                 } else {
+                    console.log('Auto-login successful, redirecting to dashboard');
                     // Auto-login successful, redirect to dashboard
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
@@ -467,19 +532,36 @@
             } catch (error) {
                 console.error('Registration error:', error);
                 
-                // Show error message
-                messageDiv.textContent = error.message || 'Registration failed. Please try again.';
+                // Show user-friendly error message
+                let errorMessage = 'Registration failed. Please try again.';
+                
+                if (error.message.includes('already registered')) {
+                    errorMessage = 'This email is already registered. Please login instead.';
+                } else if (error.message.includes('password')) {
+                    errorMessage = 'Password is too weak. Please use a stronger password.';
+                } else if (error.message.includes('email')) {
+                    errorMessage = 'Please enter a valid email address.';
+                } else if (error.message.includes('rate limit')) {
+                    errorMessage = 'Too many attempts. Please try again in a few minutes.';
+                } else {
+                    errorMessage = error.message || 'Registration failed. Please try again.';
+                }
+                
+                messageDiv.textContent = errorMessage;
                 messageDiv.className = 'message error';
                 messageDiv.style.display = 'block';
                 
                 // Reset button
                 registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-                registerBtn.classList.remove('loading');
+                registerBtn.disabled = false;
             }
         });
         
         // Check session on page load
-        document.addEventListener('DOMContentLoaded', checkExistingSession);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Register page loaded');
+            checkExistingSession();
+        });
     </script>
 </body>
 </html>
