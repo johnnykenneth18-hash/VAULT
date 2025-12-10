@@ -249,104 +249,186 @@
             <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
         </div>
     </div>
-    
+
+
+
     <script>
-        // Use the supabase.js client (your js/supabase.js)
-        const loginForm = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const messageDiv = document.getElementById('message');
-    
-        async function showMessage(text, type = 'success') {
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-        }
-        
-        async function checkExistingSession() {
-            try {
-                const result = await window.supabaseClient.getCurrentUser();
-                if (result.success && result.user) {
-                    const user = result.user;
-                    if (user.email === 'Arinze18@vault.com') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'dashboard.html';
-                    }
-                }
-            } catch (err) {
-                console.log('No active session', err);
-            }
-        }
-    
-        document.addEventListener('DOMContentLoaded', () => {
-            checkExistingSession();
-        });
-    
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-    
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-    
-            if (!email || !password) {
-                showMessage('Please fill in both email and password', 'error');
-                return;
-            }
-    
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-
-            messageDiv.style.display = 'none';
-    
-            try {
-                // Admin bypass
-                if (email === 'Arinze18@vault.com' && password === 'Arinze18') {
-                    showMessage('Admin login successful! Redirecting...');
-                    setTimeout(() => window.location.href = 'admin.html', 800);
-                    return;
-                }
-    
-                // Supabase login
-                const result = await window.supabaseClient.signIn(email, password);
-    
-                if (!result.success) {
-                    showMessage(result.error || 'Login failed. Try again.', 'error');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-                    return;
-                }
-    
-                showMessage('Login successful! Redirecting...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 800);
-    
-            } catch (err) {
-                console.error(err);
-                showMessage('Something went wrong. Try again.', 'error');
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-
-            }
-        });
-    
-        // Forgot password
-        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = prompt('Enter your email to reset password:');
-
-            if (!email) return;
-    
-            try {
-                const { error } = await supabaseClient.supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/reset-password.html'
-                });
-                if (error) alert('Error: ' + error.message);
-                else alert('Password reset email sent! Check your inbox.');
-            } catch (err) {
-                alert('Failed to send reset email: ' + err.message);
-            }
-        });
+        // Supabase Configuration - REPLACE WITH YOUR KEYS
+             const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+             const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+             
+             // Initialize Supabase
+             let supabase;
+             try {
+                 if (!window.supabase) {
+                     throw new Error('Supabase not available. Please ensure js/supabase-local.js is loaded.');
+                 }
+                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                 console.log('✅ Supabase initialized successfully');
+             } catch (error) {
+                 console.error('❌ Failed to initialize Supabase:', error);
+                 document.getElementById('message').textContent = 'Authentication service unavailable.';
+                 document.getElementById('message').className = 'message error';
+                 document.getElementById('message').style.display = 'block';
+             }
+             
+             // Check if user is already logged in
+             async function checkExistingSession() {
+                 if (!supabase) return;
+                 
+                 try {
+                     const { data: { user }, error } = await supabase.auth.getUser();
+                     if (error) throw error;
+                     
+                     if (user) {
+                         console.log('User already logged in:', user.email);
+                         // Check if admin
+                         const isAdmin = user.email === 'admin@vault.com';
+                         window.location.href = isAdmin ? 'admin.html' : 'dashboard.html';
+                     }
+                 } catch (error) {
+                     console.log('No existing session:', error.message);
+                 }
+             }
+             
+             // Login Form Handler
+             document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                 e.preventDefault();
+                 
+                 if (!supabase) {
+                     alert('Authentication service not available.');
+                     return;
+                 }
+                 
+                 const email = document.getElementById('email').value.trim().toLowerCase();
+                 const password = document.getElementById('password').value;
+                 const loginBtn = document.getElementById('loginBtn');
+                 const messageDiv = document.getElementById('message');
+                 
+                 // Validation
+                 if (!email || !email.includes('@')) {
+                     messageDiv.textContent = 'Please enter a valid email address';
+                     messageDiv.className = 'message error';
+                     messageDiv.style.display = 'block';
+                     return;
+                 }
+                 
+                 if (!password) {
+                     messageDiv.textContent = 'Please enter your password';
+                     messageDiv.className = 'message error';
+                     messageDiv.style.display = 'block';
+                     return;
+                 }
+                 
+                 // Show loading
+                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+                 loginBtn.disabled = true;
+                 messageDiv.style.display = 'none';
+                 
+                 try {
+                     console.log('Attempting login for:', email);
+                     
+                     // Sign in
+                     const { data, error } = await supabase.auth.signInWithPassword({
+                         email: email,
+                         password: password
+                     });
+                     
+                     if (error) throw error;
+                     
+                     // Store token
+                     if (data.session?.access_token) {
+                         localStorage.setItem('sb_token', data.session.access_token);
+                     }
+                     
+                     // Create user in database if doesn't exist
+                     try {
+                         const { error: dbError } = await supabase
+                             .from('users')
+                             .insert([
+                                 {
+                                     user_id: 'USER_' + Date.now(),
+                                     email: email,
+                                     first_name: email.split('@')[0],
+                                     role: email === 'admin@vault.com' ? 'admin' : 'user',
+                                     status: 'active',
+                                     balance: 0,
+                                     join_date: new Date().toISOString()
+                                 }
+                             ]);
+                         
+                         if (dbError && !dbError.message.includes('duplicate')) {
+                             console.warn('Could not create user in database:', dbError.message);
+                         }
+                     } catch (dbError) {
+                         console.warn('Database error:', dbError);
+                     }
+                     
+                     // Success message
+                     messageDiv.textContent = 'Login successful! Redirecting...';
+                     messageDiv.className = 'message success';
+                     messageDiv.style.display = 'block';
+                     
+                     // Redirect
+                     setTimeout(() => {
+                         const isAdmin = email === 'admin@vault.com';
+                         window.location.href = isAdmin ? 'admin.html' : 'dashboard.html';
+                     }, 1000);
+                     
+                 } catch (error) {
+                     console.error('Login error:', error);
+                     
+                     // User-friendly error messages
+                     let errorMessage = 'Invalid email or password';
+                     if (error.message.includes('Invalid login credentials')) {
+                         errorMessage = 'Invalid email or password. Please try again.';
+                     } else if (error.message.includes('Email not confirmed')) {
+                         errorMessage = 'Please confirm your email before logging in.';
+                     }
+                     
+                     messageDiv.textContent = errorMessage;
+                     messageDiv.className = 'message error';
+                     messageDiv.style.display = 'block';
+                     
+                     // Reset button
+                     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                     loginBtn.disabled = false;
+                 }
+             });
+             
+             // Forgot password
+             document.getElementById('forgotPassword').addEventListener('click', async function(e) {
+                 e.preventDefault();
+                 
+                 if (!supabase) {
+                     alert('Authentication service not available.');
+                     return;
+                 }
+                 
+                 const email = prompt('Enter your email to reset password:');
+                 if (email) {
+                     try {
+                         const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                             redirectTo: window.location.origin + '/reset-password.html'
+                         });
+                         
+                         if (error) {
+                             alert('Error: ' + error.message);
+                         } else {
+                             alert('Password reset email sent! Check your inbox.');
+                         }
+                     } catch (error) {
+                         alert('Failed to send reset email: ' + error.message);
+                     }
+                 }
+             });
+             
+             // Initialize on page load
+             document.addEventListener('DOMContentLoaded', function() {
+                 console.log('Login page loaded');
+                 checkExistingSession();
+             });
+     
     </script>
 </body>
 </html>
