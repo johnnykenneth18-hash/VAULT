@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - VAULT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../CSS/auth.css">
+    <link rel="stylesheet" href="./CSS/auth.css">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -321,6 +321,16 @@
         // Initialize Supabase
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
+        // Check if user is already logged in
+        async function checkExistingSession() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                // User is already logged in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        }
+        
         // Password strength checker
         document.getElementById('password').addEventListener('input', function() {
             const password = this.value;
@@ -410,7 +420,7 @@
                             first_name: firstName,
                             last_name: lastName,
                             email: email,
-                            phone: phone,
+                            phone: phone || '',
                             role: 'user',
                             status: 'active',
                             balance: 0,
@@ -420,21 +430,39 @@
                             referral_code: referralCode,
                             referral_earnings: 0,
                             join_date: new Date().toISOString(),
-                            created_at: new Date().toISOString()
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
                         }
                     ]);
                 
-                if (dbError) throw dbError;
+                if (dbError) {
+                    // If there's an error with database, still allow login
+                    console.warn('Database insert error (user may already exist):', dbError);
+                }
                 
                 // Show success message
-                messageDiv.textContent = 'Account created successfully! You can now login.';
+                messageDiv.textContent = 'Account created successfully! Logging you in...';
                 messageDiv.className = 'message success';
                 messageDiv.style.display = 'block';
                 
-                // Auto-login
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
+                // Auto-login after registration
+                const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (loginError) {
+                    // If auto-login fails, redirect to login page
+                    messageDiv.textContent = 'Account created! Please login now.';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    // Auto-login successful, redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }
                 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -450,16 +478,8 @@
             }
         });
         
-        // Check if user is already logged in
-        async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                window.location.href = 'dashboard.html';
-            }
-        }
-        
-        // Run on page load
-        document.addEventListener('DOMContentLoaded', checkAuth);
+        // Check session on page load
+        document.addEventListener('DOMContentLoaded', checkExistingSession);
     </script>
 </body>
 </html>

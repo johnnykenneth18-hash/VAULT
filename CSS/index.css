@@ -1179,6 +1179,56 @@ h4 { font-size: 1.5rem; }
     font-weight: 600;
 }
 
+/* ANDROID-SPECIFIC FIXES - Button size fixes */
+@media (max-width: 768px) {
+    .navbar .btn {
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .nav-actions {
+        gap: 10px;
+    }
+    
+    .hero-actions .btn {
+        padding: 12px 20px !important;
+        font-size: 0.95rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .btn {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .btn {
+        padding: 10px 18px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .hero-actions {
+        gap: 12px;
+    }
+    
+    .hero-actions .btn {
+        padding: 10px 16px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .cta-actions .btn {
+        padding: 12px 22px !important;
+    }
+}
+
+/* Android landscape mode */
+@media (max-height: 500px) and (max-width: 900px) {
+    .navbar .btn {
+        padding: 5px 10px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     h1 { font-size: 3rem; }

@@ -146,15 +146,18 @@ function initAuthButtons() {
 // Check Authentication Status
 async function checkAuthStatus() {
     try {
-        // Check if Supabase is available
-        if (typeof supabaseClient !== 'undefined') {
-            const { success, user } = await supabaseClient.getCurrentUser();
-            
-            if (success && user) {
-                updateAuthButtons(true, user);
-            } else {
-                updateAuthButtons(false);
-            }
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Check if user is logged in
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+            updateAuthButtons(true, user);
+        } else {
+            updateAuthButtons(false);
         }
     } catch (error) {
         console.error('Auth check error:', error);
@@ -203,22 +206,20 @@ function updateAuthButtons(isLoggedIn, user = null) {
 // Logout User
 async function logoutUser() {
     try {
-        if (typeof supabaseClient !== 'undefined') {
-            const { success } = await supabaseClient.signOut();
-            if (success) {
-                showNotification('Logged out successfully', 'success');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            }
-        } else {
-            // Fallback to localStorage
-            localStorage.removeItem('vault_current_user');
-            showNotification('Logged out successfully', 'success');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Sign out
+        const { error } = await supabase.auth.signOut();
+        
+        if (error) throw error;
+        
+        showNotification('Logged out successfully', 'success');
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     } catch (error) {
         console.error('Logout error:', error);
         showNotification('Logout failed', 'error');

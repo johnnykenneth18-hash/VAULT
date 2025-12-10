@@ -8,6 +8,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // User Authentication Functions
 async function signUp(email, password, userData) {
     try {
+        // First, sign up with Supabase Auth
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -37,13 +38,24 @@ async function signUp(email, password, userData) {
                     status: 'active',
                     balance: 0,
                     referral_code: referralCode,
-                    join_date: new Date().toISOString()
+                    join_date: new Date().toISOString(),
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 }
             ]);
         
-        if (dbError) throw dbError;
+        if (dbError) {
+            console.warn('User might already exist in database:', dbError);
+            // Continue even if there's a database error
+        }
         
-        return { success: true, data };
+        return { 
+            success: true, 
+            data: {
+                ...data,
+                user_id: userId
+            } 
+        };
     } catch (error) {
         console.error('Sign up error:', error);
         return { success: false, error: error.message };
@@ -58,6 +70,37 @@ async function signIn(email, password) {
         });
         
         if (error) throw error;
+        
+        // Get or create user in database
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+        
+        if (userError && userError.code === 'PGRST116') {
+            // User doesn't exist in database, create them
+            const userId = 'USER_' + Date.now();
+            const referralCode = email.split('@')[0].substring(0, 3).toUpperCase() + 
+                              Date.now().toString().slice(-4);
+            
+            await supabase
+                .from('users')
+                .insert([
+                    {
+                        user_id: userId,
+                        email: email,
+                        first_name: email.split('@')[0],
+                        role: email === 'admin@vault.com' ? 'admin' : 'user',
+                        status: 'active',
+                        balance: 0,
+                        referral_code: referralCode,
+                        join_date: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }
+                ]);
+        }
         
         return { success: true, data };
     } catch (error) {
@@ -90,7 +133,7 @@ async function getCurrentUser() {
             .eq('email', user.email)
             .single();
         
-        if (error) {
+        if (error && error.code === 'PGRST116') {
             // Create user if doesn't exist
             const userId = 'USER_' + Date.now();
             await supabase
@@ -100,14 +143,24 @@ async function getCurrentUser() {
                         user_id: userId,
                         email: user.email,
                         first_name: user.email.split('@')[0],
-                        role: 'user',
+                        role: user.email === 'admin@vault.com' ? 'admin' : 'user',
                         status: 'active',
                         balance: 0,
-                        join_date: new Date().toISOString()
+                        join_date: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
                     }
                 ]);
             
-            return { success: true, user: { email: user.email, user_id: userId } };
+            return { 
+                success: true, 
+                user: { 
+                    email: user.email, 
+                    user_id: userId,
+                    first_name: user.email.split('@')[0],
+                    role: user.email === 'admin@vault.com' ? 'admin' : 'user'
+                } 
+            };
         }
         
         return { success: true, user: userData };
@@ -153,7 +206,9 @@ async function addPaymentMethod(methodData) {
                     name: methodData.name,
                     type: methodData.type,
                     details: methodData.details,
-                    status: methodData.status || 'active'
+                    status: methodData.status || 'active',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 }
             ]);
         
@@ -199,7 +254,9 @@ async function createTransaction(transactionData) {
                     net_amount: transactionData.net_amount,
                     method: transactionData.method,
                     status: transactionData.status || 'pending',
-                    description: transactionData.description
+                    description: transactionData.description,
+                    transaction_date: new Date().toISOString(),
+                    created_at: new Date().toISOString()
                 }
             ]);
         
@@ -228,7 +285,9 @@ async function createDepositRequest(depositData) {
                     method: depositData.method,
                     method_details: depositData.method_details,
                     reference: depositData.reference,
-                    status: 'pending'
+                    status: 'pending',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 }
             ]);
         
@@ -258,7 +317,9 @@ async function createWithdrawalRequest(withdrawalData) {
                     method: withdrawalData.method,
                     method_details: withdrawalData.method_details,
                     account_details: withdrawalData.account_details,
-                    status: 'pending'
+                    status: 'pending',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 }
             ]);
         

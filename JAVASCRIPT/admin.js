@@ -18,6 +18,11 @@ let adminData = {
 async function initAdminDashboard() {
     console.log('Initializing admin dashboard...');
     
+    // Initialize Supabase
+    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || user.email !== 'admin@vault.com') {
@@ -26,7 +31,7 @@ async function initAdminDashboard() {
     }
     
     // Load all data
-    await loadAllData();
+    await loadAllData(supabase);
     
     // Setup navigation
     setupNavigation();
@@ -40,8 +45,8 @@ async function initAdminDashboard() {
     // Setup transactions section
     setupTransactionsSection();
     
-    // Setup payments section (IMPORTANT FOR YOU)
-    setupPaymentsSection();
+    // Setup payments section
+    setupPaymentsSection(supabase);
     
     // Setup requests sections
     setupRequestsSections();
@@ -50,7 +55,7 @@ async function initAdminDashboard() {
     setupSettingsSection();
     
     // Setup modals
-    setupModals();
+    setupModals(supabase);
     
     // Setup time display
     updateAdminTime();
@@ -60,7 +65,7 @@ async function initAdminDashboard() {
 }
 
 // Load all data from Supabase
-async function loadAllData() {
+async function loadAllData(supabase) {
     try {
         // Load users
         const { data: users, error: usersError } = await supabase
@@ -172,6 +177,10 @@ function setupNavigation() {
     
     // Logout
     document.getElementById('adminLogout').addEventListener('click', async function() {
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         await supabase.auth.signOut();
         window.location.href = 'index.html';
     });
@@ -262,8 +271,6 @@ function setupUsersSection() {
     document.getElementById('user-search')?.addEventListener('input', function() {
         loadUsersTable(this.value.toLowerCase());
     });
-    
-    document.getElementById('add-user-btn')?.addEventListener('click', () => openUserModal());
 }
 
 function loadUsersTable(search = '') {
@@ -307,8 +314,8 @@ function loadUsersTable(search = '') {
     `).join('');
 }
 
-// PAYMENT METHODS SECTION - THIS IS WHAT YOU NEED!
-function setupPaymentsSection() {
+// PAYMENT METHODS SECTION
+function setupPaymentsSection(supabase) {
     loadPaymentMethods();
     loadBankAccounts();
     loadCryptoAccounts();
@@ -456,7 +463,7 @@ function openPaymentModal(method = null) {
     modal.classList.add('active');
 }
 
-async function savePaymentMethod() {
+async function savePaymentMethod(supabase) {
     const modal = document.getElementById('paymentModal');
     const methodId = modal.dataset.methodId;
     const isEdit = modal.dataset.mode === 'edit';
@@ -517,7 +524,10 @@ async function savePaymentMethod() {
         }
         
         // Reload data
-        await loadAllData();
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabaseReload = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        await loadAllData(supabaseReload);
         
         // Close modal
         modal.classList.remove('active');
@@ -533,21 +543,7 @@ async function savePaymentMethod() {
     }
 }
 
-// Other sections (simplified for brevity)
-function setupTransactionsSection() {
-    loadTransactionsTable();
-}
-
-function setupRequestsSections() {
-    loadDepositRequests();
-    loadWithdrawalRequests();
-}
-
-function setupSettingsSection() {
-    loadSettings();
-}
-
-function setupModals() {
+function setupModals(supabase) {
     // Close buttons
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -558,7 +554,10 @@ function setupModals() {
     // Payment form submission
     document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        savePaymentMethod();
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        savePaymentMethod(supabase);
     });
     
     // Click outside modal
@@ -645,7 +644,8 @@ window.viewUserDetails = function(userId) {
 window.editUser = function(userId) {
     const user = adminData.users.find(u => u.user_id === userId);
     if (user) {
-        openUserModal(user);
+        // Implement edit user functionality
+        alert('Edit user functionality would go here');
     }
 };
 
@@ -660,6 +660,10 @@ window.deletePaymentMethod = async function(methodId) {
     if (!confirm('Delete this payment method?')) return;
     
     try {
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         const { error } = await supabase
             .from('payment_methods')
             .delete()
@@ -670,7 +674,7 @@ window.deletePaymentMethod = async function(methodId) {
         showAdminNotification('Payment method deleted', 'success');
         
         // Reload data
-        await loadAllData();
+        await loadAllData(supabase);
         loadPaymentMethods();
         loadBankAccounts();
         loadCryptoAccounts();
@@ -680,6 +684,36 @@ window.deletePaymentMethod = async function(methodId) {
         showAdminNotification('Failed to delete', 'error');
     }
 };
+
+// Other sections (simplified - you need to implement these)
+function setupTransactionsSection() {
+    loadTransactionsTable();
+}
+
+function setupRequestsSections() {
+    loadDepositRequests();
+    loadWithdrawalRequests();
+}
+
+function setupSettingsSection() {
+    loadSettings();
+}
+
+function loadTransactionsTable() {
+    // Implement transactions table
+}
+
+function loadDepositRequests() {
+    // Implement deposit requests
+}
+
+function loadWithdrawalRequests() {
+    // Implement withdrawal requests
+}
+
+function loadSettings() {
+    // Implement settings
+}
 
 // Initialize when DOM is loaded
 console.log('Admin JS loaded');

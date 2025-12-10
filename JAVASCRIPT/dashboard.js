@@ -6,18 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function initDashboard() {
     // Check authentication
-    await checkDashboardAuth();
+    const user = await checkDashboardAuth();
+    if (!user) return;
     
     // Initialize components
     initNavigation();
-    initDashboardStats();
-    loadRecentTransactions();
-    initDepositSection();
-    initWithdrawalSection();
-    initProfileSection();
-    initHistorySection();
-    initPartnershipSection();
-    initAccountsSection();
+    initDashboardStats(user);
+    loadRecentTransactions(user.user_id);
+    initDepositSection(user);
+    initWithdrawalSection(user);
+    initProfileSection(user);
+    initHistorySection(user);
+    initPartnershipSection(user);
+    initAccountsSection(user);
     
     // Update time
     updateTime();
@@ -30,19 +31,69 @@ async function initDashboard() {
 // Check Authentication
 async function checkDashboardAuth() {
     try {
-        const { success, user } = await supabaseClient.getCurrentUser();
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        if (!success || !user) {
+        // Check if user is logged in
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
             window.location.href = 'login.html';
-            return;
+            return null;
         }
         
-        // Update user info
-        updateUserInfo(user);
-        return user;
+        // Check if user exists in database
+        const { data: userData, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', user.email)
+            .single();
+        
+        if (error && error.code === 'PGRST116') {
+            // User doesn't exist in database, create them
+            const userId = 'USER_' + Date.now();
+            const referralCode = user.email.split('@')[0].substring(0, 3).toUpperCase() + 
+                              Date.now().toString().slice(-4);
+            
+            const { data: newUser, error: createError } = await supabase
+                .from('users')
+                .insert([
+                    {
+                        user_id: userId,
+                        email: user.email,
+                        first_name: user.email.split('@')[0],
+                        role: 'user',
+                        status: 'active',
+                        balance: 0,
+                        referral_code: referralCode,
+                        join_date: new Date().toISOString()
+                    }
+                ])
+                .select()
+                .single();
+            
+            if (createError) {
+                console.error('Error creating user:', createError);
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            return newUser;
+        }
+        
+        if (error) {
+            console.error('Error fetching user:', error);
+            window.location.href = 'login.html';
+            return null;
+        }
+        
+        return userData;
     } catch (error) {
         console.error('Auth check error:', error);
         window.location.href = 'login.html';
+        return null;
     }
 }
 
@@ -113,18 +164,21 @@ function initNavigation() {
 }
 
 // Dashboard Stats
-async function initDashboardStats() {
-    const { success, user } = await supabaseClient.getCurrentUser();
-    
-    if (success && user) {
+async function initDashboardStats(user) {
+    if (user) {
         // Update stats
         document.getElementById('current-balance').textContent = formatCurrency(user.balance || 0);
         document.getElementById('total-deposits').textContent = formatCurrency(user.total_deposits || 0);
         document.getElementById('total-withdrawals').textContent = formatCurrency(user.total_withdrawals || 0);
         document.getElementById('total-interest').textContent = formatCurrency(user.total_interest || 0);
         
+        // Initialize Supabase for transactions
+        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         // Update total transactions
-        const { data: transactions } = await supabaseClient.supabase
+        const { data: transactions } = await supabase
             .from('transactions')
             .select('*')
             .eq('user_id', user.user_id);
@@ -136,15 +190,15 @@ async function initDashboardStats() {
 }
 
 // Recent Transactions
-async function loadRecentTransactions() {
-    const { success, user } = await supabaseClient.getCurrentUser();
+async function loadRecentTransactions(userId) {
+    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    if (!success || !user) return;
-    
-    const { data: transactions, error } = await supabaseClient.supabase
+    const { data: transactions, error } = await supabase
         .from('transactions')
         .select('*')
-        .eq('user_id', user.user_id)
+        .eq('user_id', userId)
         .order('transaction_date', { ascending: false })
         .limit(5);
     
@@ -178,7 +232,7 @@ async function loadRecentTransactions() {
 }
 
 // Deposit Section
-function initDepositSection() {
+function initDepositSection(user) {
     const depositAmount = document.getElementById('deposit-amount');
     const investmentPeriod = document.getElementById('investment-period');
     const depositMethod = document.getElementById('deposit-method');
@@ -186,7 +240,6 @@ function initDepositSection() {
     
     if (!depositAmount || !investmentPeriod) return;
     
-    // Update calculator
     function updateDepositCalculator() {
         const amount = parseFloat(depositAmount.value) || 0;
         const weeks = parseInt(investmentPeriod.value) || 4;
@@ -206,33 +259,6 @@ function initDepositSection() {
         const methodText = depositMethod.value === 'bank' ? 'Bank Transfer' : 
                          depositMethod.value === 'crypto' ? 'Cryptocurrency' : 'Card';
         document.getElementById('preview-method').textContent = methodText;
-        
-        // Update weekly breakdown
-        updateWeeklyBreakdown(amount, weeks);
-    }
-    
-    // Weekly breakdown
-    function updateWeeklyBreakdown(amount, weeks) {
-        const container = document.getElementById('week-breakdown');
-        if (!container) return;
-        
-        let html = '';
-        let currentBalance = amount;
-        const rate = 0.5;
-        
-        for (let week = 1; week <= weeks; week++) {
-            const weeklyInterest = currentBalance * rate;
-            currentBalance += weeklyInterest;
-            
-            html += `
-                <div class="breakdown-item">
-                    <span>Week ${week}</span>
-                    <span>${formatCurrency(currentBalance)}</span>
-                </div>
-            `;
-        }
-        
-        container.innerHTML = html;
     }
     
     // Method change
@@ -264,8 +290,9 @@ function initDepositSection() {
                 return;
             }
             
-            const { success, user } = await supabaseClient.getCurrentUser();
-            if (!success || !user) return;
+            const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
             // Create deposit request
             const depositData = {
@@ -285,9 +312,21 @@ function initDepositSection() {
                 depositData.reference = document.getElementById('crypto-txid').value;
             }
             
-            const { success: depositSuccess, requestId } = await supabaseClient.createDepositRequest(depositData);
+            const { error } = await supabase
+                .from('deposit_requests')
+                .insert([
+                    {
+                        request_id: 'DEP_' + Date.now(),
+                        ...depositData,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }
+                ]);
             
-            if (depositSuccess) {
+            if (error) {
+                console.error('Deposit error:', error);
+                showNotification('Failed to submit deposit request', 'error');
+            } else {
                 showNotification('Deposit request submitted! Waiting for admin approval.', 'success');
                 
                 // Reset form
@@ -296,8 +335,6 @@ function initDepositSection() {
                 
                 // Update UI
                 updateDepositCalculator();
-            } else {
-                showNotification('Failed to submit deposit request', 'error');
             }
         });
     }
@@ -310,13 +347,14 @@ function initDepositSection() {
     investmentPeriod.addEventListener('input', updateDepositCalculator);
 }
 
-// Withdrawal Section (similar structure)
-function initWithdrawalSection() {
-    // Implement withdrawal functionality
+// Withdrawal Section
+function initWithdrawalSection(user) {
+    // Implement withdrawal functionality here
+    console.log('Withdrawal section initialized for user:', user.user_id);
 }
 
 // Profile Section
-function initProfileSection() {
+function initProfileSection(user) {
     const saveProfileBtn = document.getElementById('save-profile');
     
     if (saveProfileBtn) {
@@ -327,11 +365,12 @@ function initProfileSection() {
             const phone = document.getElementById('phone').value;
             const address = document.getElementById('address').value;
             
-            const { success, user } = await supabaseClient.getCurrentUser();
-            if (!success || !user) return;
+            const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
             // Update user in database
-            const { error } = await supabaseClient.supabase
+            const { error } = await supabase
                 .from('users')
                 .update({
                     first_name: firstName,
@@ -343,6 +382,7 @@ function initProfileSection() {
                 .eq('user_id', user.user_id);
             
             if (error) {
+                console.error('Profile update error:', error);
                 showNotification('Failed to update profile', 'error');
             } else {
                 showNotification('Profile updated successfully!', 'success');
@@ -353,12 +393,12 @@ function initProfileSection() {
 }
 
 // History Section
-function initHistorySection() {
-    // Implement transaction history
+function initHistorySection(user) {
+    console.log('History section initialized for user:', user.user_id);
 }
 
 // Partnership Section
-function initPartnershipSection() {
+function initPartnershipSection(user) {
     const copyReferralBtn = document.getElementById('copy-referral');
     
     if (copyReferralBtn) {
@@ -374,8 +414,8 @@ function initPartnershipSection() {
 }
 
 // Accounts Section
-function initAccountsSection() {
-    // Implement accounts management
+function initAccountsSection(user) {
+    console.log('Accounts section initialized for user:', user.user_id);
 }
 
 // Utility Functions
@@ -419,8 +459,16 @@ function updateTime() {
 }
 
 async function logout() {
-    const { success } = await supabaseClient.signOut();
-    if (success) {
+    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+        console.error('Logout error:', error);
+        showNotification('Logout failed', 'error');
+    } else {
         window.location.href = 'index.html';
     }
 }

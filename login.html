@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - VAULT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="./CSS/auth.css">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -249,6 +249,20 @@
         // Initialize Supabase
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
+        // Check if user is already logged in
+        async function checkExistingSession() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                // User is already logged in, redirect based on role
+                if (user.email === 'admin@vault.com') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+            }
+        }
+        
         // Login Form Handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -272,15 +286,15 @@
                 
                 if (error) throw error;
                 
-                // Get or create user in database
+                // Check if user exists in database
                 const { data: userData, error: userError } = await supabase
                     .from('users')
                     .select('*')
                     .eq('email', email)
                     .single();
                 
-                if (userError) {
-                    // Create user if doesn't exist
+                if (userError && userError.code === 'PGRST116') {
+                    // User doesn't exist in database, create them
                     const userId = 'USER_' + Date.now();
                     const referralCode = email.split('@')[0].substring(0, 3).toUpperCase() + 
                                       Date.now().toString().slice(-4);
@@ -292,11 +306,13 @@
                                 user_id: userId,
                                 email: email,
                                 first_name: email.split('@')[0],
-                                role: 'user',
+                                role: email === 'admin@vault.com' ? 'admin' : 'user',
                                 status: 'active',
                                 balance: 0,
                                 referral_code: referralCode,
-                                join_date: new Date().toISOString()
+                                join_date: new Date().toISOString(),
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
                             }
                         ]);
                 }
@@ -313,7 +329,7 @@
                     } else {
                         window.location.href = 'dashboard.html';
                     }
-                }, 1500);
+                }, 1000);
                 
             } catch (error) {
                 console.error('Login error:', error);
@@ -343,16 +359,8 @@
             }
         });
         
-        // Check if user is already logged in
-        async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                window.location.href = 'dashboard.html';
-            }
-        }
-        
-        // Run on page load
-        document.addEventListener('DOMContentLoaded', checkAuth);
+        // Check session on page load
+        document.addEventListener('DOMContentLoaded', checkExistingSession);
     </script>
 </body>
 </html>
