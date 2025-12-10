@@ -123,54 +123,61 @@ async function signOut() {
 
 async function getCurrentUser() {
     try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) return { success: false, user: null };
-        
+        if (!supabase || !supabase.auth) return { success: false, user: null };
+
+        // Check Supabase auth user
+        let userResponse;
+        if (supabase.auth.getUser) {
+            // Standard Supabase client
+            userResponse = await supabase.auth.getUser();
+            userResponse = userResponse.data ? userResponse.data.user : null;
+        } else if (supabase.auth.user) {
+            // Local Supabase client
+            userResponse = await supabase.auth.getUser();
+            userResponse = userResponse.user || null;
+        }
+
+        if (!userResponse) return { success: false, user: null };
+
         // Get user data from database
         const { data: userData, error } = await supabase
             .from('users')
             .select('*')
-            .eq('email', user.email)
+            .eq('email', userResponse.email)
             .single();
-        
+
         if (error && error.code === 'PGRST116') {
             // Create user if doesn't exist
             const userId = 'USER_' + Date.now();
-            await supabase
-                .from('users')
-                .insert([
-                    {
-                        user_id: userId,
-                        email: user.email,
-                        first_name: user.email.split('@')[0],
-                        role: user.email === 'admin@vault.com' ? 'admin' : 'user',
-                        status: 'active',
-                        balance: 0,
-                        join_date: new Date().toISOString(),
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    }
-                ]);
-            
-            return { 
-                success: true, 
-                user: { 
-                    email: user.email, 
+            await supabase.from('users').insert([{
+                user_id: userId,
+                email: userResponse.email,
+                first_name: userResponse.email.split('@')[0],
+                role: userResponse.email === 'admin@vault.com' ? 'admin' : 'user',
+                status: 'active',
+                balance: 0,
+                join_date: new Date().toISOString(),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            }]);
+
+            return {
+                success: true,
+                user: {
+                    email: userResponse.email,
                     user_id: userId,
-                    first_name: user.email.split('@')[0],
-                    role: user.email === 'admin@vault.com' ? 'admin' : 'user'
-                } 
+                    first_name: userResponse.email.split('@')[0],
+                    role: userResponse.email === 'admin@vault.com' ? 'admin' : 'user'
+                }
             };
         }
-        
+
         return { success: true, user: userData };
     } catch (error) {
         console.error('Get user error:', error);
         return { success: false, user: null, error: error.message };
     }
 }
-
 // Payment Methods Functions
 async function getPaymentMethods(type = null) {
     try {
