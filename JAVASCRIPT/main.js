@@ -147,8 +147,8 @@ function initAuthButtons() {
 async function checkAuthStatus() {
     try {
         // Initialize Supabase
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Check if user is logged in
@@ -207,8 +207,8 @@ function updateAuthButtons(isLoggedIn, user = null) {
 async function logoutUser() {
     try {
         // Initialize Supabase
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Sign out

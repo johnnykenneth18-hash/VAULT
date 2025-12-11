@@ -19,8 +19,8 @@ async function initAdminDashboard() {
     console.log('Initializing admin dashboard...');
     
     // Initialize Supabase
-    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     // Check if user is admin
@@ -177,8 +177,8 @@ function setupNavigation() {
     
     // Logout
     document.getElementById('adminLogout').addEventListener('click', async function() {
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         await supabase.auth.signOut();
@@ -524,8 +524,8 @@ async function savePaymentMethod(supabase) {
         }
         
         // Reload data
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabaseReload = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         await loadAllData(supabaseReload);
         
@@ -554,8 +554,8 @@ function setupModals(supabase) {
     // Payment form submission
     document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         savePaymentMethod(supabase);
     });
@@ -660,8 +660,8 @@ window.deletePaymentMethod = async function(methodId) {
     if (!confirm('Delete this payment method?')) return;
     
     try {
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         const { error } = await supabase

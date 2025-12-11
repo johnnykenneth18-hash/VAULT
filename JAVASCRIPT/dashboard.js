@@ -32,8 +32,8 @@ async function initDashboard() {
 async function checkDashboardAuth() {
     try {
         // Initialize Supabase
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Check if user is logged in
@@ -120,7 +120,7 @@ function updateUserInfo(user) {
     // Update referral link
     const referralLink = document.getElementById('referral-link');
     if (referralLink && user.referral_code) {
-        referralLink.value = `https://vault.com/ref/${user.referral_code}`;
+        referralLink.value = `https://vaultbank.vercel.app/ref/${user.referral_code}`;
     }
 }
 
@@ -173,8 +173,8 @@ async function initDashboardStats(user) {
         document.getElementById('total-interest').textContent = formatCurrency(user.total_interest || 0);
         
         // Initialize Supabase for transactions
-        const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+        const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Update total transactions
@@ -191,8 +191,8 @@ async function initDashboardStats(user) {
 
 // Recent Transactions
 async function loadRecentTransactions(userId) {
-    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     const { data: transactions, error } = await supabase
@@ -290,8 +290,8 @@ function initDepositSection(user) {
                 return;
             }
             
-            const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+            const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
             // Create deposit request
@@ -365,8 +365,8 @@ function initProfileSection(user) {
             const phone = document.getElementById('phone').value;
             const address = document.getElementById('address').value;
             
-            const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+            const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
             // Update user in database
@@ -459,8 +459,8 @@ function updateTime() {
 }
 
 async function logout() {
-    const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
+    const SUPABASE_URL = 'https://rhotbzbuvwhdwwrvjhhe.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJob3RiemJ1dndoZHd3cnZqaGhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTMwNjcsImV4cCI6MjA4MDk4OTA2N30.s9gSHCPBJM2hTgqIsIUWo-L5rcKTj0TAsSQ4LnIMfg0';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     const { error } = await supabase.auth.signOut();
