@@ -1,6 +1,6 @@
 // Supabase Configuration
 
-const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
+const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.com';
 const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
 
 // Create Supabase client
