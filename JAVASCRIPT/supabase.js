@@ -4,7 +4,14 @@ const SUPABASE_URL = 'https://zfppcuqqebnmdkyzioki.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_b66jo-KYkkot68z51toAMg_W5YGeYSH';
 
 // Create Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabase;
+try {
+    if (!window.supabase) throw new Error('Supabase not available. Please ensure supabase.js or supabase-local.js is loaded.');
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Supabase initialized successfully');
+} catch (error) {
+    console.error('❌ Supabase initialization failed:', error);
+}
 
 // User Authentication Functions
 async function signUp(email, password, userData) {
