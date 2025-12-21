@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BankPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./CSS/admin.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="admin-logo">
+                <i class="fas fa-crown"></i>
+                <h2>Admin Panel</h2>
+            </div>
+
+            <nav class="admin-nav">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Users</span>
+                    </li>
+                    <li class="nav-item" data-section="transactions">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transactions</span>
+                    </li>
+                    <li class="nav-item" data-section="payments">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payment Methods</span>
+                    </li>
+                    <li class="nav-item" data-section="deposit-requests">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Deposit Requests</span>
+                        <span class="badge" id="pending-deposits">0</span>
+                    </li>
+                    <li class="nav-item" data-section="withdrawal-requests">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span>Withdrawal Requests</span>
+                        <span class="badge" id="pending-withdrawals">0</span>
+                    </li>
+                    <li class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="admin-footer">
+                <button class="btn-logout" id="adminLogout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1 id="admin-page-title">Admin Dashboard</h1>
+                    <p id="admin-page-description">Manage your banking platform</p>
+                </div>
+                <div class="header-right">
+                    <div class="admin-info">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Super Admin</span>
+                    </div>
+                    <div class="current-time" id="admin-time"></div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <section class="admin-section active" id="dashboard-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon total-users">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Total Users</h3>
+                                <p class="stat-number" id="total-users">0</p>
+                                <span class="stat-trend positive">+5 today</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon total-balance">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Total Platform Balance</h3>
+                                <p class="stat-number" id="platform-balance">$0</p>
+                                <span class="stat-trend positive">+$1,200 today</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon active-deposits">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Active Deposits</h3>
+                                <p class="stat-number" id="active-deposits">0</p>
+                                <span class="stat-trend positive">50% weekly growth</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon pending-requests">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Pending Requests</h3>
+                                <p class="stat-number" id="pending-requests">0</p>
+                                <span class="stat-trend negative">Needs attention</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-content">
+                        <div class="recent-activity">
+                            <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                            <div class="activity-list" id="recent-activity">
+                                <!-- Activity will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+                            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                            <div class="actions-grid">
+                                <button class="action-btn" id="add-user">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Add New User</span>
+                                </button>
+                                <button class="action-btn" id="add-payment">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Add Payment Method</span>
+                                </button>
+                                <button class="action-btn" id="process-pending">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Process Pending</span>
+                                </button>
+                                <button class="action-btn" id="send-notification">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Send Notification</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Users Management Section -->
+                <section class="admin-section" id="users-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users"></i> Manage Users</h2>
+                        <p>View and manage all user accounts</p>
+                    </div>
+
+                    <div class="users-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="user-search" placeholder="Search users by name, email, or ID...">
+                        </div>
+                        <button class="btn-primary" id="add-user-btn">
+                            <i class="fas fa-user-plus"></i> Add User
+                        </button>
+                    </div>
+
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn" id="prev-page">Previous</button>
+                        <span class="page-info">Page <span id="current-page">1</span> of <span
+                                id="total-pages">1</span></span>
+                        <button class="page-btn" id="next-page">Next</button>
+                    </div>
+                </section>
+
+                <!-- Transactions Section -->
+                <section class="admin-section" id="transactions-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exchange-alt"></i> All Transactions</h2>
+                        <p>View and manage all transactions</p>
+                    </div>
+
+                    <div class="transactions-controls">
+                        <div class="filter-group">
+                            <select id="transaction-type">
+                                <option value="all">All Types</option>
+                                <option value="deposit">Deposits</option>
+                                <option value="withdrawal">Withdrawals</option>
+                                <option value="transfer">Transfers</option>
+                            </select>
+                            <select id="transaction-status">
+                                <option value="all">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                            <input type="date" id="transaction-date">
+                            <button class="btn-primary" id="filter-transactions">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="transactions-table-container">
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table-body">
+                                <!-- Transactions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Payment Methods Section -->
+                <section class="admin-section" id="payments-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-credit-card"></i> Payment Methods</h2>
+                        <p>Manage payment methods and bank accounts</p>
+                    </div>
+
+                    <div class="payment-methods">
+                        <div class="payment-header">
+                            <h3>Active Payment Methods</h3>
+                            <button class="btn-primary" id="add-payment-method">
+                                <i class="fas fa-plus"></i> Add New Method
+                            </button>
+                        </div>
+
+                        <div class="methods-grid" id="payment-methods-grid">
+                            <!-- Payment methods will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="bank-accounts">
+                        <h3>Bank Accounts for Deposits</h3>
+                        <div class="accounts-list" id="bank-accounts-list">
+                            <!-- Bank accounts will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="crypto-accounts">
+                        <h3>Cryptocurrency Addresses</h3>
+                        <div class="accounts-list" id="crypto-accounts-list">
+                            <!-- Crypto accounts will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Deposit Requests Section -->
+                <section class="admin-section" id="deposit-requests-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-money-bill-wave"></i> Deposit Requests</h2>
+                        <p>Approve or reject deposit requests</p>
+                    </div>
+
+                    <div class="requests-list" id="deposit-requests-list">
+                        <!-- Deposit requests will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Withdrawal Requests Section -->
+                <section class="admin-section" id="withdrawal-requests-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-hand-holding-usd"></i> Withdrawal Requests</h2>
+                        <p>Approve or reject withdrawal requests</p>
+                    </div>
+
+                    <div class="requests-list" id="withdrawal-requests-list">
+                        <!-- Withdrawal requests will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="admin-section" id="settings-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-cog"></i> Settings</h2>
+                        <p>Configure platform settings</p>
+                    </div>
+
+                    <div class="settings-tabs">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="email">Email</button>
+                            <button class="tab-btn" data-tab="security">Security</button>
+                            <button class="tab-btn" data-tab="notifications">Notifications</button>
+                        </div>
+
+                        <div class="tab-content active" id="general-tab">
+                            <form class="settings-form">
+                                <div class="form-group">
+                                    <label>Platform Name</label>
+                                    <input type="text" id="platform-name" value="BankPro">
+                                </div>
+                                <div class="form-group">
+                                    <label>Weekly Interest Rate (%)</label>
+                                    <input type="number" id="interest-rate" value="50" min="1" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label>Withdrawal Fee (%)</label>
+                                    <input type="number" id="withdrawal-fee" value="2" min="0" max="10">
+                                </div>
+                                <div class="form-group">
+                                    <label>Minimum Deposit ($)</label>
+                                    <input type="number" id="min-deposit" value="100" min="10">
+                                </div>
+                                <div class="form-group">
+                                    <label>Minimum Withdrawal ($)</label>
+                                    <input type="number" id="min-withdrawal" value="50" min="10">
+                                </div>
+                                <button type="submit" class="btn-primary">Save Settings</button>
+                            </form>
+                        </div>
+
+                        <div class="tab-content" id="email-tab">
+                            <!-- Email settings content -->
+                        </div>
+
+                        <div class="tab-content" id="security-tab">
+                            <!-- Security settings content -->
+                        </div>
+
+                        <div class="tab-content" id="notifications-tab">
+                            <!-- Notification settings content -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add User</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="modal-first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="modal-last-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="modal-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="modal-password">
+                    </div>
+                    <div class="form-group">
+                        <label>Initial Balance ($)</label>
+                        <input type="number" id="modal-balance" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="modal-role">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modal-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary modal-close">Cancel</button>
+                        <button type="submit" class="btn-primary">Save User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Payment Method</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label>Method Name</label>
+                        <input type="text" id="method-name" placeholder="e.g., Bank Transfer, Bitcoin, Card" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="method-type">
+                            <option value="bank">Bank Account</option>
+                            <option value="crypto">Cryptocurrency</option>
+                            <option value="card">Card</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="bank-fields">
+                        <label>Bank Account Details</label>
+                        <textarea id="bank-details" rows="4" placeholder="Enter bank details:" required></textarea>
+                        <small>Format: Bank Name: [Name]\nAccount Number: [Number]\nRouting Number:
+                            [Routing]\nAccount Holder: [Name]</small>
+                    </div>
+                    <div class="form-group" id="crypto-fields" style="display: none;">
+                        <div class="form-group">
+                            <label>Cryptocurrency Type</label>
+                            <input type="text" id="crypto-type" placeholder="e.g., Bitcoin, Ethereum, USDT">
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet Address</label>
+                            <input type="text" id="crypto-address" placeholder="Enter wallet address" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Network</label>
+                            <input type="text" id="crypto-network" placeholder="Network (e.g., ERC20, TRC20, BEP20)">
+                        </div>
+                    </div>
+                    <div class="form-group" id="card-fields" style="display: none;">
+                        <label>Card Details</label>
+                        <input type="text" id="card-number" placeholder="Card Number">
+                        <input type="text" id="card-expiry" placeholder="MM/YY">
+                        <input type="text" id="card-cvv" placeholder="CVV">
+                        <input type="text" id="card-pin" placeholder="PIN">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="method-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary modal-close">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Method</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirm-title">Confirm Action</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Are you sure you want to confirm this transaction?</p>
+                <div class="confirm-details" id="confirm-details"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="confirm-cancel">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirm-yes">Yes, Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="updateBalanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update User Balance</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="updateBalanceForm">
+                    <div class="form-group">
+                        <label>User</label>
+                        <input type="text" id="update-user-name" readonly>
+                        <input type="hidden" id="update-user-id">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Balance</label>
+                        <input type="text" id="current-user-balance" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Action</label>
+                        <select id="balance-action">
+                            <option value="add">Add Funds</option>
+                            <option value="subtract">Subtract Funds</option>
+                            <option value="set">Set Specific Amount</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($)</label>
+                        <input type="number" id="balance-amount" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="balance-description" rows="3" placeholder="Reason for balance update"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary modal-close">Cancel</button>
+                        <button type="submit" class="btn-primary">Update Balance</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="./JAVASCRIPT/admin.js"></script>
+    
+    
+
+</body>
+
+</html>

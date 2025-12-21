@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAULT || dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./CSS/dashboard.css">
+    <!-- FAVICON -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <!-- SUPABASE LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-university"></i>
+                <h2>VAULT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item" data-section="deposit">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Deposit</span>
+                    </li>
+                    <li class="nav-item" data-section="withdrawal">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span>Withdrawal</span>
+                    </li>
+                    <li class="nav-item" data-section="profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                    </li>
+                    <li class="nav-item" data-section="history">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </li>
+                    <li class="nav-item" data-section="partnership">
+                        <i class="fas fa-handshake"></i>
+                        <span>Partnership</span>
+                    </li>
+                    <li class="nav-item" data-section="accounts">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Accounts</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <h4 id="sidebar-username">Loading...</h4>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-description">Welcome to your banking dashboard</p>
+                </div>
+                <div class="header-right">
+                    <button class="logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notification-count">0</span>
+                    </div>
+                    <div class="current-time" id="current-time"></div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboard-section">
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card balance-card">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Current Balance</h3>
+                                <p class="amount" id="current-balance">$0.00</p>
+                                <span class="trend positive">+5.2% from last week</span>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card deposit-card">
+                            <div class="card-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Deposits</h3>
+                                <p class="amount" id="total-deposits">$0.00</p>
+                                <span class="trend positive">+$0 this month</span>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card withdrawal-card">
+                            <div class="card-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Withdrawals</h3>
+                                <p class="amount" id="total-withdrawals">$0.00</p>
+                                <span class="trend negative">-0% from last month</span>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card interest-card">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Interest Earned</h3>
+                                <p class="amount" id="total-interest">$0.00</p>
+                                <span class="trend positive">50% weekly rate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-transactions">
+                        <h2><i class="fas fa-clock"></i> Recent Transactions</h2>
+                        <div class="transactions-list" id="recent-transactions">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- NEW: Payment Methods Display Section -->
+                    <div class="payment-methods-section">
+                        <h2><i class="fas fa-credit-card"></i> Available Payment Methods</h2>
+                        <p>Bank and cryptocurrency details provided by admin for deposits</p>
+
+                        <div class="methods-display" id="payment-methods-display">
+                            <div class="loading-methods">Loading payment methods...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Deposit Section -->
+                <section class="content-section" id="deposit-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-money-bill-wave"></i> Make a Deposit</h2>
+                        <p>Earn 50% weekly interest on your deposits (reduces to 25% after first week)</p>
+                    </div>
+
+                    <div class="deposit-container">
+                        <div class="deposit-form">
+                            <div class="form-group">
+                                <label for="deposit-amount">
+                                    <i class="fas fa-dollar-sign"></i> Deposit Amount
+                                </label>
+                                <input type="number" id="deposit-amount" min="100" step="100"
+                                    placeholder="Enter amount (min: $100)" value="1000">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="deposit-method">
+                                    <i class="fas fa-credit-card"></i> Payment Method
+                                </label>
+                                <select id="deposit-method">
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="crypto">Cryptocurrency</option>
+                                </select>
+                            </div>
+
+                            <!-- Bank Transfer Fields -->
+                            <div class="method-fields" id="bank-fields">
+                                <div class="form-group">
+                                    <label>Select Bank</label>
+                                    <select id="bank-select">
+                                        <option value="">Select a bank</option>
+                                        <!-- Banks will be loaded from admin -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Reference/Proof</label>
+                                    <input type="text" id="deposit-reference" placeholder="Enter transaction reference or proof">
+                                    <small class="instruction-text">Include your user ID in the transaction reference</small>
+                                </div>
+                                <div class="bank-details" id="bank-details">
+                                    <!-- Bank details will be shown here -->
+                                </div>
+                                <div class="instruction-box">
+                                    <h4><i class="fas fa-info-circle"></i> Deposit Instructions</h4>
+                                    <p>After transferring funds to the account provided by VAULT, click "Submit Deposit Request" to have your funds reflected in your dashboard. Please allow 1-2 hours for processing after submission.</p>
+                                </div>
+                            </div>
+
+                            <!-- Crypto Fields -->
+                            <div class="method-fields" id="crypto-fields" style="display: none;">
+                                <div class="form-group">
+                                    <label>Select Cryptocurrency</label>
+                                    <select id="crypto-select">
+                                        <option value="">Select cryptocurrency</option>
+                                        <!-- Cryptos will be loaded from admin -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Transaction ID (TxID)</label>
+                                    <input type="text" id="crypto-txid" placeholder="Enter transaction ID from your wallet">
+                                    <small class="instruction-text">This is required for verification</small>
+                                </div>
+                                <div class="crypto-details" id="crypto-details">
+                                    <!-- Crypto details will be shown here -->
+                                </div>
+                                <div class="instruction-box">
+                                    <h4><i class="fas fa-info-circle"></i> Deposit Instructions</h4>
+                                    <p>After transferring cryptocurrency to the wallet address provided by VAULT, click "Submit Deposit Request" to have your funds reflected in your dashboard. Network confirmation may take 10-30 minutes.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="investment-period">
+                                    <i class="fas fa-calendar-week"></i> Investment Period
+                                </label>
+                                <div class="range-container">
+                                    <input type="range" id="investment-period" min="1" max="12" value="4">
+                                    <div class="range-labels">
+                                        <span>1 Week</span>
+                                        <span id="selected-weeks">4 Weeks</span>
+                                        <span>12 Weeks</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="interest-info">
+                                <h3><i class="fas fa-percentage"></i> Interest Details</h3>
+                                <p>First Week Interest Rate: <strong>50%</strong> ($500 for every $1000)</p>
+                                <p>Subsequent Weeks: <strong>25%</strong> weekly</p>
+                                <p>Projected Interest: <strong id="projected-interest">$2,000.00</strong></p>
+                            </div>
+
+                            <button class="btn deposit-btn" id="make-deposit">
+                                <i class="fas fa-piggy-bank"></i> Submit Deposit Request
+                            </button>
+                            <p class="note">Note: Your deposit will be processed after admin confirmation</p>
+                        </div>
+
+                        <div class="deposit-preview">
+                            <div class="preview-card">
+                                <h3>Deposit Summary</h3>
+                                <div class="preview-item">
+                                    <span>Deposit Amount:</span>
+                                    <strong id="preview-amount">$1,000.00</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Payment Method:</span>
+                                    <strong id="preview-method">Bank Transfer</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Investment Period:</span>
+                                    <strong id="preview-weeks">4 Weeks</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Weekly Interest:</span>
+                                    <strong>50% → 25%</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Total Interest:</span>
+                                    <strong id="preview-total-interest">$2,000.00</strong>
+                                </div>
+                                <div class="preview-item total">
+                                    <span>Final Amount:</span>
+                                    <strong id="preview-final">$3,000.00</strong>
+                                </div>
+                            </div>
+
+                            <div class="week-breakdown">
+                                <h4>Weekly Growth</h4>
+                                <div class="breakdown-list" id="week-breakdown">
+                                    <!-- Weekly breakdown will go here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Withdrawal Section -->
+                <section class="content-section" id="withdrawal-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-hand-holding-usd"></i> Make a Withdrawal</h2>
+                        <p>Withdraw funds with a 2% processing fee</p>
+                    </div>
+
+                    <div class="withdrawal-container">
+                        <div class="withdrawal-form">
+                            <div class="form-group">
+                                <label for="withdrawal-amount">
+                                    <i class="fas fa-dollar-sign"></i> Withdrawal Amount
+                                </label>
+                                <input type="number" id="withdrawal-amount" min="50" step="10"
+                                    placeholder="Enter amount (min: $50)" value="500">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="withdrawal-method">
+                                    <i class="fas fa-university"></i> Withdrawal Method
+                                </label>
+                                <select id="withdrawal-method">
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="crypto">Cryptocurrency</option>
+                                </select>
+                            </div>
+
+                            <!-- Bank Withdrawal Fields -->
+                            <div class="method-fields" id="withdrawal-bank-fields">
+                                <div class="form-group">
+                                    <label>Bank Name</label>
+                                    <input type="text" id="withdrawal-bank-name" placeholder="Enter bank name (e.g., Chase Bank)" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account Number</label>
+                                    <input type="text" id="withdrawal-account-number" placeholder="Enter account number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account Holder Name</label>
+                                    <input type="text" id="withdrawal-account-holder" placeholder="Enter account holder name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Routing Number/SWIFT</label>
+                                    <input type="text" id="withdrawal-routing" placeholder="Enter routing or SWIFT code" required>
+                                </div>
+                                <div class="instruction-box">
+                                    <h4><i class="fas fa-info-circle"></i> Withdrawal Instructions</h4>
+                                    <p>After adding your withdrawal account details, click "Submit Withdrawal Request" to initiate the withdrawal process. Funds will be transferred to your account after admin confirmation.</p>
+                                </div>
+                            </div>
+
+                            <!-- Crypto Withdrawal Fields -->
+                            <div class="method-fields" id="withdrawal-crypto-fields" style="display: none;">
+                                <div class="form-group">
+                                    <label>Cryptocurrency Type</label>
+                                    <input type="text" id="withdrawal-crypto-type" placeholder="e.g., Bitcoin, Ethereum, USDT" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Wallet Address</label>
+                                    <input type="text" id="withdrawal-wallet-address" placeholder="Enter your wallet address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Network</label>
+                                    <input type="text" id="withdrawal-network" placeholder="e.g., ERC20, TRC20, BEP20" required>
+                                </div>
+                                <div class="instruction-box">
+                                    <h4><i class="fas fa-info-circle"></i> Withdrawal Instructions</h4>
+                                    <p>After adding your cryptocurrency wallet details, click "Submit Withdrawal Request" to initiate the withdrawal process. Funds will be sent to your wallet after admin confirmation.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="withdrawal-account">
+                                    <i class="fas fa-wallet"></i> From Account
+                                </label>
+                                <select id="withdrawal-account">
+                                    <option value="main">Main Account</option>
+                                </select>
+                            </div>
+
+                            <div class="fee-info">
+                                <h3><i class="fas fa-info-circle"></i> Fee Details</h3>
+                                <p>Processing Fee: <strong>2%</strong> ($2 for every $100)</p>
+                                <p>Estimated Fee: <strong id="estimated-fee">$10.00</strong></p>
+                            </div>
+
+                            <button class="btn withdrawal-btn" id="make-withdrawal">
+                                <i class="fas fa-wallet"></i> Submit Withdrawal Request
+                            </button>
+                            <p class="note">Note: Your withdrawal will be processed after admin confirmation</p>
+                        </div>
+
+                        <div class="withdrawal-preview">
+                            <div class="preview-card">
+                                <h3>Withdrawal Summary</h3>
+                                <div class="preview-item">
+                                    <span>Withdrawal Amount:</span>
+                                    <strong id="preview-withdrawal">$500.00</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Processing Fee (2%):</span>
+                                    <strong id="preview-fee">$10.00</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>You Will Receive:</span>
+                                    <strong id="preview-net">$490.00</strong>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Available Balance:</span>
+                                    <strong id="preview-available">$0.00</strong>
+                                </div>
+                            </div>
+
+                            <div class="quick-amounts">
+                                <h4>Quick Withdraw</h4>
+                                <div class="quick-buttons">
+                                    <button class="quick-btn" data-amount="100">$100</button>
+                                    <button class="quick-btn" data-amount="500">$500</button>
+                                    <button class="quick-btn" data-amount="1000">$1,000</button>
+                                    <button class="quick-btn" data-amount="5000">$5,000</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section class="content-section" id="profile-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+                        <p>Manage your personal information and settings</p>
+                    </div>
+
+                    <div class="profile-container">
+                        <div class="profile-sidebar">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-circle"></i>
+                                <button class="change-photo">Change Photo</button>
+                            </div>
+
+                            <div class="profile-stats">
+                                <h3>Account Stats</h3>
+                                <div class="stat-item">
+                                    <span>Member Since</span>
+                                    <strong id="member-since">Jan 2023</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Account Level</span>
+                                    <strong class="level-premium">Premium</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Total Transactions</span>
+                                    <strong id="total-transactions">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Verification Status</span>
+                                    <strong class="status-verified">Verified</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-content">
+                            <form class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" id="first-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" id="last-name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" id="email" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" id="phone">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" id="address">
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn save-btn" id="save-profile">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                    <button type="button" class="btn secondary-btn" id="change-password">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="security-settings">
+                                <h3><i class="fas fa-shield-alt"></i> Security Settings</h3>
+                                <div class="security-item">
+                                    <div>
+                                        <h4>Two-Factor Authentication</h4>
+                                        <p>Add an extra layer of security to your account</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="two-factor">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-item">
+                                    <div>
+                                        <h4>Email Notifications</h4>
+                                        <p>Receive email alerts for transactions</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="email-notifications" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Section -->
+                <section class="content-section" id="history-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-history"></i> Transaction History</h2>
+                        <p>View all your deposit and withdrawal transactions</p>
+                    </div>
+
+                    <div class="history-controls">
+                        <div class="filter-group">
+                            <select id="history-filter">
+                                <option value="all">All Transactions</option>
+                                <option value="deposit">Deposits Only</option>
+                                <option value="withdrawal">Withdrawals Only</option>
+                                <option value="pending">Pending Only</option>
+                            </select>
+                            <input type="date" id="history-date" placeholder="Select date">
+                            <button class="btn filter-btn" id="apply-filter">
+                                <i class="fas fa-filter"></i> Apply Filter
+                            </button>
+                        </div>
+
+                        <div class="export-group">
+                            <button class="btn export-btn" id="export-history">
+                                <i class="fas fa-download"></i> Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="history-table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- History rows will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="history-summary">
+                        <div class="summary-card">
+                            <h3>This Month</h3>
+                            <div class="summary-content">
+                                <div class="summary-item">
+                                    <span>Total Deposits</span>
+                                    <strong class="positive" id="month-deposits">$0.00</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Total Withdrawals</span>
+                                    <strong class="negative" id="month-withdrawals">$0.00</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Net Change</span>
+                                    <strong class="positive" id="month-net">$0.00</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Partnership Section -->
+                <section class="content-section" id="partnership-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-handshake"></i> Partnership Program</h2>
+                        <p>Earn commissions by referring friends and partners</p>
+                    </div>
+
+                    <div class="partnership-stats">
+                        <div class="partnership-card">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Referrals</h3>
+                                <p class="amount" id="total-referrals">0</p>
+                                <span>Active members referred</span>
+                            </div>
+                        </div>
+
+                        <div class="partnership-card">
+                            <div class="card-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Commission</h3>
+                                <p class="amount" id="total-commission">$0.00</p>
+                                <span>Earned from referrals</span>
+                            </div>
+                        </div>
+
+                        <div class="partnership-card">
+                            <div class="card-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Commission Rate</h3>
+                                <p class="amount">15%</p>
+                                <span>Of referred member's deposits</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="referral-section">
+                        <div class="referral-info">
+                            <h3><i class="fas fa-share-alt"></i> Your Referral Link</h3>
+                            <div class="referral-link">
+                                <input type="text" id="referral-link" value="" readonly>
+                                <button class="btn copy-btn" id="copy-referral">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <p class="referral-note">Share this link with friends to earn 15% commission on their
+                                deposits</p>
+                        </div>
+
+                        <div class="referral-steps">
+                            <h3>How It Works</h3>
+                            <div class="steps">
+                                <div class="step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4>Share Your Link</h4>
+                                        <p>Share your unique referral link with friends</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4>They Sign Up & Deposit</h4>
+                                        <p>Friends sign up and make their first deposit</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4>Earn Commission</h4>
+                                        <p>You earn 15% of their deposit amount</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="referral-history">
+                        <h3><i class="fas fa-list-alt"></i> Referral History</h3>
+                        <div class="referrals-list" id="referrals-list">
+                            <!-- Referrals will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- My Accounts Section -->
+                <section class="content-section" id="accounts-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-wallet"></i> My Accounts</h2>
+                        <p>Manage your bank accounts and wallets</p>
+                    </div>
+
+                    <div class="accounts-grid" id="accounts-grid">
+                        <!-- Accounts will be loaded dynamically -->
+                    </div>
+
+                    <div class="add-account-section">
+                        <h3><i class="fas fa-plus-circle"></i> Add New Account</h3>
+                        <div class="add-account-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Account Type</label>
+                                    <select id="new-account-type">
+                                        <option value="checking">Checking Account</option>
+                                        <option value="savings">Savings Account</option>
+                                        <option value="investment">Investment Account</option>
+                                        <option value="crypto">Cryptocurrency Wallet</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account Name</label>
+                                    <input type="text" id="new-account-name" placeholder="e.g., Personal Savings">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Initial Balance ($)</label>
+                                <input type="number" id="new-account-balance" placeholder="0.00" min="0" step="0.01">
+                            </div>
+                            <button class="btn add-account-btn" id="add-new-account">
+                                <i class="fas fa-plus"></i> Add Account
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="transfer-section">
+                        <h3><i class="fas fa-exchange-alt"></i> Quick Transfer</h3>
+                        <div class="transfer-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>From Account</label>
+                                    <select id="transfer-from">
+                                        <!-- Accounts will be loaded dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>To Account</label>
+                                    <select id="transfer-to">
+                                        <!-- Accounts will be loaded dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="number" id="transfer-amount" placeholder="Enter amount" min="10">
+                            </div>
+
+                            <button class="btn transfer-action-btn" id="make-transfer">
+                                <i class="fas fa-paper-plane"></i> Transfer Now
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Success Modal -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Deposit Request Submitted</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p>Your deposit request has been submitted successfully!</p>
+                <div class="deposit-details">
+                    <p><strong>Amount:</strong> <span id="modal-deposit-amount">$0.00</span></p>
+                    <p><strong>Method:</strong> <span id="modal-deposit-method">Bank Transfer</span></p>
+                    <p><strong>Reference:</strong> <span id="modal-deposit-ref">N/A</span></p>
+                </div>
+                <p class="note">Your deposit will be processed after admin confirmation. You will be notified once it's
+                    approved.</p>
+                <div class="modal-actions">
+                    <button class="btn-primary modal-close">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Success Modal -->
+    <div class="modal" id="withdrawalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Withdrawal Request Submitted</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p id="withdrawal-success-message">Withdrawal request has been sent to VAULT Industries. Your funds will reflect in your account as soon as possible.</p>
+                <div class="withdrawal-details">
+                    <p><strong>Amount:</strong> <span id="modal-withdrawal-amount">$0.00</span></p>
+                    <p><strong>Method:</strong> <span id="modal-withdrawal-method">Bank Transfer</span></p>
+                    <p><strong>Net Amount:</strong> <span id="modal-net-amount">$0.00</span></p>
+                </div>
+                <p class="note">Your withdrawal will be processed after admin confirmation. You will be notified once
+                    it's approved.</p>
+                <div class="modal-actions">
+                    <button class="btn-primary modal-close">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Load Supabase before your script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./JAVASCRIPT/dashboard.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAULT | Premium Investment Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./CSS/main.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-university"></i>
+                <h1>VAULT</h1>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#invest" class="nav-link">Invest</a>
+                <a href="#plans" class="nav-link">Plans</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn btn-outline" id="loginBtn">Sign In</button>
+                <button class="btn btn-primary" id="signupBtn">Get Started</button>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <span class="hero-badge">
+                        <i class="fas fa-rocket"></i> 50% Weekly Returns
+                    </span>
+                    <h1>Grow Your Wealth with <span class="highlight">Smart Investing</span></h1>
+                    <p class="hero-subtitle">Join thousands of investors earning up to 50% weekly returns on their
+                        investments. Secure, transparent, and profitable.</p>
+
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <h3>$25M+</h3>
+                            <p>Total Investments</p>
+                        </div>
+                        <div class="stat">
+                            <h3>12,500+</h3>
+                            <p>Active Investors</p>
+                        </div>
+                        <div class="stat">
+                            <h3>50%</h3>
+                            <p>Weekly Returns</p>
+                        </div>
+                        <div class="stat">
+                            <h3>24/7</h3>
+                            <p>Support Available</p>
+                        </div>
+                    </div>
+
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg" id="startInvesting">
+                            <i class="fas fa-chart-line"></i> Start Investing
+                        </button>
+                        <button class="btn btn-outline btn-lg" id="watchDemo">
+                            <i class="fas fa-play-circle"></i> Watch Demo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hero-image">
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h3>Investment Calculator</h3>
+                            <p>See your potential returns</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="calc-input">
+                                <label>Investment Amount</label>
+                                <div class="input-group">
+                                    <span>$</span>
+                                    <input type="number" id="calcAmount" value="1000" min="100" step="100">
+                                </div>
+                            </div>
+
+                            <div class="calc-input">
+                                <label>Investment Period</label>
+                                <div class="range-slider">
+                                    <input type="range" id="calcPeriod" min="1" max="12" value="4">
+                                    <div class="range-labels">
+                                        <span>1 Week</span>
+                                        <span id="selectedPeriod">4 Weeks</span>
+                                        <span>12 Weeks</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="calc-results">
+                                <div class="result-item">
+                                    <span>Your Investment</span>
+                                    <strong id="calcInvestment">$1,000</strong>
+                                </div>
+                                <div class="result-item">
+                                    <span>Total Returns</span>
+                                    <strong id="calcReturns">$2,000</strong>
+                                </div>
+                                <div class="result-item total">
+                                    <span>Final Amount</span>
+                                    <strong id="calcTotal">$3,000</strong>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block">
+                                <i class="fas fa-calculator"></i> Calculate More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">About Us</span>
+                <h2>Trusted by Investors Worldwide</h2>
+                <p>We provide secure investment opportunities with industry-leading returns</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="coin-rising-image.jpg" alt="Investment Analytics">
+                    <div class="experience-badge">
+                        <span>5+</span>
+                        <p>Years Experience</p>
+                    </div>
+                </div>
+
+                <div class="about-text">
+                    <h3>Why Choose Vault?</h3>
+                    <p>Vault is a premier investment platform that combines cutting-edge technology with proven
+                        investment strategies to deliver consistent, high returns for our clients.</p>
+
+                    <div class="features-list">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Secure & Regulated</h4>
+                                <p>Bank-level security and regulatory compliance ensure your investments are protected.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>High Returns</h4>
+                                <p>Earn up to 50% weekly returns through our diversified investment portfolio.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>24/7 Access</h4>
+                                <p>Monitor and manage your investments anytime, anywhere through our platform.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Expert Support</h4>
+                                <p>Dedicated investment advisors available to help you maximize your returns.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary">
+                        <i class="fas fa-book"></i> Learn More About Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Plans Section -->
+    <section class="section plans" id="plans">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Investment Plans</span>
+                <h2>Choose Your Investment Strategy</h2>
+                <p>Select from our range of investment plans tailored to different goals and risk profiles</p>
+            </div>
+
+            <div class="plans-grid">
+                <!-- Basic Plan -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3>Starter Plan</h3>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="amount">100</span>
+                            <span class="period">Min Deposit</span>
+                        </div>
+                        <p class="plan-description">Perfect for beginners starting their investment journey</p>
+                    </div>
+
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Weekly Returns: 30%</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Min Investment: $100</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Max Investment: $1,000</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Withdrawal Anytime</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline btn-block plan-select">
+                        Select Starter Plan
+                    </button>
+                </div>
+
+                <!-- Premium Plan (Recommended) -->
+                <div class="plan-card featured">
+                    <div class="plan-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3>Premium Plan</h3>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="amount">1,000</span>
+                            <span class="period">Min Deposit</span>
+                        </div>
+                        <p class="plan-description">Optimal balance of risk and return for serious investors</p>
+                    </div>
+
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Weekly Returns: 50%</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Min Investment: $1,000</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Max Investment: $10,000</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Compound Interest</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Priority Support</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Weekly Reports</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block plan-select">
+                        Select Premium Plan
+                    </button>
+                </div>
+
+                <!-- VIP Plan -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3>VIP Plan</h3>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="amount">5,000</span>
+                            <span class="period">Min Deposit</span>
+                        </div>
+                        <p class="plan-description">Maximum returns for high-net-worth investors</p>
+                    </div>
+
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Weekly Returns: 75%</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Min Investment: $5,000</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Max Investment: $50,000</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Daily Compounding</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Personal Advisor</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Exclusive Features</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline btn-block plan-select">
+                        Select VIP Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section process" id="invest">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">How It Works</span>
+                <h2>Start Investing in 4 Easy Steps</h2>
+                <p>Get started with your investment journey in minutes</p>
+            </div>
+
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3>Create Account</h3>
+                        <p>Sign up for free and verify your identity</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>Make Deposit</h3>
+                        <p>Choose your plan and make your first deposit</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Start Earning</h3>
+                        <p>Watch your investment grow with daily returns</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3>Withdraw Profits</h3>
+                        <p>Withdraw your earnings anytime you want</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Platform Features</span>
+                <h2>Everything You Need to Succeed</h2>
+                <p>Our platform is packed with features designed to maximize your investment experience</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile App</h3>
+                    <p>Manage your investments on the go with our iOS and Android apps</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3>Advanced Analytics</h3>
+                    <p>Real-time performance tracking and detailed investment analytics</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Bank-Level Security</h3>
+                    <p>256-bit SSL encryption and multi-factor authentication</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Partnership Program</h3>
+                    <p>Earn commissions by referring friends to our platform</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3>Tax Reports</h3>
+                    <p>Automated tax reporting and documentation for your investments</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>Auto-Invest</h3>
+                    <p>Set up automatic investments and reinvestment of profits</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Testimonials</span>
+                <h2>What Our Investors Say</h2>
+                <p>Hear from thousands of satisfied investors worldwide</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                        <div class="user-info">
+                            <h4>Michael Chen</h4>
+                            <span>Investor for 2 years</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"I've tried several investment platforms, but VAULT stands out. The 50%
+                        weekly returns are real, and withdrawals are processed within hours. Highly recommended!"</p>
+                    <div class="testimonial-meta">
+                        <span><i class="fas fa-calendar"></i> March 15, 2024</span>
+                        <span><i class="fas fa-chart-line"></i> $15,200 earned</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+                        <div class="user-info">
+                            <h4>Sarah Johnson</h4>
+                            <span>Investor for 1 year</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"As a beginner, I was nervous about investing. The team at VAULT guided
+                        me through everything. Now I'm earning consistent returns. The platform is incredibly
+                        user-friendly!"</p>
+                    <div class="testimonial-meta">
+                        <span><i class="fas fa-calendar"></i> February 28, 2024</span>
+                        <span><i class="fas fa-chart-line"></i> $8,500 earned</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User">
+                        <div class="user-info">
+                            <h4>Robert Williams</h4>
+                            <span>Investor for 3 years</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"The partnership program is fantastic. I've earned over $5,000 just by
+                        referring friends. Combined with my investment returns, this platform has significantly boosted
+                        my income."</p>
+                    <div class="testimonial-meta">
+                        <span><i class="fas fa-calendar"></i> January 10, 2024</span>
+                        <span><i class="fas fa-chart-line"></i> $22,300 earned</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">FAQ</span>
+                <h2>Frequently Asked Questions</h2>
+                <p>Get answers to common questions about our investment platform</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I start investing?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Simply sign up for an account, complete the verification process, choose an investment plan,
+                            and make your first deposit. You can start with as little as $100.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are the 50% weekly returns guaranteed?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>While past performance is not a guarantee of future results, our investment strategies have
+                            consistently delivered 30-50% weekly returns for over 5 years. We employ risk management
+                            strategies to maintain stable returns.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How quickly can I withdraw my money?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Withdrawals are processed within 2-24 hours, depending on the withdrawal method. There are no
+                            lock-in periods - you can withdraw your funds anytime.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is my investment secure?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we use bank-level 256-bit SSL encryption, two-factor authentication, and store funds in
+                            segregated accounts. We're also registered and compliant with financial regulations.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What is the partnership program?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our partnership program allows you to earn 15% commission on deposits made by people you
+                            refer to VAULT. There's no limit to how much you can earn through referrals.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are there any hidden fees?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No hidden fees. We only charge a 2% withdrawal fee to cover processing costs. All other
+                            features, including deposits and account management, are completely free.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your Investment Journey?</h2>
+                <p>Join over 12,500 investors who are growing their wealth with Vault. Start with just $100 and
+                    experience the power of smart investing.</p>
+
+                <div class="cta-actions">
+                    <button class="btn btn-primary btn-lg" id="ctaSignup">
+                        <i class="fas fa-user-plus"></i> Sign Up Free
+                    </button>
+                    <button class="btn btn-outline btn-lg" id="ctaSchedule">
+                        <i class="fas fa-calendar"></i> Schedule a Demo
+                    </button>
+                </div>
+
+                <div class="cta-features">
+                    <div class="feature">
+                        <i class="fas fa-lock"></i>
+                        <span>Secure Platform</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-clock"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile App</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-chart-line"></i>
+                        <span>50% Weekly Returns</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <i class="fas fa-university"></i>
+                        <h3>VAULT</h3>
+                    </div>
+                    <p class="footer-description">Premium investment platform delivering consistent high returns through
+                        diversified investment strategies.</p>
+
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#plans">Investment Plans</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Investment Guide</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Support Center</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Risk Disclosure</a></li>
+                        <li><a href="#">Compliance</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> support@vault.com</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Investment Street, Financial District, NY 10005</p>
+                    </div>
+
+                    <div class="newsletter">
+                        <h5>Stay Updated</h5>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Your email address">
+                            <button type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 VAULT Investment Platform. All rights reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-bitcoin"></i>
+                    <i class="fab fa-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./JAVASCRIPT/main.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <script src="./JAVASCRIPT/supabase-local.js"></script>
+</body>
+
+</html>

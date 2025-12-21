@@ -1,0 +1,14 @@
+{
+  "name": "vault-banking-platform",
+  "version": "1.0.0",
+  "description": "Premium Banking and Investment Platform",
+  "scripts": {
+    "start": "live-server .",
+    "build": "echo 'No build required'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

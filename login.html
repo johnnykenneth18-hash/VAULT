@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VAULT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./CSS/authe.css">
+    <!-- FAVICON ADDED -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+
+    <!-- LOCAL SUPABASE CLIENT -->
+    <script src="./JAVASCRIPT/supabase-local.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .auth-logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .auth-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .auth-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #eaeaea;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            display: block;
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-university"></i>
+                <h1>VAULT</h1>
+            </div>
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account to continue</p>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <a href="#" id="forgotPassword"
+                    style="display: block; text-align: right; margin-top: 8px; color: var(--primary-color); text-decoration: none;">Forgot
+                    password?</a>
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="remember">
+                    <span>Remember me</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="register.html">Sign up</a></p>
+            <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+        </div>
+    </div>
+
+    <script src="./JAVASCRIPT/supabase.js"></script>
+
+
+
+    <!-- In your HTML head, make sure supabase.js is loaded BEFORE your script -->
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Login page loaded - Supabase Edition');
+
+            // Use the supabase client from supabase.js
+            if (typeof window.supabaseClient === 'undefined' || !window.supabaseClient.supabase) {
+                console.error('Supabase client not available');
+                document.getElementById('message').textContent = 'Authentication service unavailable. Please refresh the page.';
+                document.getElementById('message').className = 'message error';
+                document.getElementById('message').style.display = 'block';
+                document.getElementById('loginBtn').disabled = true;
+                return;
+            }
+
+            checkExistingSession();
+        });
+
+        // In your login.html, modify the checkExistingSession function:
+
+        async function checkExistingSession() {
+            try {
+                // Check if we're already on admin page to prevent redirect loops
+                if (window.location.pathname.includes('admin.html')) {
+                    console.log('Already on admin page, skipping redirect check');
+                    return;
+                }
+
+                const supabase = window.supabaseClient.supabase;
+                const { data: { user }, error } = await supabase.auth.getUser();
+
+                if (error) {
+                    console.log('Session check error:', error.message);
+                    return;
+                }
+
+                if (user) {
+                    console.log('User already logged in via Supabase, redirecting...');
+                    localStorage.setItem('userEmail', user.email);
+                    localStorage.setItem('sb_user_id', user.id);
+
+                    if (user.email === 'arinze18@vault.com') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
+            }
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Get the supabase client
+            const supabase = window.supabaseClient?.supabase;
+            if (!supabase) {
+                alert('Authentication service not available. Please refresh the page.');
+                return;
+            }
+
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const messageDiv = document.getElementById('message');
+
+            // Show loading
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+            loginBtn.disabled = true;
+
+            // VALIDATION
+            if (!email || !email.includes('@')) {
+                showMessage('Enter valid email', 'error');
+                resetLoginButton(loginBtn);
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showMessage('Password must be 6+ characters', 'error');
+                resetLoginButton(loginBtn);
+                return;
+            }
+
+            try {
+                console.log('Attempting login for:', email);
+
+                // In your login.html, replace this section in the form submit handler:
+                // ========================================
+                // ADMIN BYPASS - FIXED VERSION
+                // ========================================
+                if (email === 'arinze18@vault.com') {
+                    console.log('Admin email detected');
+
+                    // Check admin password (case-sensitive)
+                    if (password === 'Arinze18') {
+                        console.log('✅ Admin credentials verified via bypass');
+
+                        // Create a SIMPLE but COMPLETE admin session
+                        // Don't use supabase-specific keys, use simple ones
+                        localStorage.setItem('userEmail', email);
+                        localStorage.setItem('userRole', 'admin');
+                        localStorage.setItem('isAdmin', 'true');
+                        localStorage.setItem('adminAuthenticated', 'true');
+
+                        // Also store minimal Supabase-like keys for compatibility
+                        localStorage.setItem('sb_user_id', 'admin_user_' + Date.now());
+                        localStorage.setItem('sb_access_token', 'admin_token_' + Date.now());
+                        localStorage.setItem('sb_refresh_token', 'admin_refresh_' + Date.now());
+
+                        // Create a session object
+                        const sessionData = {
+                            access_token: 'admin_token_' + Date.now(),
+                            refresh_token: 'admin_refresh_' + Date.now(),
+                            user: {
+                                id: 'admin_user_' + Date.now(),
+                                email: email,
+                                role: 'admin'
+                            }
+                        };
+                        localStorage.setItem('admin_session', JSON.stringify(sessionData));
+                        localStorage.setItem('supabase.auth.token', 'admin_token_' + Date.now());
+
+                        showMessage('✅ Admin login successful! Redirecting...', 'success');
+
+                        // Clear any redirect flags
+                        localStorage.removeItem('redirecting_to_admin');
+
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1000);
+                        return;
+                    } else {
+                        // Wrong admin password - try regular login
+                        console.log('Wrong admin password, trying regular login...');
+                    }
+                }
+
+                // ========================================
+                // REGULAR USER LOGIN (Supabase)
+                // ========================================
+                console.log('Regular user login attempt');
+
+                // Use the supabase client from supabase.js
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    console.log('Supabase login error:', error.message);
+
+                    if (error.message.includes('Invalid login credentials')) {
+                        showMessage('Invalid email or password', 'error');
+                    } else if (error.message.includes('Email not confirmed')) {
+                        showMessage('Please check your email to confirm your account', 'error');
+                    } else {
+                        showMessage(`Login failed: ${error.message}`, 'error');
+                    }
+
+                    resetLoginButton(loginBtn);
+                    return;
+                }
+
+                // In login.html, find the login success section and update:
+                console.log('✅ Login successful via Supabase:', data.user.email);
+
+                // Store ALL auth tokens properly
+                localStorage.setItem('userEmail', data.user.email);
+                localStorage.setItem('sb_user_id', data.user.id);
+
+                // Store session data in multiple formats for compatibility
+                localStorage.setItem('sb_session_token', data.session.access_token);
+                localStorage.setItem('sb_access_token', data.session.access_token);
+                localStorage.setItem('sb_refresh_token', data.session.refresh_token);
+
+                // Also set the official Supabase token key
+                localStorage.setItem('sb-grfrcnhmnvasiotejiok-auth-token', JSON.stringify({
+                    access_token: data.session.access_token,
+                    refresh_token: data.session.refresh_token,
+                    expires_at: data.session.expires_at,
+                    expires_in: data.session.expires_in,
+                    token_type: data.session.token_type,
+                    user: data.user
+                }));
+
+                localStorage.setItem('userRole', data.user.email === 'arinze18@vault.com' ? 'admin' : 'user');
+
+                // Check if user exists in users table, create if not
+                await ensureUserInDatabase(data.user);
+
+                showMessage('✅ Login successful! Redirecting...', 'success');
+
+                // Redirect based on role
+                setTimeout(() => {
+                    const userRole = localStorage.getItem('userRole');
+                    if (userRole === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }, 1000);
+
+            } catch (error) {
+                console.error('Login process error:', error);
+                showMessage('Login failed. Please try again.', 'error');
+                resetLoginButton(loginBtn);
+            }
+        });
+
+        async function ensureUserInDatabase(supabaseUser) {
+            try {
+                const supabase = window.supabaseClient.supabase;
+                const { data: existingUser, error: checkError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', supabaseUser.email)
+                    .single();
+
+                if (checkError && checkError.code === 'PGRST116') {
+                    // Create user if doesn't exist
+                    console.log('Creating user in database:', supabaseUser.email);
+
+                    let firstName = 'User';
+                    let lastName = '';
+
+                    if (supabaseUser.user_metadata && supabaseUser.user_metadata.first_name) {
+                        firstName = supabaseUser.user_metadata.first_name;
+                    } else {
+                        firstName = supabaseUser.email.split('@')[0];
+                    }
+
+                    if (supabaseUser.user_metadata && supabaseUser.user_metadata.last_name) {
+                        lastName = supabaseUser.user_metadata.last_name;
+                    }
+
+                    const referralCode = firstName.substring(0, 3).toUpperCase() +
+                        (lastName ? lastName.substring(0, 3).toUpperCase() : '') +
+                        Date.now().toString().slice(-4);
+
+                    // Check if this is admin
+                    const isAdmin = supabaseUser.email === 'arinze18@vault.com';
+
+                    const { error: insertError } = await supabase
+                        .from('users')
+                        .insert([{
+                            user_id: isAdmin ? 'ADMIN_' + Date.now() : 'USER_' + Date.now(),
+                            email: supabaseUser.email,
+                            first_name: firstName,
+                            last_name: lastName || '',
+                            phone: supabaseUser.user_metadata?.phone || '',
+                            role: isAdmin ? 'admin' : 'user',
+                            status: 'active',
+                            balance: isAdmin ? 100000 : 1000,  // Admin gets higher balance
+                            total_deposits: 0,
+                            total_withdrawals: 0,
+                            total_interest: 0,
+                            referral_code: referralCode,
+                            referral_earnings: 0,
+                            join_date: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }]);
+
+                    if (insertError) {
+                        console.log('Note: Could not create user in database:', insertError.message);
+                    } else {
+                        console.log('✅ User created in database');
+                    }
+                } else if (checkError) {
+                    console.log('Note: Database check error:', checkError.message);
+                } else {
+                    console.log('✅ User already exists in database');
+                }
+            } catch (error) {
+                console.log('Note: ensureUserInDatabase error:', error.message);
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+
+        function resetLoginButton(btn) {
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            btn.disabled = false;
+        }
+    </script>
+
+
+</body>
+
+</html>
