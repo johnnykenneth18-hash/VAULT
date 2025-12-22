@@ -1229,6 +1229,11 @@ h4 {
         line-height: 1.3 !important;
         margin-bottom: 15px !important;
     }
+    .highlight{
+        font-size: 3rem !important;
+
+
+    }
 
     .hero-subtitle {
         font-size: 1rem !important;
@@ -1454,9 +1459,8 @@ h4 {
         font-size: 1.5rem !important;
     }
 
-    .nav-actions .btn {
-        padding: 6px 12px !important;
-        font-size: 0.8rem !important;
+    .highlight{
+
     }
 
     .nav-menu {
