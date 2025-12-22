@@ -98,6 +98,104 @@ function initSupabase() {
     return supabase;
 }
 
+
+
+
+
+
+
+
+
+// Add this helper function after initSupabase:
+async function restoreSession(supabase) {
+    try {
+        // Check if we have any auth tokens
+        const tokens = [
+            'sb-grfrcnhmnvasiotejiok-auth-token',
+            'sb_session_token',
+            'sb_access_token',
+            'supabase.auth.token'
+        ];
+
+        let hasToken = false;
+        for (const tokenKey of tokens) {
+            if (localStorage.getItem(tokenKey)) {
+                hasToken = true;
+                console.log(`🔑 Found auth token in: ${tokenKey}`);
+                break;
+            }
+        }
+
+        if (hasToken) {
+            console.log('🔄 Attempting to restore session...');
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) {
+                console.log('Session restore error:', error.message);
+                // Try to get user directly
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    console.log('✅ User restored via getUser:', user.email);
+                }
+            } else if (session) {
+                console.log('✅ Session restored:', session.user.email);
+            }
+        } else {
+            console.log('⚠️ No auth tokens found in storage');
+        }
+    } catch (error) {
+        console.error('Session restore error:', error);
+    }
+}
+
+
+function debugAuth() {
+    console.log('🔍 DEBUG - Current Auth State:');
+
+    const items = [
+        'userEmail',
+        'sb_user_id',
+        'sb_session_token',
+        'sb_access_token',
+        'sb_refresh_token',
+        'sb-grfrcnhmnvasiotejiok-auth-token',
+        'supabase.auth.token',
+        'adminAuthenticated',
+        'userRole',
+        'isAdmin',
+        'admin_session'
+    ];
+
+    items.forEach(key => {
+        const value = localStorage.getItem(key);
+        if (value) {
+            console.log(`${key}:`, `✓ (${value.length} chars)`);
+
+            // Show first 50 chars of interesting values
+            if (key.includes('session') || key.includes('token')) {
+                console.log(`   Content: ${value.substring(0, 50)}...`);
+            }
+        } else {
+            console.log(`${key}: ✗`);
+        }
+    });
+
+    // List all localStorage keys for debugging
+    const allKeys = Object.keys(localStorage);
+    console.log('Complete localStorage keys:', allKeys);
+    console.log('Total items:', allKeys.length);
+}
+
+
+
+
+
+
+
+
+
+
+
 // Main dashboard initialization
 async function initDashboard() {
     console.log('🚀 INITIALIZING DASHBOARD');
@@ -190,6 +288,7 @@ async function checkAuth() {
 
             localStorage.setItem('userEmail', session.user.email);
             localStorage.setItem('sb_user_id', session.user.id);
+            localStorage.setItem('sb_session_token', session.access_token);
 
             return {
                 success: true,
