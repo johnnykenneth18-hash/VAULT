@@ -6,7 +6,6 @@
 let currentUser = null;
 let userAccount = null;
 let supabase = null;
-let adminPaymentMethods = [];
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
@@ -20,16 +19,76 @@ function initSupabase() {
             const SUPABASE_URL = 'https://grfrcnhmnvasiotejiok.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k';
 
+            if (!window.supabase) {
+                console.error('Supabase library not loaded');
+                return null;
+            }
+
+            // Create custom storage that properly handles Supabase auth tokens
+            const customStorage = {
+                getItem: (key) => {
+                    const value = localStorage.getItem(key);
+                    console.log('📦 Storage GET:', key, value ? '✓' : '✗');
+
+                    // Try alternative keys if main key not found
+                    if (!value) {
+                        if (key === 'sb-grfrcnhmnvasiotejiok-auth-token') {
+                            // Check for common alternative names
+                            const alternatives = [
+                                'sb_session_token',
+                                'sb_access_token',
+                                'supabase.auth.token',
+                                'sb-grfrcnhmnvasiotejiok-auth-token'
+                            ];
+
+                            for (const altKey of alternatives) {
+                                const altValue = localStorage.getItem(altKey);
+                                if (altValue) {
+                                    console.log(`🔍 Found alternative key: ${altKey}`);
+                                    return altValue;
+                                }
+                            }
+                        }
+                    }
+                    return value;
+                },
+                setItem: (key, value) => {
+                    console.log('📝 Storage SET:', key);
+                    localStorage.setItem(key, value);
+
+                    // Also set common alternative names for compatibility
+                    if (key.includes('auth-token')) {
+                        localStorage.setItem('sb_session_token', value);
+                        localStorage.setItem('sb_access_token', value);
+                        localStorage.setItem('supabase.auth.token', value);
+                    }
+                },
+                removeItem: (key) => {
+                    console.log('🗑️ Storage REMOVE:', key);
+                    localStorage.removeItem(key);
+
+                    // Remove all related auth tokens
+                    if (key.includes('auth-token') || key.includes('sb-')) {
+                        localStorage.removeItem('sb_session_token');
+                        localStorage.removeItem('sb_access_token');
+                        localStorage.removeItem('supabase.auth.token');
+                    }
+                }
+            };
+
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
                 auth: {
                     persistSession: true,
                     autoRefreshToken: true,
                     detectSessionInUrl: false,
-                    storage: localStorage
+                    storage: customStorage
                 }
             });
 
-            console.log('✅ Supabase client initialized');
+            console.log('✅ Supabase client initialized with custom storage');
+
+            // Try to restore session immediately
+            restoreSession(supabase);
 
         } catch (error) {
             console.error('Error initializing Supabase:', error);
