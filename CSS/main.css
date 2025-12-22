@@ -1230,7 +1230,7 @@ h4 {
         margin-bottom: 15px !important;
     }
     .highlight{
-        font-size: 2.5rem !important;
+        font-size: 2.7rem !important;
 
 
     }
@@ -1449,22 +1449,8 @@ h4 {
     }
 }
 
-/* Fix navigation for small screens */
-@media (max-width: 768px) {
-    .navbar .container {
-        padding: 12px 15px !important;
-    }
 
-    .nav-brand h1 {
-        font-size: 1.5rem !important;
-    }
 
-    
-
-    .nav-menu {
-        top: 60px !important;
-    }
-}
 
 /* Fix for tablet screens (481px to 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
