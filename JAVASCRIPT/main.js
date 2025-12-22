@@ -146,11 +146,9 @@ function initAuthButtons() {
 function checkAboutUs() {
     const aboutUsBtn = document.getElementById('aboutUsBtn');
 
-    if (aboutUsBtn) {
-        aboutUsBtn.addEventListener('click', function () {
-            window.location.href = 'about-us.html';
-        });
-    }
+    aboutUsBtn.addEventListener('click', function () {
+        window.location.href = 'aboutUs.html';
+    });
 
 }
 
