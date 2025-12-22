@@ -3524,3 +3524,448 @@ select {
         padding: 12px;
     }
 }
+
+/* ======================================== */
+/* SPECIFIC FIXES FOR PROFILE, HISTORY & PARTNERSHIP SECTIONS */
+/* ======================================== */
+
+/* ========== PROFILE SECTION FIXES ========== */
+@media screen and (max-width: 767px) {
+    .profile-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .profile-sidebar {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .profile-avatar i {
+        font-size: 80px;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .stat-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-bottom: none;
+        border-right: 1px solid #f0f0f0;
+    }
+
+    .stat-item:nth-child(even) {
+        border-right: none;
+    }
+
+    .stat-item:last-child {
+        grid-column: 1 / -1;
+        border-right: none;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 15px;
+        margin-top: 10px;
+    }
+
+    .profile-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .security-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .security-item .switch {
+        align-self: flex-start;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Extra small phones */
+@media screen and (max-width: 380px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 15px;
+    }
+
+    .stat-item:nth-child(even) {
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .stat-item:last-child {
+        border-top: none;
+        margin-top: 0;
+    }
+}
+
+/* ========== HISTORY SECTION FIXES ========== */
+@media screen and (max-width: 767px) {
+    .history-controls {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .filter-group select,
+    .filter-group input[type="date"] {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+        /* Prevent iOS zoom */
+    }
+
+    .export-group {
+        width: 100%;
+    }
+
+    .export-group .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .history-table-container {
+        padding: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -15px;
+        width: calc(100% + 30px);
+        border-radius: 0;
+        box-shadow: none;
+        border-top: 1px solid #eaeaea;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .history-table {
+        min-width: 600px;
+        /* Allow horizontal scroll */
+        font-size: 0.85rem;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 10px 8px;
+        white-space: nowrap;
+    }
+
+    .history-table th:nth-child(6),
+    .history-table td:nth-child(6) {
+        min-width: 120px;
+        max-width: 150px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .summary-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .summary-item {
+        padding: 15px;
+        text-align: center;
+    }
+}
+
+/* Table-specific fixes for small screens */
+@media screen and (max-width: 480px) {
+
+    .history-table th,
+    .history-table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+    }
+
+    .transaction-type,
+    .status {
+        padding: 3px 8px;
+        font-size: 0.75rem;
+    }
+
+    .history-table .deposit,
+    .history-table .withdrawal {
+        font-size: 0.9rem;
+    }
+}
+
+/* ========== PARTNERSHIP SECTION FIXES ========== */
+@media screen and (max-width: 767px) {
+    .partnership-stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .partnership-card {
+        flex-direction: row;
+        padding: 15px;
+        align-items: center;
+    }
+
+    .partnership-card .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .partnership-card .card-content h3 {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+    }
+
+    .partnership-card .card-content .amount {
+        font-size: 1.4rem;
+        margin-bottom: 3px;
+    }
+
+    .partnership-card .card-content span {
+        font-size: 0.8rem;
+    }
+
+    .referral-section {
+        padding: 20px;
+    }
+
+    .referral-link {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .referral-link input {
+        width: 100%;
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .referral-link .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .step {
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .step-number {
+        margin: 0;
+        flex-shrink: 0;
+        width: 35px;
+        height: 35px;
+    }
+
+    .step-content h4 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .step-content p {
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    .referral-history {
+        padding: 20px;
+    }
+
+    .referrals-list {
+        max-height: 300px;
+    }
+
+    .referral-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 15px 0;
+    }
+
+    .referral-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .referral-stats .stat {
+        text-align: center;
+        flex: 1;
+    }
+}
+
+/* Extra small screens for partnership */
+@media screen and (max-width: 380px) {
+    .partnership-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .step {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .referral-item {
+        padding: 12px 0;
+    }
+
+    .referral-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .referral-stats .stat {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* ========== DARK MODE FIXES ========== */
+@media (prefers-color-scheme: dark) and (max-width: 767px) {
+
+    /* Profile dark mode */
+    .profile-sidebar,
+    .profile-content {
+        background: #1a1a2e;
+    }
+
+    .stat-item {
+        border-color: #2d4059;
+    }
+
+    /* History dark mode */
+    .history-table-container {
+        background: #1a1a2e;
+        border-color: #2d4059;
+    }
+
+    .history-table th {
+        background: #0f3460;
+    }
+
+    .history-table td {
+        border-color: #2d4059;
+    }
+
+    /* Partnership dark mode */
+    .partnership-card,
+    .referral-section,
+    .referral-history {
+        background: #1a1a2e;
+    }
+
+    .step {
+        background: #0f3460;
+    }
+}
+
+/* ========== TOUCH OPTIMIZATIONS ========== */
+/* Larger touch targets for small screens */
+@media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+    .stat-item {
+        min-height: 60px;
+        justify-content: center;
+    }
+
+    .history-table th,
+    .history-table td {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .partnership-card {
+        min-height: 70px;
+    }
+
+    .referral-item {
+        min-height: 70px;
+    }
+
+    .step {
+        min-height: 70px;
+    }
+
+    /* Make all buttons easier to tap */
+    .btn,
+    .filter-btn,
+    .export-btn,
+    .copy-btn {
+        min-height: 44px;
+    }
+}
+
+/* ========== FIX FOR IOS TABLES ========== */
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    .history-table-container {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .history-table {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+
+    /* Fix for iOS modal issues */
+    .modal.active {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+
+/* ========== LANDSCAPE MODE OPTIMIZATIONS ========== */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    .profile-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .history-table-container {
+        max-height: 200px;
+    }
+
+    .partnership-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .steps {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
