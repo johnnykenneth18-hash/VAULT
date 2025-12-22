@@ -3969,3 +3969,492 @@ select {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+
+/* ======================================== */
+/* COMPREHENSIVE FIXES FOR PAYMENT METHODS DISPLAY */
+/* ======================================== */
+
+/* ========== FIX 1: AVAILABLE PAYMENT METHODS ON DASHBOARD ========== */
+/* Make payment methods responsive across all devices */
+
+/* Mobile phones (up to 767px) */
+@media screen and (max-width: 767px) {
+    .payment-methods-section {
+        padding: 15px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+
+    .methods-display {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+        margin: 0 -5px;
+    }
+
+    .method-card-display {
+        margin: 0 5px;
+        padding: 15px;
+        border-radius: 10px;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .method-card-display h4 {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .method-card-display h4 i {
+        font-size: 1rem;
+    }
+
+    .method-details-display {
+        max-height: 150px;
+        font-size: 0.85rem !important;
+        line-height: 1.5;
+        padding: 12px;
+        overflow-x: auto;
+        overflow-y: auto;
+        word-break: break-word;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 6px;
+        flex: 1;
+        margin-bottom: 10px;
+    }
+
+    .method-type-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        margin-top: 8px;
+        align-self: flex-start;
+    }
+
+    /* Fix for long bank details */
+    .method-details-display pre,
+    .method-details-display code {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Tablets (768px - 1024px) */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .methods-display {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px;
+    }
+
+    .method-card-display {
+        min-height: 150px;
+    }
+
+    .method-details-display {
+        max-height: 180px;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Desktop (1025px and above) */
+@media screen and (min-width: 1025px) {
+    .methods-display {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+        gap: 20px;
+    }
+
+    .method-card-display {
+        min-height: 160px;
+    }
+
+    .method-details-display {
+        max-height: 200px;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* ========== FIX 2: CRYPTOCURRENCY PAYMENT METHOD IN DEPOSIT SECTION ========== */
+/* Fix for cryptocurrency fields on small screens */
+
+@media screen and (max-width: 767px) {
+
+    /* Fix for deposit section layout */
+    .deposit-container {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+
+    .deposit-form {
+        padding: 20px;
+        overflow: hidden;
+    }
+
+    /* Fix for method fields container */
+    #crypto-fields {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    /* Fix for crypto select dropdown */
+    #crypto-select {
+        width: 100% !important;
+        font-size: 16px !important;
+        /* Prevent iOS zoom */
+        padding: 12px 40px 12px 12px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+
+    /* Fix for crypto details display */
+    .crypto-details {
+        width: 100% !important;
+        margin: 10px 0 !important;
+        padding: 12px !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+        max-height: 200px !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        word-break: break-word !important;
+        white-space: pre-wrap !important;
+    }
+
+    .crypto-details pre {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        margin: 0 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Fix for transaction ID input */
+    #crypto-txid {
+        width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+
+    /* Fix for instruction box */
+    #crypto-fields .instruction-box {
+        margin-top: 15px !important;
+        padding: 12px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Fix for form groups in crypto fields */
+    #crypto-fields .form-group {
+        width: 100% !important;
+        margin-bottom: 15px !important;
+    }
+
+    #crypto-fields .form-group label {
+        font-size: 0.95rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Ensure proper spacing */
+    #crypto-fields>* {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Extra small phones (320px - 380px) */
+@media screen and (max-width: 380px) {
+    #crypto-fields {
+        padding: 12px !important;
+        gap: 12px !important;
+    }
+
+    .crypto-details {
+        padding: 10px !important;
+        font-size: 0.8rem !important;
+        max-height: 180px !important;
+    }
+
+    #crypto-select,
+    #crypto-txid {
+        padding: 10px 35px 10px 10px !important;
+        font-size: 15px !important;
+    }
+
+    .method-details-display {
+        font-size: 0.8rem !important;
+        padding: 10px !important;
+    }
+}
+
+/* ========== FIX 3: BANK PAYMENT METHOD IN DEPOSIT SECTION ========== */
+/* Apply same fixes to bank fields */
+
+@media screen and (max-width: 767px) {
+    #bank-fields {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    #bank-select {
+        width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px 40px 12px 12px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+
+    .bank-details {
+        width: 100% !important;
+        margin: 10px 0 !important;
+        padding: 12px !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+        max-height: 200px !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        word-break: break-word !important;
+        white-space: pre-wrap !important;
+    }
+
+    .bank-details pre {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        margin: 0 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
+
+    #deposit-reference {
+        width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+
+    #bank-fields .instruction-box {
+        margin-top: 15px !important;
+        padding: 12px !important;
+        font-size: 0.85rem !important;
+    }
+
+    #bank-fields .form-group {
+        width: 100% !important;
+        margin-bottom: 15px !important;
+    }
+}
+
+/* ========== FIX 4: TOUCH DEVICE OPTIMIZATIONS ========== */
+/* Better touch experience on mobile */
+
+@media (hover: none) and (pointer: coarse) {
+
+    /* Payment methods touch targets */
+    .method-card-display {
+        min-height: 120px;
+    }
+
+    .method-details-display {
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Form input touch targets */
+    #bank-select,
+    #crypto-select,
+    #deposit-reference,
+    #crypto-txid {
+        min-height: 44px !important;
+    }
+
+    /* Prevent text zoom on iOS */
+    .method-details-display,
+    .bank-details,
+    .crypto-details {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100% !important;
+    }
+}
+
+/* ========== FIX 5: DARK MODE COMPATIBILITY ========== */
+/* Ensure fixes work in dark mode */
+
+@media (prefers-color-scheme: dark) and (max-width: 767px) {
+
+    /* Payment methods dark mode */
+    .method-card-display {
+        background: #0f3460 !important;
+        border-color: #2d4059 !important;
+    }
+
+    .method-details-display {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #e1e1e1 !important;
+    }
+
+    /* Crypto/Bank fields dark mode */
+    #crypto-fields,
+    #bank-fields {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: #2d4059 !important;
+    }
+
+    .crypto-details,
+    .bank-details {
+        background: #1a1a2e !important;
+        color: #e1e1e1 !important;
+        border-color: #2d4059 !important;
+    }
+
+    .crypto-details pre,
+    .bank-details pre {
+        color: #e1e1e1 !important;
+    }
+
+    /* Form inputs dark mode */
+    #crypto-select,
+    #bank-select,
+    #deposit-reference,
+    #crypto-txid {
+        background: #1a1a2e !important;
+        color: #e1e1e1 !important;
+        border-color: #2d4059 !important;
+    }
+}
+
+/* ========== FIX 6: LANDSCAPE MODE ========== */
+/* Better layout in landscape */
+
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    .methods-display {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px;
+    }
+
+    .method-card-display {
+        min-height: 140px;
+    }
+
+    .method-details-display {
+        max-height: 120px;
+        font-size: 0.8rem !important;
+    }
+
+    #crypto-fields,
+    #bank-fields {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 15px;
+    }
+
+    #crypto-fields .form-group,
+    #bank-fields .form-group {
+        flex: 1 1 calc(50% - 10px) !important;
+        min-width: 150px;
+    }
+
+    #crypto-fields .instruction-box,
+    #bank-fields .instruction-box {
+        flex: 1 1 100% !important;
+    }
+
+    .crypto-details,
+    .bank-details {
+        flex: 1 1 100% !important;
+    }
+}
+
+/* ========== FIX 7: SCROLLBAR STYLING ========== */
+/* Better scrollbars for payment details */
+
+.method-details-display::-webkit-scrollbar,
+.crypto-details::-webkit-scrollbar,
+.bank-details::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.method-details-display::-webkit-scrollbar-track,
+.crypto-details::-webkit-scrollbar-track,
+.bank-details::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.method-details-display::-webkit-scrollbar-thumb,
+.crypto-details::-webkit-scrollbar-thumb,
+.bank-details::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    .method-details-display::-webkit-scrollbar-track,
+    .crypto-details::-webkit-scrollbar-track,
+    .bank-details::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .method-details-display::-webkit-scrollbar-thumb,
+    .crypto-details::-webkit-scrollbar-thumb,
+    .bank-details::-webkit-scrollbar-thumb {
+        background: #4361ee;
+    }
+}
+
+/* ========== FIX 8: PREVENT TEXT OVERFLOW ========== */
+/* Ensure no text overflow in any device */
+
+.method-details-display,
+.bank-details,
+.crypto-details {
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -moz-hyphens: auto !important;
+    -ms-hyphens: auto !important;
+}
+
+/* ========== FIX 9: FORM FIELD CONSISTENCY ========== */
+/* Make all form fields consistent across devices */
+
+@media screen and (max-width: 767px) {
+
+    /* Ensure all form inputs have same styling */
+    .deposit-form input[type="text"],
+    .deposit-form input[type="number"],
+    .deposit-form select {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    /* Fix for method fields grid */
+    .method-fields {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Ensure proper spacing */
+    .deposit-form>* {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
