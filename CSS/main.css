@@ -1200,6 +1200,227 @@ h4 {
 
 
 
+/* ANDROID-SPECIFIC FIXES - Button size fixes */
+@media (max-width: 768px) {
+    .navbar .btn {
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .nav-actions {
+        gap: 10px;
+    }
+
+    .hero-actions .btn {
+        padding: 12px 20px !important;
+        font-size: 0.95rem !important;
+    }
+
+
+    .navbar .container {
+        padding: 12px 15px !important;
+    }
+
+    .nav-brand h1 {
+        font-size: 1.5rem !important;
+    }
+
+
+
+    .nav-menu {
+        top: 60px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .btn {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .btn {
+        padding: 10px 18px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .hero-actions {
+        gap: 12px;
+    }
+
+    .hero-actions .btn {
+        padding: 10px 16px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .cta-actions .btn {
+        padding: 12px 22px !important;
+    }
+}
+
+/* Android landscape mode */
+@media (max-height: 500px) and (max-width: 900px) {
+    .navbar .btn {
+        padding: 5px 10px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    h1 {
+        font-size: 3rem;
+    }
+
+    h2 {
+        font-size: 2.2rem;
+    }
+
+    .hero-content {
+        gap: 40px;
+    }
+
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .process-steps {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+    }
+
+    .step:nth-child(2)::after {
+        display: none;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .container {
+        padding: 15px;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+    }
+
+    .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .hero {
+        padding: 150px 0 80px;
+    }
+
+    .hero-content {
+        grid-template-columns: 1fr;
+    }
+
+    .hero::before {
+        display: none;
+    }
+
+    .investment-card {
+        margin: 0 auto;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+
+    .plans-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .plan-card.featured {
+        transform: none;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0 14px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .process-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .step::after {
+        display: none;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-actions {
+        flex-direction: column;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
 /* Add this at the end of your main.css file, right before the media queries section */
 
 /* =========================================== */
@@ -1484,8 +1705,6 @@ h4 {
 }
 
 
-
-
 /* Fix for tablet screens (481px to 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
     .hero-text h1 {
@@ -1549,233 +1768,4 @@ li,
 a,
 label {
     font-size: clamp(0.875rem, 2vw, 1rem) !important;
-}
-
-
-
-
-
-
-
-
-
-/* ANDROID-SPECIFIC FIXES - Button size fixes */
-@media (max-width: 768px) {
-    .navbar .btn {
-        padding: 8px 16px !important;
-        font-size: 0.85rem !important;
-    }
-
-    .nav-actions {
-        gap: 10px;
-    }
-
-    .hero-actions .btn {
-        padding: 12px 20px !important;
-        font-size: 0.95rem !important;
-    }
-
-
-    .navbar .container {
-        padding: 12px 15px !important;
-    }
-
-    .nav-brand h1 {
-        font-size: 1.5rem !important;
-    }
-
-
-
-    .nav-menu {
-        top: 60px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar .btn {
-        padding: 6px 12px !important;
-        font-size: 0.8rem !important;
-    }
-
-    .btn {
-        padding: 10px 18px !important;
-        font-size: 0.9rem !important;
-    }
-
-    .hero-actions {
-        gap: 12px;
-    }
-
-    .hero-actions .btn {
-        padding: 10px 16px !important;
-        font-size: 0.9rem !important;
-    }
-
-    .cta-actions .btn {
-        padding: 12px 22px !important;
-    }
-}
-
-/* Android landscape mode */
-@media (max-height: 500px) and (max-width: 900px) {
-    .navbar .btn {
-        padding: 5px 10px !important;
-        font-size: 0.75rem !important;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-    h1 {
-        font-size: 3rem;
-    }
-
-    h2 {
-        font-size: 2.2rem;
-    }
-
-    .hero-content {
-        gap: 40px;
-    }
-
-    .hero-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .process-steps {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-    }
-
-    .step:nth-child(2)::after {
-        display: none;
-    }
-
-    .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .testimonials-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .navbar .container {
-        padding: 15px;
-    }
-
-    .nav-menu {
-        position: fixed;
-        top: 70px;
-        left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transform: translateY(-100%);
-        opacity: 0;
-        visibility: hidden;
-        transition: var(--transition);
-    }
-
-    .nav-menu.active {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .nav-toggle {
-        display: block;
-    }
-
-    .hero {
-        padding: 150px 0 80px;
-    }
-
-    .hero-content {
-        grid-template-columns: 1fr;
-    }
-
-    .hero::before {
-        display: none;
-    }
-
-    .investment-card {
-        margin: 0 auto;
-    }
-
-    .about-content {
-        grid-template-columns: 1fr;
-    }
-
-    .plans-grid {
-        grid-template-columns: 1fr;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .plan-card.featured {
-        transform: none;
-    }
-
-    .testimonials-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 576px) {
-    .container {
-        padding: 0 14px;
-    }
-
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    h2 {
-        font-size: 2rem;
-    }
-
-    h3 {
-        font-size: 1.5rem;
-    }
-
-    .hero-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .hero-actions {
-        flex-direction: column;
-    }
-
-    .process-steps {
-        grid-template-columns: 1fr;
-    }
-
-    .step::after {
-        display: none;
-    }
-
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cta-actions {
-        flex-direction: column;
-    }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .footer-bottom {
-        flex-direction: column;
-        text-align: center;
-    }
 }
