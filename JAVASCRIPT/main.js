@@ -14,6 +14,7 @@ function initLandingPage() {
 
     // Check user authentication
     checkAuthStatus();
+    checkAboutUs();
 }
 
 // Navigation
@@ -141,6 +142,16 @@ function initAuthButtons() {
             window.location.href = 'register.html';
         });
     }
+}
+function checkAboutUs() {
+    const aboutUsBtn = document.getElementById('aboutUs');
+
+    if (aboutUsBtn) {
+        aboutUsBtn.addEventListener('click', function () {
+            window.location.href = 'about-us.html';
+        });
+    }
+
 }
 
 // Check Authentication Status
