@@ -144,7 +144,7 @@ function initAuthButtons() {
     }
 }
 function checkAboutUs() {
-    const aboutUsBtn = document.getElementById('aboutUs');
+    const aboutUsBtn = document.getElementById('aboutUsBtn');
 
     if (aboutUsBtn) {
         aboutUsBtn.addEventListener('click', function () {
