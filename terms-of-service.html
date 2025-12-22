@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Terms of Service | VAULT Investment Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./CSS/main.css">
+    <style>
+        /* =========================================== */
+        /* TERMS OF SERVICE SPECIFIC STYLES - FULLY RESPONSIVE */
+        /* =========================================== */
+
+        /* Base Terms Styles */
+        .terms-hero {
+            padding: 140px 0 40px;
+            background: linear-gradient(135deg, rgba(58, 12, 163, 0.05) 0%, rgba(67, 97, 238, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: auto;
+        }
+
+        .terms-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233a0ca3' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .terms-hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding: 0 10px;
+        }
+
+        .terms-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(58, 12, 163, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+            font-size: 0.9rem;
+            max-width: 90%;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .last-updated {
+            color: var(--gray-color);
+            margin-top: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .last-updated i {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .terms-nav {
+            background: white;
+            padding: 12px 0;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .terms-nav-list {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding: 0 5px;
+        }
+
+        .terms-nav-link {
+            padding: 7px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.78rem;
+            white-space: nowrap;
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eaeaea;
+        }
+
+        .terms-nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(67, 97, 238, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .terms-nav-link:hover::before {
+            left: 100%;
+        }
+
+        .terms-nav-link:hover,
+        .terms-nav-link.active {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            border-color: transparent;
+        }
+
+        .terms-content {
+            padding: 30px 0;
+            background: white;
+        }
+
+        .terms-section {
+            margin-bottom: 35px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            padding: 0 5px;
+            scroll-margin-top: 80px;
+        }
+
+        .terms-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .terms-section h2 {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            line-height: 1.3;
+            padding-left: 15px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .terms-article {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eaeaea;
+            transition: all 0.3s ease;
+        }
+
+        .terms-article:hover {
+            background: #f0f2ff;
+            border-color: rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .terms-article h3 {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: var(--dark-color);
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .terms-article h3 i {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .terms-article p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .terms-article ul,
+        .terms-article ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .terms-article li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .terms-article strong {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .warning-box {
+            background: rgba(247, 37, 133, 0.05);
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .warning-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--danger-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .info-box {
+            background: rgba(67, 97, 238, 0.05);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .info-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .legal-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .legal-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .legal-table th {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .legal-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eaeaea;
+            background: white;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .legal-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .acceptance-box {
+            background: linear-gradient(135deg, rgba(0, 176, 155, 0.1) 0%, rgba(67, 97, 238, 0.1) 100%);
+            border: 2px solid var(--success-color);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .acceptance-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color), var(--success-color));
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .acceptance-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .acceptance-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success-color);
+        }
+
+        .acceptance-checkbox label {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .terms-actions {
+            background: #f8f9fa;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+
+        .terms-actions h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 70px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            z-index: 999;
+            font-size: 1.1rem;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        /* Quick Navigation Sidebar for Desktop */
+        .quick-nav-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            z-index: 100;
+            display: none;
+            max-width: 200px;
+        }
+
+        .quick-nav-sidebar h4 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quick-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .quick-nav-link {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .quick-nav-link:hover,
+        .quick-nav-link.active {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            transform: translateX(3px);
+        }
+
+        /* =========================================== */
+        /* RESPONSIVE BREAKPOINTS FOR ALL DEVICES */
+        /* =========================================== */
+
+        /* Small Android Phones (up to 360px) */
+        @media (max-width: 360px) {
+            .terms-hero {
+                padding: 120px 0 30px !important;
+            }
+
+            .terms-badge {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+
+            .terms-hero-content h1 {
+                font-size: 1.8rem !important;
+                margin-bottom: 12px !important;
+            }
+
+            .hero-subtitle {
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+                padding: 0 5px;
+            }
+
+            .terms-nav {
+                padding: 10px 0;
+                margin-bottom: 10px;
+            }
+
+            .terms-nav-list {
+                gap: 4px;
+            }
+
+            .terms-nav-link {
+                padding: 6px 10px;
+                font-size: 0.72rem;
+                min-height: 32px;
+            }
+
+            .terms-section h2 {
+                font-size: 1.2rem !important;
+                padding-left: 12px;
+                margin-bottom: 15px;
+            }
+
+            .terms-article {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .terms-article h3 {
+                font-size: 1rem;
+                gap: 8px;
+            }
+
+            .terms-article p,
+            .terms-article li {
+                font-size: 0.85rem !important;
+                line-height: 1.5;
+            }
+
+            .legal-table th,
+            .legal-table td {
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+
+            .acceptance-box {
+                padding: 20px 15px;
+                margin-top: 30px;
+            }
+
+            .acceptance-checkbox {
+                padding: 12px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .terms-actions {
+                padding: 20px 15px;
+                margin-top: 30px;
+            }
+
+            .back-to-top {
+                width: 40px;
+                height: 40px;
+                bottom: 60px;
+                right: 10px;
+            }
+        }
+
+        /* Medium Mobile (361px - 480px) */
+        @media (min-width: 361px) and (max-width: 480px) {
+            .terms-hero {
+                padding: 130px 0 35px;
+            }
+
+            .terms-badge {
+                padding: 9px 18px;
+            }
+
+            .terms-hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .terms-nav-link {
+                font-size: 0.8rem;
+                padding: 7px 14px;
+            }
+
+            .terms-section h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Tablet (481px - 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .terms-hero {
+                padding: 150px 0 50px;
+            }
+
+            .terms-nav-list {
+                gap: 10px;
+            }
+
+            .terms-nav-link {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+            }
+
+            .terms-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .quick-nav-sidebar {
+                display: none !important;
+            }
+        }
+
+        /* Desktop (769px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .terms-hero {
+                padding: 170px 0 70px;
+            }
+
+            .terms-nav {
+                padding: 15px 0;
+                margin-bottom: 25px;
+            }
+
+            .terms-nav-list {
+                gap: 15px;
+            }
+
+            .terms-nav-link {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .terms-content {
+                padding: 50px 0;
+            }
+
+            .quick-nav-sidebar {
+                display: block;
+                left: 10px;
+                max-width: 180px;
+            }
+        }
+
+        /* Large Desktop (1025px and above) */
+        @media (min-width: 1025px) {
+            .terms-hero {
+                padding: 180px 0 80px;
+            }
+
+            .terms-badge {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+
+            .terms-nav {
+                padding: 20px 0;
+                margin-bottom: 30px;
+            }
+
+            .terms-nav-list {
+                gap: 20px;
+            }
+
+            .terms-nav-link {
+                padding: 12px 25px;
+                font-size: 0.95rem;
+            }
+
+            .terms-section h2 {
+                font-size: 1.8rem;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .terms-article {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+
+            .terms-article h3 {
+                font-size: 1.2rem;
+            }
+
+            .legal-table th,
+            .legal-table td {
+                padding: 15px 20px;
+            }
+
+            .acceptance-box {
+                padding: 30px;
+                margin-top: 50px;
+            }
+
+            .terms-actions {
+                padding: 40px;
+                margin-top: 60px;
+            }
+
+            .back-to-top {
+                width: 50px;
+                height: 50px;
+                bottom: 100px;
+                right: 30px;
+            }
+
+            .quick-nav-sidebar {
+                display: block;
+            }
+        }
+
+        /* Landscape Mode Fixes */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .terms-hero {
+                padding: 110px 0 30px !important;
+                min-height: auto !important;
+            }
+
+            .terms-nav {
+                position: static;
+                margin-bottom: 10px;
+            }
+
+            .terms-nav-list {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
+
+            .terms-nav-link {
+                flex-shrink: 0;
+            }
+
+            .terms-content {
+                padding: 20px 0;
+            }
+
+            .terms-section {
+                margin-bottom: 25px;
+            }
+
+            .back-to-top {
+                bottom: 50px;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .terms-article:hover {
+                transform: none;
+            }
+
+            .terms-nav-link:hover {
+                transform: none;
+            }
+
+            .back-to-top:hover {
+                transform: none;
+            }
+
+            .quick-nav-link:hover {
+                transform: none;
+            }
+
+            /* Increase touch target sizes */
+            .terms-nav-link,
+            .btn,
+            .acceptance-checkbox label {
+                min-height: 44px;
+                padding: 12px 20px;
+            }
+
+            .acceptance-checkbox {
+                padding: 20px;
+            }
+
+            .legal-table td,
+            .legal-table th {
+                padding: 14px 12px;
+            }
+        }
+
+        /* High DPI (Retina) Screens */
+        @media (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+
+            .terms-badge,
+            .terms-nav-link,
+            .terms-article,
+            .legal-table {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .terms-hero {
+                background: linear-gradient(135deg, rgba(58, 12, 163, 0.1) 0%, rgba(67, 97, 238, 0.1) 100%);
+            }
+
+            .terms-nav {
+                background: #1a1a2e;
+                border-bottom-color: #2d2d44;
+            }
+
+            .terms-nav-link {
+                background: #2d2d44;
+                color: #e0e0e0;
+                border-color: #3a3a5e;
+            }
+
+            .terms-content {
+                background: #1a1a2e;
+                color: #e0e0e0;
+            }
+
+            .terms-section h2 {
+                color: #4cc9f0;
+                border-left-color: #4cc9f0;
+            }
+
+            .terms-article {
+                background: #2d2d44;
+                border-color: #3a3a5e;
+                color: #e0e0e0;
+            }
+
+            .terms-article:hover {
+                background: #3a3a5e;
+                border-color: #4361ee;
+            }
+
+            .terms-article p,
+            .terms-article li {
+                color: #b0b0b0;
+            }
+
+            .legal-table td {
+                background: #2d2d44;
+                color: #e0e0e0;
+                border-bottom-color: #3a3a5e;
+            }
+
+            .warning-box {
+                background: rgba(247, 37, 133, 0.1);
+                border-left-color: var(--danger-color);
+            }
+
+            .info-box {
+                background: rgba(67, 97, 238, 0.1);
+                border-left-color: var(--primary-color);
+            }
+
+            .acceptance-box {
+                background: linear-gradient(135deg, rgba(0, 176, 155, 0.1) 0%, rgba(67, 97, 238, 0.1) 100%);
+                border-color: var(--success-color);
+            }
+
+            .acceptance-checkbox {
+                background: #2d2d44;
+                color: #e0e0e0;
+            }
+
+            .terms-actions {
+                background: #2d2d44;
+                border-color: #3a3a5e;
+            }
+
+            .quick-nav-sidebar {
+                background: #1a1a2e;
+                color: #e0e0e0;
+            }
+
+            .quick-nav-link {
+                background: #2d2d44;
+                color: #e0e0e0;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+
+            .terms-nav,
+            .back-to-top,
+            .quick-nav-sidebar,
+            .footer,
+            .btn,
+            .acceptance-box {
+                display: none !important;
+            }
+
+            .terms-hero {
+                padding: 50px 0 !important;
+                background: white !important;
+            }
+
+            .terms-content {
+                padding: 0 !important;
+            }
+
+            body {
+                font-size: 12pt !important;
+                line-height: 1.5 !important;
+                color: black !important;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                color: black !important;
+                page-break-after: avoid !important;
+            }
+
+            .terms-section {
+                page-break-inside: avoid !important;
+                margin-bottom: 30pt !important;
+            }
+
+            .terms-article {
+                background: white !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .legal-table {
+                page-break-inside: avoid !important;
+            }
+        }
+
+        /* Fix for Android text size adjustment */
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* Prevent horizontal scrolling */
+        body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Improve readability on small screens */
+        p,
+        li,
+        td,
+        span {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        /* Ensure proper spacing for lists */
+        ul,
+        ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Simplified Navigation for Mobile -->
+    <nav class="navbar" style="position: fixed; top: 0; width: 100%; z-index: 1000;">
+        <div class="container" style="padding: 10px 15px;">
+            <div class="nav-brand">
+                <i class="fas fa-university" style="font-size: 1.5rem;"></i>
+                <h1 style="font-size: 1.4rem; margin: 0;">VAULT</h1>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="privacy-policy.html" class="nav-link">Privacy</a>
+                <a href="terms-of-service.html" class="nav-link active">Terms</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+
+            <button class="nav-toggle" id="navToggle"
+                style="background: none; border: none; font-size: 1.3rem; color: var(--dark-color); cursor: pointer; padding: 5px; margin-left: 10px;">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="terms-hero">
+        <div class="container">
+            <div class="terms-hero-content">
+                <span class="terms-badge">
+                    <i class="fas fa-balance-scale"></i> Legal Terms & Conditions
+                </span>
+                <h1 style="font-size: 2.3rem; margin-bottom: 15px; line-height: 1.2; color: var(--secondary-color);">
+                    Terms of Service</h1>
+                <p class="hero-subtitle"
+                    style="max-width: 800px; margin: 0 auto 15px; font-size: 1.1rem; line-height: 1.5; color: var(--gray-color);">
+                    Please read these Terms of Service carefully before using our investment platform. By accessing or
+                    using our services, you agree to be bound by these terms.
+                </p>
+
+                <div class="last-updated">
+                    <i class="fas fa-history"></i>
+                    Last Updated: <span id="currentDate"></span> | Effective Date: <span id="effectiveDate"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms Navigation -->
+    <div class="terms-nav">
+        <div class="container">
+            <div class="terms-nav-list" id="termsNav">
+                <a href="#acceptance" class="terms-nav-link active">Acceptance</a>
+                <a href="#eligibility" class="terms-nav-link">Eligibility</a>
+                <a href="#account" class="terms-nav-link">Account</a>
+                <a href="#investments" class="terms-nav-link">Investments</a>
+                <a href="#fees" class="terms-nav-link">Fees</a>
+                <a href="#liability" class="terms-nav-link">Liability</a>
+                <a href="#termination" class="terms-nav-link">Termination</a>
+                <a href="#governing-law" class="terms-nav-link">Governing Law</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Sidebar (Desktop Only) -->
+    <div class="quick-nav-sidebar" id="quickNav">
+        <h4>Quick Navigation</h4>
+        <div class="quick-nav-links">
+            <!-- Links will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Terms Content -->
+    <section class="terms-content">
+        <div class="container">
+            <!-- Acceptance of Terms -->
+            <div id="acceptance" class="terms-section">
+                <h2>1. Acceptance of Terms</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-check-circle"></i> Agreement to Terms</h3>
+                    <p>By accessing and using the VAULT investment platform ("Platform"), you acknowledge that you have
+                        read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree
+                        with these Terms, you must not access or use our Platform.</p>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Important Notice</h4>
+                        <p>These Terms constitute a legally binding agreement between you and VAULT Investments LLC. We
+                            reserve the right to modify these Terms at any time. Continued use of the Platform after
+                            changes constitutes acceptance of the modified Terms.</p>
+                    </div>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-file-contract"></i> Modifications to Terms</h3>
+                    <p>We may revise these Terms from time to time. The most current version will always be posted on
+                        our website. By continuing to access or use our Platform after revisions become effective, you
+                        agree to be bound by the revised Terms.</p>
+                </div>
+            </div>
+
+            <!-- Eligibility -->
+            <div id="eligibility" class="terms-section">
+                <h2>2. Eligibility and Registration</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-user-check"></i> Eligibility Requirements</h3>
+                    <p>To use our Platform, you must:</p>
+                    <ul>
+                        <li>Be at least 18 years old</li>
+                        <li>Have the legal capacity to enter into binding contracts</li>
+                        <li>Not be a resident of any restricted jurisdiction</li>
+                        <li>Not be on any sanctions list or restricted persons list</li>
+                        <li>Complete the identity verification process</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-info-circle"></i> Geographic Restrictions</h4>
+                        <p>Our services are not available to residents of certain countries due to regulatory
+                            restrictions. Please contact support to verify if our services are available in your
+                            jurisdiction.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Terms -->
+            <div id="account" class="terms-section">
+                <h2>3. Account Terms</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-user-shield"></i> Account Security</h3>
+                    <p>You are responsible for:</p>
+                    <ul>
+                        <li>Maintaining the confidentiality of your login credentials</li>
+                        <li>All activities that occur under your account</li>
+                        <li>Promptly notifying us of any unauthorized access</li>
+                        <li>Ensuring your contact information is up to date</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-shield-alt"></i> Security Responsibilities</h4>
+                        <p>We implement industry-standard security measures, but you must also take reasonable steps to
+                            protect your account. We are not liable for losses resulting from unauthorized access due to
+                            your failure to maintain account security.</p>
+                    </div>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-id-card"></i> Identity Verification</h3>
+                    <p>To comply with KYC (Know Your Customer) and AML (Anti-Money Laundering) regulations, we require:
+                    </p>
+
+                    <div class="legal-table-container">
+                        <table class="legal-table">
+                            <thead>
+                                <tr>
+                                    <th>Document Type</th>
+                                    <th>Purpose</th>
+                                    <th>Required For</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Government ID</td>
+                                    <td>Identity verification</td>
+                                    <td>All accounts</td>
+                                </tr>
+                                <tr>
+                                    <td>Proof of Address</td>
+                                    <td>Residence verification</td>
+                                    <td>Accounts over $10,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Source of Funds</td>
+                                    <td>AML compliance</td>
+                                    <td>Large deposits</td>
+                                </tr>
+                                <tr>
+                                    <td>Tax Information</td>
+                                    <td>Tax reporting</td>
+                                    <td>All investment accounts</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Terms -->
+            <div id="investments" class="terms-section">
+                <h2>4. Investment Terms</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-chart-line"></i> Investment Risks</h3>
+                    <p>All investments carry risk. By using our Platform, you acknowledge and agree that:</p>
+                    <ul>
+                        <li>Past performance is not indicative of future results</li>
+                        <li>Investment values may fluctuate</li>
+                        <li>You could lose some or all of your investment</li>
+                        <li>Returns are not guaranteed</li>
+                        <li>Market conditions can affect investment performance</li>
+                    </ul>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-hand-holding-usd"></i> Investment Plans</h3>
+                    <p>Our investment plans have specific terms:</p>
+
+                    <div class="legal-table-container">
+                        <table class="legal-table">
+                            <thead>
+                                <tr>
+                                    <th>Plan Type</th>
+                                    <th>Minimum Deposit</th>
+                                    <th>Maximum Deposit</th>
+                                    <th>Withdrawal Period</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Starter Plan</td>
+                                    <td>$100</td>
+                                    <td>$1,000</td>
+                                    <td>24-48 hours</td>
+                                </tr>
+                                <tr>
+                                    <td>Premium Plan</td>
+                                    <td>$1,000</td>
+                                    <td>$10,000</td>
+                                    <td>24-72 hours</td>
+                                </tr>
+                                <tr>
+                                    <td>VIP Plan</td>
+                                    <td>$5,000</td>
+                                    <td>$50,000</td>
+                                    <td>48-96 hours</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fees and Charges -->
+            <div id="fees" class="terms-section">
+                <h2>5. Fees and Charges</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-percentage"></i> Fee Structure</h3>
+                    <p>We charge the following fees for our services:</p>
+
+                    <div class="legal-table-container">
+                        <table class="legal-table">
+                            <thead>
+                                <tr>
+                                    <th>Fee Type</th>
+                                    <th>Amount</th>
+                                    <th>When Charged</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Withdrawal Fee</td>
+                                    <td>2%</td>
+                                    <td>Per withdrawal</td>
+                                </tr>
+                                <tr>
+                                    <td>Inactivity Fee</td>
+                                    <td>$10/month</td>
+                                    <td>After 12 months of inactivity</td>
+                                </tr>
+                                <tr>
+                                    <td>Account Closure</td>
+                                    <td>$25</td>
+                                    <td>Upon account closure</td>
+                                </tr>
+                                <tr>
+                                    <td>Wire Transfer</td>
+                                    <td>$30</td>
+                                    <td>Per wire transfer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-money-bill-wave"></i> No Hidden Fees</h4>
+                        <p>We believe in transparency. There are no hidden fees for deposits, account maintenance, or
+                            investment management. All fees are clearly disclosed before any transaction.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liability and Disclaimers -->
+            <div id="liability" class="terms-section">
+                <h2>6. Liability and Disclaimers</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-exclamation-circle"></i> Disclaimer of Warranties</h3>
+                    <p>The Platform is provided "as is" and "as available" without warranties of any kind, either
+                        express or implied, including but not limited to:</p>
+                    <ul>
+                        <li>Warranties of merchantability</li>
+                        <li>Fitness for a particular purpose</li>
+                        <li>Non-infringement</li>
+                        <li>Accuracy or reliability of information</li>
+                        <li>Uninterrupted or error-free service</li>
+                    </ul>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-gavel"></i> Limitation of Liability</h3>
+                    <p>To the maximum extent permitted by law, VAULT Investments LLC shall not be liable for:</p>
+                    <ul>
+                        <li>Any indirect, incidental, or consequential damages</li>
+                        <li>Loss of profits, data, or investment capital</li>
+                        <li>Damages resulting from market fluctuations</li>
+                        <li>Third-party actions or omissions</li>
+                        <li>Force majeure events</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-balance-scale-left"></i> Maximum Liability</h4>
+                        <p>Our total liability to you for any claims arising from or related to these Terms or your use
+                            of the Platform shall not exceed the total fees you have paid to us in the six months
+                            preceding the event giving rise to the claim.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Termination -->
+            <div id="termination" class="terms-section">
+                <h2>7. Termination</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-power-off"></i> Termination Rights</h3>
+                    <p>Either party may terminate these Terms:</p>
+                    <ul>
+                        <li><strong>By You:</strong> You may close your account at any time by submitting a closure
+                            request</li>
+                        <li><strong>By Us:</strong> We may terminate or suspend your account for violation of these
+                            Terms</li>
+                        <li><strong>Automatic Termination:</strong> Upon completion of all investment cycles and
+                            withdrawal of funds</li>
+                    </ul>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-money-check-alt"></i> Effects of Termination</h3>
+                    <p>Upon termination:</p>
+                    <ul>
+                        <li>Your right to use the Platform immediately ceases</li>
+                        <li>You must withdraw any remaining funds within 30 days</li>
+                        <li>We will return any remaining balance after deducting applicable fees</li>
+                        <li>We may retain certain information as required by law</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Governing Law -->
+            <div id="governing-law" class="terms-section">
+                <h2>8. Governing Law and Dispute Resolution</h2>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-globe-americas"></i> Governing Law</h3>
+                    <p>These Terms shall be governed by and construed in accordance with the laws of the State of
+                        Delaware, United States, without regard to its conflict of law provisions.</p>
+                </div>
+
+                <div class="terms-article">
+                    <h3><i class="fas fa-handshake"></i> Dispute Resolution</h3>
+                    <p>Any disputes arising from these Terms shall be resolved as follows:</p>
+                    <ol>
+                        <li><strong>Negotiation:</strong> Parties shall attempt to resolve disputes through good faith
+                            negotiation</li>
+                        <li><strong>Mediation:</strong> If negotiation fails, parties shall attempt mediation with a
+                            neutral third party</li>
+                        <li><strong>Arbitration:</strong> If mediation fails, disputes shall be resolved through binding
+                            arbitration in Delaware</li>
+                        <li><strong>Court Action:</strong> Either party may seek injunctive relief in court to prevent
+                            irreparable harm</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Acceptance Section -->
+            <div class="acceptance-box">
+                <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: var(--success-color);">
+                    <i class="fas fa-file-signature"></i> Terms Acceptance
+                </h3>
+                <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+                    By using our Platform, you acknowledge that you have read, understood, and agree to be bound by
+                    these Terms of Service.
+                </p>
+
+                <div class="acceptance-checkbox" id="acceptanceCheckbox">
+                    <input type="checkbox" id="termsAcceptance">
+                    <label for="termsAcceptance">I have read and agree to the Terms of Service</label>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="acceptTerms()"
+                        style="padding: 12px 30px; font-size: 1rem; min-height: 50px;">
+                        <i class="fas fa-check-double"></i> Accept & Continue
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contact and Updates -->
+            <div class="terms-actions">
+                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Contact & Updates</h3>
+                <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+                    For questions about these Terms or to request previous versions, please contact our legal
+                    department.
+                </p>
+
+                <div style="margin: 20px 0; text-align: left; display: inline-block;">
+                    <p
+                        style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem;">
+                        <i class="fas fa-envelope"
+                            style="color: var(--secondary-color); margin-top: 3px; flex-shrink: 0;"></i>
+                        <span><strong>legal@vault.com</strong></span>
+                    </p>
+                    <p
+                        style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem;">
+                        <i class="fas fa-phone"
+                            style="color: var(--secondary-color); margin-top: 3px; flex-shrink: 0;"></i>
+                        <span>+1 (555) 987-6543 (Legal Department)</span>
+                    </p>
+                    <p style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0; font-size: 0.9rem;">
+                        <i class="fas fa-clock"
+                            style="color: var(--secondary-color); margin-top: 3px; flex-shrink: 0;"></i>
+                        <span>Business Hours: Mon-Fri, 9 AM - 5 PM EST</span>
+                    </p>
+                </div>
+
+                <div style="margin-top: 25px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                    <button class="btn btn-primary" onclick="downloadTerms()"
+                        style="padding: 12px 20px; font-size: 0.9rem; min-height: 44px;">
+                        <i class="fas fa-download"></i> Download Terms (PDF)
+                    </button>
+                    <button class="btn btn-outline" onclick="printTerms()"
+                        style="padding: 12px 20px; font-size: 0.9rem; min-height: 44px;">
+                        <i class="fas fa-print"></i> Print Terms
+                    </button>
+                    <button class="btn btn-outline" onclick="compareVersions()"
+                        style="padding: 12px 20px; font-size: 0.9rem; min-height: 44px;">
+                        <i class="fas fa-history"></i> View Previous Versions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Simplified Footer -->
+    <footer class="footer" style="padding: 40px 0 20px;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div class="footer-brand"
+                    style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-university" style="font-size: 1.8rem; color: var(--accent-color);"></i>
+                    <h3 style="font-size: 1.5rem; margin: 0; color: white;">VAULT</h3>
+                </div>
+                <p class="footer-description"
+                    style="max-width: 500px; margin: 0 auto 20px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">
+                    Premium investment platform delivering consistent high returns through diversified investment
+                    strategies.
+                </p>
+                <div class="social-links" style="justify-content: center; margin-top: 20px;">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-bottom"
+                style="padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+                <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 10px;">
+                    &copy; 2024 VAULT Investment Platform. All rights reserved.
+                </p>
+                <div style="margin-top: 10px;">
+                    <a href="privacy-policy.html"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Privacy
+                        Policy</a>
+                    <a href="terms-of-service.html"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Terms
+                        of Service</a>
+                    <a href="#"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Cookie
+                        Policy</a>
+                    <a href="#"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Risk
+                        Disclosure</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Set current dates
+        const currentDate = new Date();
+        document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Set effective date (30 days ago for demonstration)
+        const effectiveDate = new Date(currentDate);
+        effectiveDate.setDate(effectiveDate.getDate() - 30);
+        document.getElementById('effectiveDate').textContent = effectiveDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Mobile menu toggle
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        navToggle.addEventListener('click', function () {
+            navMenu.classList.toggle('active');
+            this.innerHTML = navMenu.classList.contains('active')
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
+                navMenu.classList.remove('active');
+                navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Scroll animations for terms sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -30px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all terms sections
+        document.querySelectorAll('.terms-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Navigation highlighting
+        const sections = document.querySelectorAll('.terms-section');
+        const navLinks = document.querySelectorAll('.terms-nav-link');
+        const quickNav = document.getElementById('quickNav');
+        const quickNavLinks = document.querySelector('.quick-nav-links');
+
+        // Populate quick navigation for desktop
+        if (quickNav && window.innerWidth >= 1025) {
+            sections.forEach(section => {
+                const id = section.id;
+                const title = section.querySelector('h2').textContent;
+
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.className = 'quick-nav-link';
+                link.textContent = title.replace(/^\d+\.\s*/, ''); // Remove number prefix
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+
+                quickNavLinks.appendChild(link);
+            });
+
+            // Show quick nav on desktop
+            quickNav.style.display = 'block';
+        }
+
+        function updateActiveNav() {
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+
+                if (window.scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            // Update main navigation
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Update quick navigation
+            if (quickNav) {
+                const quickLinks = quickNav.querySelectorAll('.quick-nav-link');
+                quickLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Back to top button
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
+        }
+
+        // Throttle scroll events for performance
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (!scrollTimeout) {
+                scrollTimeout = setTimeout(() => {
+                    updateActiveNav();
+                    scrollTimeout = null;
+                }, 100);
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 120,
+                        behavior: 'smooth'
+                    });
+
+                    // Update active state
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Close mobile menu if open
+                    navMenu.classList.remove('active');
+                    navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // Back to top functionality
+        document.getElementById('backToTop').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            // Update navigation
+            navLinks.forEach(l => l.classList.remove('active'));
+            const firstNavLink = document.querySelector('.terms-nav-link[href="#acceptance"]');
+            if (firstNavLink) firstNavLink.classList.add('active');
+        });
+
+        // Terms acceptance functionality
+        function acceptTerms() {
+            const checkbox = document.getElementById('termsAcceptance');
+            if (!checkbox.checked) {
+                showNotification('Please check the box to accept the Terms of Service.', 'warning');
+                checkbox.focus();
+                return;
+            }
+
+            // Store acceptance in localStorage
+            localStorage.setItem('termsAccepted', 'true');
+            localStorage.setItem('termsAcceptanceDate', new Date().toISOString());
+            localStorage.setItem('termsVersion', '1.0'); // Update with actual version
+
+            showNotification('Terms of Service accepted successfully!', 'success');
+
+            // Redirect to dashboard or home page
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        // Show acceptance status on load
+        function checkTermsAcceptance() {
+            const accepted = localStorage.getItem('termsAccepted');
+            if (accepted === 'true') {
+                const checkbox = document.getElementById('termsAcceptance');
+                checkbox.checked = true;
+                showNotification('You have already accepted the Terms of Service.', 'info');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+
+            let icon = 'fa-info-circle';
+            let bgColor = 'var(--primary-color)';
+
+            if (type === 'warning') {
+                icon = 'fa-exclamation-triangle';
+                bgColor = 'var(--warning-color)';
+            } else if (type === 'success') {
+                icon = 'fa-check-circle';
+                bgColor = 'var(--success-color)';
+            }
+
+            notification.innerHTML = `
+                <div style="position: fixed; top: 80px; right: 15px; left: 15px; background: ${bgColor}; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s ease; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas ${icon}"></i>
+                        <span style="font-size: 0.9rem;">${message}</span>
+                    </div>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; margin: 0; line-height: 1;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Download terms function
+        function downloadTerms() {
+            showNotification('Terms of Service PDF download will be available soon.', 'info');
+            // In production: window.open('/downloads/terms-of-service.pdf', '_blank');
+        }
+
+        // Print terms function
+        function printTerms() {
+            window.print();
+        }
+
+        // Compare versions function
+        function compareVersions() {
+            showNotification('Previous versions will be available in the legal archive.', 'info');
+            // In production: window.open('/legal/archive/terms', '_blank');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            checkTermsAcceptance();
+
+            // Add CSS animation for notification
+            if (!document.querySelector('#notification-style')) {
+                const style = document.createElement('style');
+                style.id = 'notification-style';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateY(-20px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                    @media (max-width: 480px) {
+                        .notification > div {
+                            left: 10px !important;
+                            right: 10px !important;
+                            top: 70px !important;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // Initial active nav update
+            updateActiveNav();
+
+            // Prevent zoom on input focus in iOS
+            document.addEventListener('touchstart', function () { }, { passive: true });
+
+            // Auto-check acceptance for returning users
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('returning') === 'true') {
+                const checkbox = document.getElementById('termsAcceptance');
+                checkbox.checked = true;
+            }
+        });
+
+        // Handle resize events
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                updateActiveNav();
+
+                // Show/hide quick nav based on screen size
+                const quickNav = document.getElementById('quickNav');
+                if (quickNav) {
+                    if (window.innerWidth >= 1025) {
+                        quickNav.style.display = 'block';
+                    } else {
+                        quickNav.style.display = 'none';
+                    }
+                }
+            }, 250);
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            // Escape key closes mobile menu
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+
+            // Space key toggles acceptance checkbox
+            if (e.key === ' ' && e.target === document.getElementById('termsAcceptance')) {
+                e.preventDefault();
+                e.target.checked = !e.target.checked;
+            }
+        });
+
+        // Add touch gesture support
+        let touchStartY = 0;
+        document.addEventListener('touchstart', function (e) {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        // Improve scrolling performance on mobile
+        document.addEventListener('touchmove', function (e) {
+            // Prevent default only for non-scrollable elements
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Auto-scroll to section from URL hash
+        window.addEventListener('load', function () {
+            if (window.location.hash) {
+                const targetSection = document.querySelector(window.location.hash);
+                if (targetSection) {
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
