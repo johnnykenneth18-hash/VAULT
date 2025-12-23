@@ -1451,20 +1451,91 @@ function formatCurrency(amount) {
 }
 
 function showNotification(message, type = 'info') {
-    document.querySelectorAll('.notification-popup').forEach(el => el.remove());
+    // Remove any existing notification system container
+    const existingSystem = document.querySelector('.notification-system');
+    if (existingSystem) {
+        existingSystem.remove();
+    }
 
+    // Create notification system container
+    const notificationSystem = document.createElement('div');
+    notificationSystem.className = 'notification-system';
+
+    // Create notification toast
     const notification = document.createElement('div');
-    notification.className = `notification-popup ${type}`;
+    notification.className = `notification-toast ${type}`;
+
+    // Set icon based on type
+    let icon = 'info-circle';
+    let title = 'Information';
+
+    switch (type) {
+        case 'success':
+            icon = 'check-circle';
+            title = 'Success';
+            break;
+        case 'error':
+            icon = 'exclamation-circle';
+            title = 'Error';
+            break;
+        case 'warning':
+            icon = 'exclamation-triangle';
+            title = 'Warning';
+            break;
+        case 'info':
+        default:
+            icon = 'info-circle';
+            title = 'Information';
+    }
+
+    // Create notification HTML
     notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-        <span>${message}</span>
+        <div class="notification-icon">
+            <i class="fas fa-${icon}"></i>
+        </div>
+        <div class="notification-content">
+            <h4>${title}</h4>
+            <p>${message}</p>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="notification-progress">
+            <div class="notification-progress-bar"></div>
+        </div>
     `;
 
-    document.body.appendChild(notification);
+    // Add to system container
+    notificationSystem.appendChild(notification);
+    document.body.appendChild(notificationSystem);
 
-    setTimeout(() => {
+    // Add close button functionality
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
         notification.classList.add('fade-out');
-        setTimeout(() => notification.remove(), 300);
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+                if (notificationSystem.children.length === 0) {
+                    notificationSystem.remove();
+                }
+            }
+        }, 300);
+    });
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.classList.add('fade-out');
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                    if (notificationSystem.children.length === 0) {
+                        notificationSystem.remove();
+                    }
+                }
+            }, 300);
+        }
     }, 3000);
 }
 

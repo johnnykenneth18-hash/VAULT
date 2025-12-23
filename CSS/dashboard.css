@@ -4458,3 +4458,297 @@ select {
         max-width: 100% !important;
     }
 }
+
+/* ======================================== */
+/* NOTIFICATION SYSTEM FIX */
+/* ======================================== */
+
+/* Remove old notification styles */
+.notification-popup {
+    display: none !important;
+}
+
+/* New fixed notification system */
+.notification-system {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    max-width: 350px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.notification-toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    pointer-events: all;
+    animation: slideInRight 0.3s ease forwards;
+    transform: translateX(120%);
+    opacity: 0;
+    border-left: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-toast::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    opacity: 0.3;
+}
+
+.notification-toast.success {
+    border-left-color: var(--success-color);
+    background: linear-gradient(to right, rgba(76, 201, 240, 0.05), white);
+}
+
+.notification-toast.success::before {
+    background: var(--success-color);
+}
+
+.notification-toast.error {
+    border-left-color: var(--danger-color);
+    background: linear-gradient(to right, rgba(247, 37, 133, 0.05), white);
+}
+
+.notification-toast.error::before {
+    background: var(--danger-color);
+}
+
+.notification-toast.info {
+    border-left-color: var(--primary-color);
+    background: linear-gradient(to right, rgba(67, 97, 238, 0.05), white);
+}
+
+.notification-toast.info::before {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning {
+    border-left-color: var(--warning-color);
+    background: linear-gradient(to right, rgba(255, 158, 0, 0.05), white);
+}
+
+.notification-toast.warning::before {
+    background: var(--warning-color);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+.notification-toast.fade-out {
+    animation: slideOutRight 0.3s ease forwards;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+}
+
+.notification-toast.success .notification-icon {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-icon {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-icon {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-icon {
+    background: var(--warning-color);
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: var(--dark-color);
+}
+
+.notification-content p {
+    font-size: 14px;
+    margin: 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.3s;
+}
+
+.notification-close:hover {
+    color: var(--danger-color);
+}
+
+/* Progress bar for auto-dismiss */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+.notification-progress-bar {
+    height: 100%;
+    width: 100%;
+    transform: scaleX(1);
+    transform-origin: left;
+    animation: progressBar 3s linear forwards;
+}
+
+.notification-toast.success .notification-progress-bar {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-progress-bar {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-progress-bar {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-progress-bar {
+    background: var(--warning-color);
+}
+
+@keyframes progressBar {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 767px) {
+    .notification-system {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        max-width: none;
+    }
+
+    .notification-toast {
+        padding: 14px 16px;
+        margin-bottom: 8px;
+    }
+
+    .notification-content h4 {
+        font-size: 14px;
+    }
+
+    .notification-content p {
+        font-size: 13px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .notification-toast {
+        background: #1a1a2e;
+        color: #e1e1e1;
+        border-left-color: var(--primary-color);
+    }
+
+    .notification-toast.success {
+        background: linear-gradient(to right, rgba(76, 201, 240, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.error {
+        background: linear-gradient(to right, rgba(247, 37, 133, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.info {
+        background: linear-gradient(to right, rgba(67, 97, 238, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.warning {
+        background: linear-gradient(to right, rgba(255, 158, 0, 0.1), #1a1a2e);
+    }
+
+    .notification-content h4 {
+        color: #e1e1e1;
+    }
+
+    .notification-content p {
+        color: #b0b0b0;
+    }
+
+    .notification-close {
+        color: #b0b0b0;
+    }
+
+    .notification-close:hover {
+        color: #f72585;
+    }
+
+    .notification-progress {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
