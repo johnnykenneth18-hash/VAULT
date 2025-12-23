@@ -770,9 +770,20 @@ async function approveDepositRequest(requestId, amount, userId) {
 
         showAdminNotification('Deposit approved successfully!', 'success');
 
-        // Reload ALL data and refresh UI
+        // CRITICAL: Force refresh the current section
+        const activeSection = document.querySelector('.admin-section.active');
+        const sectionId = activeSection ? activeSection.id : '';
+
+        if (sectionId === 'deposit-requests-section') {
+            // If we're on the deposit requests page, reload it
+            await loadDepositRequests(supabase);
+        } else if (sectionId === 'withdrawal-requests-section') {
+            // If we're on the withdrawal requests page, reload it
+            await loadWithdrawalRequests(supabase);
+        }
+
+        // Always reload all data and update counts
         await loadAllData(supabase);
-        loadDepositRequests(supabase);
         updateDashboardStats();
         updatePendingCounts();
 
@@ -800,10 +811,17 @@ async function rejectDepositRequest(requestId) {
 
         showAdminNotification('Deposit request rejected', 'success');
 
+        // CRITICAL: Force refresh the current section
+        const activeSection = document.querySelector('.admin-section.active');
+        const sectionId = activeSection ? activeSection.id : '';
+
+        if (sectionId === 'deposit-requests-section') {
+            await loadDepositRequests(supabase);
+        }
+
         // Reload data and refresh UI
         await loadAllData(supabase);
-        loadDepositRequests(supabase);
-        updatePendingCounts();  // Update badge count
+        updatePendingCounts();
 
     } catch (error) {
         console.error('Error rejecting deposit:', error);
@@ -886,14 +904,22 @@ async function approveWithdrawalRequest(requestId, amount, userId) {
 
         showAdminNotification('Withdrawal approved successfully!', 'success');
 
-        // Reload ALL data and refresh UI
+        // CRITICAL: Force refresh the current section
+        const activeSection = document.querySelector('.admin-section.active');
+        const sectionId = activeSection ? activeSection.id : '';
+
+        if (sectionId === 'deposit-requests-section') {
+            // If we're on the deposit requests page, reload it
+            await loadDepositRequests(supabase);
+        } else if (sectionId === 'withdrawal-requests-section') {
+            // If we're on the withdrawal requests page, reload it
+            await loadWithdrawalRequests(supabase);
+        }
+
+        // Always reload all data and update counts
         await loadAllData(supabase);
-        loadWithdrawalRequests(supabase);
         updateDashboardStats();
         updatePendingCounts();
-
-
-
 
     } catch (error) {
         console.error('Error approving withdrawal:', error);
@@ -919,17 +945,23 @@ async function rejectWithdrawalRequest(requestId) {
 
         showAdminNotification('Withdrawal request rejected', 'success');
 
+        // CRITICAL: Force refresh the current section
+        const activeSection = document.querySelector('.admin-section.active');
+        const sectionId = activeSection ? activeSection.id : '';
+
+        if (sectionId === 'withdrawal-requests-section') {
+            await loadWithdrawalRequests(supabase);
+        }
+
         // Reload data and refresh UI
         await loadAllData(supabase);
-        loadWithdrawalRequests(supabase);
-        updatePendingCounts();  // Update badge count
+        updatePendingCounts();
 
     } catch (error) {
         console.error('Error rejecting withdrawal:', error);
         showAdminNotification('Failed to reject withdrawal', 'error');
     }
 }
-
 // Other sections (simplified)
 function setupTransactionsSection() {
     loadTransactionsTable();
