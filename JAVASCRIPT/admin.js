@@ -646,61 +646,86 @@ async function debugDepositRequests() {
 
 
 async function loadDepositRequests(supabase) {
-    console.log('🔄 LOADING deposit requests (with error handling)...');
+    console.log('🔄 LOADING deposit requests WITH PROPER FILTERING...');
 
     try {
         const container = document.getElementById('deposit-requests-list');
-        if (!container) {
-            console.error('❌ Container not found!');
-            return;
-        }
+        if (!container) return;
 
         // Show loading
-        container.innerHTML = '<div class="loading-requests"><i class="fas fa-spinner fa-spin"></i> Loading deposit requests...</div>';
+        container.innerHTML = '<div class="loading-requests">Loading deposit requests...</div>';
 
-        // Get ONLY pending requests
-        const { data: pendingRequests, error } = await supabase
+        // CRITICAL FIX: Add a timestamp to prevent caching
+        const timestamp = new Date().getTime();
+
+        // Get ONLY pending requests - DOUBLE CHECK THE FILTER
+        const { data: depositRequests, error } = await supabase
             .from('deposit_requests')
             .select('*')
-            .eq('status', 'pending')  // CRITICAL: Only get pending
+            .eq('status', 'pending')  // THIS MUST BE 'pending' NOT 'pending '
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('❌ Database query error:', error);
+            console.error('❌ Query error:', error);
             throw error;
         }
 
-        console.log(`📊 Received ${pendingRequests?.length || 0} pending requests from database`);
+        console.log(`📊 Database query returned ${depositRequests?.length || 0} requests`);
+        console.log('📋 All returned requests:', depositRequests);
+
+        // DEBUG: Check each request's status
+        if (depositRequests && depositRequests.length > 0) {
+            depositRequests.forEach((req, index) => {
+                console.log(`${index + 1}. ID: ${req.request_id}, Status: "${req.status}", Amount: $${req.amount}`);
+            });
+        }
+
+        // Filter on client side TOO (just in case)
+        const pendingRequests = depositRequests ? depositRequests.filter(req => {
+            const isPending = req.status === 'pending';
+            if (!isPending) {
+                console.log(`⚠️ Filtering out non-pending request: ${req.request_id} (status: "${req.status}")`);
+            }
+            return isPending;
+        }) : [];
+
+        console.log(`✅ After client filter: ${pendingRequests.length} pending requests`);
 
         // Update global data
-        adminData.depositRequests = pendingRequests || [];
+        adminData.depositRequests = pendingRequests;
 
-        // Display results
-        if (!adminData.depositRequests || adminData.depositRequests.length === 0) {
+        // Display
+        if (pendingRequests.length === 0) {
             container.innerHTML = `
-                <div class="no-requests">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>No Pending Requests</h3>
-                    <p>All deposit requests have been processed</p>
+                <div class="no-requests" style="text-align: center; padding: 40px; color: #27ae60; background: #eafaf1; border-radius: 8px;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 10px;">All Clear!</h3>
+                    <p style="color: #666;">No pending deposit requests</p>
+                    <button onclick="debugCurrentState()" style="margin-top: 20px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Debug Current State
+                    </button>
                 </div>
             `;
         } else {
-            // Build the UI
+            // Build UI
             let html = '';
-            adminData.depositRequests.forEach(request => {
+            pendingRequests.forEach(request => {
                 const user = adminData.users?.find(u => u.user_id === request.user_id);
                 html += `
-                    <div class="request-card deposit" data-request-id="${request.request_id}">
+                    <div class="request-card deposit" data-request-id="${request.request_id}" data-status="${request.status}">
                         <div class="request-header">
                             <h3>${formatCurrency(request.amount)}</h3>
                             <span class="request-status pending">Pending</span>
+                            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                                ID: ${request.request_id}<br>
+                                DB Status: <strong>${request.status}</strong>
+                            </div>
                         </div>
                         <div class="request-details">
-                            <p><strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : 'Unknown User'}</p>
+                            <p><strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : request.user_id}</p>
                             <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
                             <p><strong>Method:</strong> ${request.method || 'Bank Transfer'}</p>
                             <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
-                            <p><strong>Reference:</strong> ${request.reference || 'N/A'}</p>
                         </div>
                         <div class="request-actions">
                             <button class="btn-approve" onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
@@ -715,29 +740,147 @@ async function loadDepositRequests(supabase) {
             });
 
             container.innerHTML = html;
-            console.log(`✅ Displayed ${adminData.depositRequests.length} requests`);
         }
 
-        // Update badge count
+        // Update badge
         updatePendingCounts();
 
     } catch (error) {
-        console.error('❌ Error loading deposit requests:', error);
+        console.error('❌ Load error:', error);
         const container = document.getElementById('deposit-requests-list');
         if (container) {
-            container.innerHTML = `
-                <div class="error-requests">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Load Error</h3>
-                    <p>Failed to load deposit requests</p>
-                    <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Retry
-                    </button>
-                </div>
-            `;
+            container.innerHTML = '<div class="error-requests">Error loading</div>';
         }
     }
 }
+
+
+
+
+
+
+async function debugCurrentState() {
+    console.log('🔍 DEBUGGING CURRENT STATE...');
+
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
+
+    // 1. Get ALL deposit requests
+    const { data: allRequests, error: allError } = await supabase
+        .from('deposit_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    console.log('📊 ALL DEPOSIT REQUESTS IN DATABASE:');
+    if (allRequests && allRequests.length > 0) {
+        allRequests.forEach(req => {
+            console.log(`   • ${req.request_id}: status="${req.status}", amount=$${req.amount}, user=${req.user_id}`);
+        });
+    } else {
+        console.log('   (none)');
+    }
+
+    // 2. Check what the UI is showing
+    const container = document.getElementById('deposit-requests-list');
+    if (container) {
+        const cards = container.querySelectorAll('.request-card');
+        console.log(`📱 UI IS SHOWING ${cards.length} REQUEST CARDS:`);
+        cards.forEach(card => {
+            const requestId = card.getAttribute('data-request-id') || 'unknown';
+            const status = card.getAttribute('data-status') || 'unknown';
+            console.log(`   • ${requestId} (UI status: ${status})`);
+        });
+    }
+
+    // 3. Check adminData
+    console.log('📦 adminData.depositRequests:', adminData.depositRequests?.length || 0, 'items');
+
+    // 4. Check if there's whitespace in status values
+    if (allRequests) {
+        const statusValues = new Set(allRequests.map(r => r.status));
+        console.log('🔤 UNIQUE STATUS VALUES IN DATABASE:', Array.from(statusValues));
+
+        // Check for whitespace issues
+        statusValues.forEach(status => {
+            console.log(`   Status "${status}":`, {
+                length: status.length,
+                charCodes: Array.from(status).map(c => c.charCodeAt(0)),
+                hasSpaces: status.includes(' '),
+                trimmed: status.trim()
+            });
+        });
+    }
+
+    return allRequests;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function cleanupDatabase() {
+    console.log('🧹 CLEANING UP DATABASE...');
+
+    if (!confirm('This will mark all non-pending requests as "archived". Continue?')) return;
+
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
+
+    try {
+        // Get all requests
+        const { data: allRequests, error } = await supabase
+            .from('deposit_requests')
+            .select('*');
+
+        if (error) throw error;
+
+        console.log(`Found ${allRequests.length} total requests`);
+
+        // Find requests that aren't 'pending' but might be showing
+        const nonPending = allRequests.filter(req => req.status !== 'pending');
+        console.log(`Found ${nonPending.length} non-pending requests`);
+
+        // Archive them
+        for (const request of nonPending) {
+            console.log(`Archiving ${request.request_id} (status: ${request.status})`);
+
+            await supabase
+                .from('deposit_requests')
+                .update({
+                    status: 'archived',
+                    updated_at: new Date().toISOString()
+                })
+                .eq('request_id', request.request_id);
+        }
+
+        showAdminNotification(`✅ Archived ${nonPending.length} non-pending requests`, 'success');
+
+        // Refresh
+        await loadDepositRequests(supabase);
+
+    } catch (error) {
+        console.error('Cleanup error:', error);
+        showAdminNotification('Cleanup failed: ' + error.message, 'error');
+    }
+}
+
+
+
+
 
 
 
@@ -990,15 +1133,37 @@ async function approveDepositRequest(requestId, amount, userId) {
         }
 
         // 5. SUCCESS!
-        showAdminNotification(`✅ Deposit of $${amount} approved successfully!`, 'success');
+        // In approveDepositRequest(), after success:
+        showAdminNotification(`✅ Deposit approved! Refreshing...`, 'success');
 
-        // 6. Force refresh ALL data after a short delay
+        // HARD refresh of the section
         setTimeout(async () => {
-            console.log('🔄 Refreshing data...');
+            const supabase = window.supabase.createClient(
+                'https://grfrcnhmnvasiotejiok.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5ND0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+            );
+
+            // Clear the container
+            const container = document.getElementById('deposit-requests-list');
+            if (container) {
+                container.innerHTML = '<div class="loading-requests">Refreshing...</div>';
+            }
+
+            // Wait a moment for database to sync
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Reload ALL data
             await loadAllData(supabase);
-            await loadDepositRequests(supabase); // Force reload this section
+
+            // Force reload this section
+            await loadDepositRequests(supabase);
+
+            // Update everything
             updatePendingCounts();
             updateDashboardStats();
+
+            showAdminNotification('✅ Page refreshed!', 'success');
+
         }, 500);
 
     } catch (error) {
