@@ -64,7 +64,7 @@ h4 {
 .highlight {
     color: var(--primary-color);
     position: relative;
-    font-size: 4.3rem;
+    
 }
 
 .highlight::after {
@@ -76,6 +76,7 @@ h4 {
     height: 8px;
     background: rgba(67, 97, 238, 0.2);
     z-index: -1;
+    font-size: 4.3rem;
 }
 
 /* Buttons */
