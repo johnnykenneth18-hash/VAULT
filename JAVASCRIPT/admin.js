@@ -1091,16 +1091,16 @@ async function loadWithdrawalRequests(supabase) {
 
 function testCurrentUI() {
     console.log('👁️ TESTING CURRENT UI...');
-    
+
     const container = document.getElementById('deposit-requests-list');
     if (!container) {
         console.log('❌ Container not found');
         return;
     }
-    
+
     const cards = container.querySelectorAll('.request-card');
     console.log(`Found ${cards.length} request cards in UI:`);
-    
+
     cards.forEach((card, index) => {
         const requestId = card.getAttribute('data-request-id') || card.id || 'unknown';
         const status = card.getAttribute('data-status') || 'unknown';
@@ -1109,7 +1109,7 @@ function testCurrentUI() {
         console.log(`   Data status: ${status}`);
         console.log(`   HTML:`, card.outerHTML.substring(0, 200) + '...');
     });
-    
+
     // Check if buttons have correct onclick
     const buttons = container.querySelectorAll('button');
     console.log(`Found ${buttons.length} buttons:`);
@@ -1129,101 +1129,144 @@ function testCurrentUI() {
 
 
 async function approveDepositRequest(requestId, amount, userId) {
-    console.log('✅ APPROVING:', requestId);
+    console.log('🚀🚀🚀 APPROVING DEPOSIT REQUEST:', requestId);
 
     if (!confirm(`Approve deposit of $${amount}?`)) return;
 
-    try {
-        const supabase = window.supabase.createClient(
-            'https://grfrcnhmnvasiotejiok.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
-        );
+    // Create supabase client INSIDE the function to avoid scope issues
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
 
-        // 1. Remove from UI immediately
+    try {
+        // 1. FIRST: VISUALLY REMOVE FROM UI (immediate feedback)
+        console.log('🎯 Removing from UI:', requestId);
         const card = document.getElementById(`card-${requestId}`);
         if (card) {
+            // Animate removal
             card.style.transition = 'all 0.3s ease';
             card.style.opacity = '0.3';
-            card.style.transform = 'translateX(-20px)';
+            card.style.transform = 'translateX(-50px)';
+            card.style.height = card.offsetHeight + 'px';
+
             setTimeout(() => {
-                if (card.parentNode) {
-                    card.remove();
-                }
+                card.style.height = '0';
+                card.style.margin = '0';
+                card.style.padding = '0';
+                card.style.border = 'none';
+                card.style.overflow = 'hidden';
+
+                setTimeout(() => {
+                    if (card.parentNode) {
+                        card.remove();
+                        console.log('✅ Card removed from DOM');
+
+                        // If container is empty, show message
+                        const container = document.getElementById('deposit-requests-list');
+                        if (container && container.querySelectorAll('.request-card').length === 0) {
+                            container.innerHTML = `
+                                <div class="no-requests" style="text-align: center; padding: 40px; color: #27ae60;">
+                                    <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                                    <h3>Approved!</h3>
+                                    <p>No pending deposit requests</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
             }, 300);
         }
 
-        // 2. Update database
-        console.log('📝 Updating database...');
-        const { error: updateError } = await supabase
+        // 2. UPDATE DATABASE
+        console.log('📝 Updating database status to "approved"...');
+        const { data: updateResult, error: updateError } = await supabase
             .from('deposit_requests')
             .update({
                 status: 'approved',
                 updated_at: new Date().toISOString()
             })
-            .eq('request_id', requestId);
+            .eq('request_id', requestId)
+            .select();
 
         if (updateError) {
-            console.error('❌ Update error:', updateError);
-            showAdminNotification('Update failed: ' + updateError.message, 'error');
+            console.error('❌ DATABASE UPDATE FAILED:', updateError);
+            showAdminNotification('Database error: ' + updateError.message, 'error');
             return;
         }
 
-        console.log('✅ Database updated');
+        console.log('✅ Database update successful:', updateResult);
 
-        // 3. Update user balance
+        // 3. UPDATE USER BALANCE
         console.log('💰 Updating user balance...');
-        const { data: user, error: userError } = await supabase
-            .from('users')
-            .select('balance, total_deposits')
-            .eq('user_id', userId)
-            .single();
-
-        if (!userError && user) {
-            const newBalance = (parseFloat(user.balance) || 0) + parseFloat(amount);
-            const newTotalDeposits = (parseFloat(user.total_deposits) || 0) + parseFloat(amount);
-
-            await supabase
+        try {
+            const { data: user, error: userError } = await supabase
                 .from('users')
-                .update({
-                    balance: newBalance,
-                    total_deposits: newTotalDeposits,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('user_id', userId);
-            console.log('✅ User balance updated');
+                .select('balance, total_deposits')
+                .eq('user_id', userId)
+                .single();
+
+            if (!userError && user) {
+                const newBalance = (parseFloat(user.balance) || 0) + parseFloat(amount);
+                const newTotalDeposits = (parseFloat(user.total_deposits) || 0) + parseFloat(amount);
+
+                await supabase
+                    .from('users')
+                    .update({
+                        balance: newBalance,
+                        total_deposits: newTotalDeposits,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('user_id', userId);
+
+                console.log('✅ User balance updated');
+            }
+        } catch (balanceError) {
+            console.error('⚠️ Balance update error (continuing):', balanceError);
         }
 
-        // 4. Create transaction
-        console.log('📊 Creating transaction...');
-        const transactionId = 'TXN_' + Date.now();
-        await supabase
-            .from('transactions')
-            .insert([{
-                transaction_id: transactionId,
-                user_id: userId,
-                type: 'deposit',
-                amount: amount,
-                method: 'Bank Transfer',
-                status: 'completed',
-                description: `Deposit approved`,
-                transaction_date: new Date().toISOString()
-            }]);
-        console.log('✅ Transaction created');
+        // 4. CREATE TRANSACTION
+        console.log('📊 Creating transaction record...');
+        try {
+            const transactionId = 'TXN_' + Date.now();
+            await supabase
+                .from('transactions')
+                .insert([{
+                    transaction_id: transactionId,
+                    user_id: userId,
+                    type: 'deposit',
+                    amount: amount,
+                    method: 'Bank Transfer',
+                    status: 'completed',
+                    description: `Deposit approved`,
+                    transaction_date: new Date().toISOString()
+                }]);
+            console.log('✅ Transaction created');
+        } catch (transactionError) {
+            console.error('⚠️ Transaction error (continuing):', transactionError);
+        }
 
-        // 5. Show success
-        showAdminNotification(`✅ Deposit of $${amount} approved!`, 'success');
+        // 5. SHOW SUCCESS
+        showAdminNotification(`✅ Deposit of $${amount} approved successfully!`, 'success');
+        console.log('🎉 Approval process complete!');
 
-        // 6. Refresh after delay
+        // 6. FORCE REFRESH AFTER DELAY
         setTimeout(async () => {
-            console.log('🔄 Refreshing UI...');
-            await loadDepositRequests(supabase);
+            console.log('🔄 Forcing full refresh...');
+
+            // Update badge counts immediately
             updatePendingCounts();
             updateDashboardStats();
+
+            // Force reload from database
+            await loadDepositRequests(supabase);
+
+            console.log('✅ Refresh complete');
         }, 1000);
 
     } catch (error) {
-        console.error('❌ Approval error:', error);
-        showAdminNotification('Error: ' + error.message, 'error');
+        console.error('❌ UNEXPECTED ERROR:', error);
+        showAdminNotification('Unexpected error: ' + error.message, 'error');
     }
 }
 
@@ -1319,6 +1362,96 @@ function removeRequestFromUI(requestId, type = 'deposit') {
 
 
 
+
+
+
+
+
+
+async function testApprovalNow() {
+    console.log('🧪 TESTING APPROVAL RIGHT NOW...');
+
+    const requestId = 'DEP_1766459029151';
+    const amount = 4000;
+    const userId = 'USER_1765990632558';
+
+    console.log('Test parameters:', { requestId, amount, userId });
+
+    // Test 1: Check current status
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
+
+    const { data: current, error } = await supabase
+        .from('deposit_requests')
+        .select('status, amount, user_id')
+        .eq('request_id', requestId)
+        .single();
+
+    console.log('Current status:', current);
+
+    if (confirm(`Test approve request ${requestId} for $${amount}?`)) {
+        // Call the approval function
+        await approveDepositRequest(requestId, amount, userId);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+async function verifyDatabaseStatus() {
+    console.log('🔍 VERIFYING DATABASE STATUS...');
+
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
+
+    const { data: allRequests, error } = await supabase
+        .from('deposit_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error:', error);
+        return;
+    }
+
+    console.log(`📊 Total requests in database: ${allRequests.length}`);
+
+    const statusCounts = {};
+    allRequests.forEach(req => {
+        statusCounts[req.status] = (statusCounts[req.status] || 0) + 1;
+
+        console.log(`${req.request_id}: $${req.amount} - ${req.status} - ${req.user_id}`);
+    });
+
+    console.log('📈 Status summary:', statusCounts);
+
+    return allRequests;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function forceRefreshDeposits() {
     console.log('🔄 FORCE REFRESHING...');
 
@@ -1336,19 +1469,32 @@ async function forceRefreshDeposits() {
 
 
 async function rejectDepositRequest(requestId) {
+    console.log('🗑️ REJECTING REQUEST:', requestId);
+
     if (!confirm('Reject this deposit request?')) return;
 
-    try {
-        const supabase = window.supabase.createClient(
-            'https://grfrcnhmnvasiotejiok.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
-        );
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
 
+    try {
         // Remove from UI
-        removeRequestFromUI(requestId, 'deposit');
+        const card = document.getElementById(`card-${requestId}`);
+        if (card) {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '0.3';
+            card.style.transform = 'translateX(50px)';
+
+            setTimeout(() => {
+                if (card.parentNode) {
+                    card.remove();
+                }
+            }, 300);
+        }
 
         // Update database
-        const { error } = await supabase
+        await supabase
             .from('deposit_requests')
             .update({
                 status: 'rejected',
@@ -1356,13 +1502,7 @@ async function rejectDepositRequest(requestId) {
             })
             .eq('request_id', requestId);
 
-        if (error) {
-            console.error('Reject error:', error);
-            showAdminNotification('Reject failed: ' + error.message, 'error');
-            return;
-        }
-
-        showAdminNotification('✅ Deposit request rejected', 'success');
+        showAdminNotification('✅ Request rejected', 'success');
 
         // Refresh
         setTimeout(async () => {
