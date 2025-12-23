@@ -293,6 +293,12 @@
                         <h2><i class="fas fa-money-bill-wave"></i> Deposit Requests</h2>
                         <p>Approve or reject deposit requests</p>
                     </div>
+                    <!-- Add this inside deposit-requests-section, after the header -->
+                    <div class="section-actions">
+                        <button class="btn-refresh" id="refresh-deposits" onclick="refreshDepositRequests()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
 
                     <div class="requests-list" id="deposit-requests-list">
                         <!-- Deposit requests will be loaded here -->

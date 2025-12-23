@@ -717,6 +717,29 @@ body {
     border-left-color: #4cc9f0;
 }
 
+.section-actions {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.btn-refresh {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-refresh:hover {
+    background: #2980b9;
+}
+
+.btn-refresh i {
+    margin-right: 5px;
+}
+
 .request-card.withdrawal {
     border-left-color: #f72585;
 }
