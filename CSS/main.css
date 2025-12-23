@@ -1270,6 +1270,9 @@ h4 {
     h1 {
         font-size: 3rem;
     }
+    .highlight{
+        font-size: 7rem;
+    }
 
     h2 {
         font-size: 2.2rem;
