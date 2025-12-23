@@ -645,46 +645,45 @@ async function debugDepositRequests() {
 
 
 async function loadDepositRequests(supabase) {
+    console.log('🔄 LOADING deposit requests...');
 
-    console.log('🔄 LOADING deposit requests WITH PROPER FILTERING...');
+    const container = document.getElementById('deposit-requests-list');
+    if (!container) {
+        console.error('❌ Container #deposit-requests-list not found!');
+        return;
+    }
 
     try {
-
         // Show loading
         container.innerHTML = '<div class="loading-requests">Loading deposit requests...</div>';
 
-        // CRITICAL FIX: Add a timestamp to prevent caching
-        const timestamp = new Date().getTime();
-
-        // Get ONLY pending requests - DOUBLE CHECK THE FILTER
+        // Get ONLY pending requests
         const { data: depositRequests, error } = await supabase
             .from('deposit_requests')
             .select('*')
-            .eq('status', 'pending')  // THIS MUST BE 'pending' NOT 'pending '
+            .eq('status', 'pending')
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('❌ Query error:', error);
+            console.error('❌ Database error:', error);
             throw error;
         }
 
-        console.log(`📊 Database query returned ${depositRequests?.length || 0} requests`);
-        console.log('📋 All returned requests:', depositRequests);
+        console.log(`📊 Database returned ${depositRequests?.length || 0} requests`);
 
-        // DEBUG: Check each request's status
+        // Debug: Log all returned requests
         if (depositRequests && depositRequests.length > 0) {
+            console.log('📋 All returned requests:');
             depositRequests.forEach((req, index) => {
-                console.log(`${index + 1}. ID: ${req.request_id}, Status: "${req.status}", Amount: $${req.amount}`);
+                console.log(`${index + 1}. ${req.request_id} - Status: "${req.status}" - Amount: $${req.amount}`);
             });
         }
 
-        // Filter on client side TOO (just in case)
+        // Filter on client side too (just to be safe)
         const pendingRequests = depositRequests ? depositRequests.filter(req => {
-            const isPending = req.status === 'pending';
-            if (!isPending) {
-                console.log(`⚠️ Filtering out non-pending request: ${req.request_id} (status: "${req.status}")`);
-            }
-            return isPending;
+            // Trim and check status
+            const status = String(req.status).trim().toLowerCase();
+            return status === 'pending';
         }) : [];
 
         console.log(`✅ After client filter: ${pendingRequests.length} pending requests`);
@@ -692,16 +691,13 @@ async function loadDepositRequests(supabase) {
         // Update global data
         adminData.depositRequests = pendingRequests;
 
-        // Display
+        // Display results
         if (pendingRequests.length === 0) {
             container.innerHTML = `
-                <div class="no-requests" style="text-align: center; padding: 40px; color: #27ae60; background: #eafaf1; border-radius: 8px;">
-                    <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 10px;">All Clear!</h3>
-                    <p style="color: #666;">No pending deposit requests</p>
-                    <button onclick="debugCurrentState()" style="margin-top: 20px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Debug Current State
-                    </button>
+                <div class="no-requests">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>No Pending Requests</h3>
+                    <p>All deposit requests have been processed</p>
                 </div>
             `;
         } else {
@@ -709,28 +705,27 @@ async function loadDepositRequests(supabase) {
             let html = '';
             pendingRequests.forEach(request => {
                 const user = adminData.users?.find(u => u.user_id === request.user_id);
+                const displayName = user ? `${user.first_name} ${user.last_name}` : request.user_id;
+
                 html += `
-                    <div class="request-card deposit" data-request-id="${request.request_id}" data-status="${request.status}">
+                    <div class="request-card deposit" id="req-${request.request_id}">
                         <div class="request-header">
                             <h3>${formatCurrency(request.amount)}</h3>
                             <span class="request-status pending">Pending</span>
-                            <div style="font-size: 11px; color: #666; margin-top: 5px;">
-                                ID: ${request.request_id}<br>
-                                DB Status: <strong>${request.status}</strong>
-                            </div>
                         </div>
                         <div class="request-details">
-                            <p><strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : request.user_id}</p>
+                            <p><strong>User:</strong> ${displayName}</p>
                             <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
                             <p><strong>Method:</strong> ${request.method || 'Bank Transfer'}</p>
                             <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
+                            ${request.reference ? `<p><strong>Reference:</strong> ${request.reference}</p>` : ''}
                         </div>
                         <div class="request-actions">
                             <button class="btn-approve" onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
-                                <i class="fas fa-check"></i> Approve
+                                Approve
                             </button>
                             <button class="btn-reject" onclick="rejectDepositRequest('${request.request_id}')">
-                                <i class="fas fa-times"></i> Reject
+                                Reject
                             </button>
                         </div>
                     </div>
@@ -740,14 +735,22 @@ async function loadDepositRequests(supabase) {
             container.innerHTML = html;
         }
 
-        // Update badge
+        // Update badge count
         updatePendingCounts();
 
     } catch (error) {
-        console.error('❌ Load error:', error);
-        const container = document.getElementById('deposit-requests-list');
+        console.error('❌ Error in loadDepositRequests:', error);
         if (container) {
-            container.innerHTML = '<div class="error-requests">Error loading</div>';
+            container.innerHTML = `
+                <div class="error-requests">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading</h3>
+                    <p>Failed to load deposit requests</p>
+                    <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Reload Page
+                    </button>
+                </div>
+            `;
         }
     }
 }
@@ -970,75 +973,104 @@ async function testApproval() {
 
 
 async function loadWithdrawalRequests(supabase) {
-    try {
-        const container = document.getElementById('withdrawal-requests-list');
-        if (!container) return;
+    console.log('🔄 LOADING withdrawal requests...');
 
-        // Show loading state
+    const container = document.getElementById('withdrawal-requests-list');
+    if (!container) {
+        console.error('❌ Container #withdrawal-requests-list not found!');
+        return;
+    }
+
+    try {
+        // Show loading
         container.innerHTML = '<div class="loading-requests">Loading withdrawal requests...</div>';
 
-        // ALWAYS fetch fresh data from database
+        // Get ONLY pending requests
         const { data: withdrawalRequests, error } = await supabase
             .from('withdrawal_requests')
             .select('*')
-            .eq('status', 'pending')  // Only show pending
+            .eq('status', 'pending')
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
-
-        // Update adminData
-        adminData.withdrawalRequests = withdrawalRequests || [];
-
-        console.log('Loaded withdrawal requests:', withdrawalRequests); // Debug log
-
-        if (adminData.withdrawalRequests.length === 0) {
-            container.innerHTML = '<div class="no-requests">No pending withdrawal requests</div>';
-            return;
+        if (error) {
+            console.error('❌ Database error:', error);
+            throw error;
         }
 
-        container.innerHTML = adminData.withdrawalRequests.map(request => {
-            const user = adminData.users.find(u => u.user_id === request.user_id);
-            return `
-                <div class="request-card withdrawal">
-                    <div class="request-header">
-                        <h3>${formatCurrency(request.amount)}</h3>
-                        <span class="request-status pending">Pending</span>
-                    </div>
-                    <div class="request-user">
-                        <strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : request.user_id}
-                        <br><strong>Email:</strong> ${user ? user.email : 'N/A'}
-                    </div>
-                    <div class="request-details">
-                        <p><strong>Method:</strong> ${request.method}</p>
-                        <p><strong>Account Details:</strong> ${request.account_details || 'N/A'}</p>
-                        <p><strong>Net Amount:</strong> ${formatCurrency(request.net_amount)}</p>
-                        <p><strong>Fee:</strong> ${formatCurrency(request.fee)}</p>
-                        <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
-                        ${request.method_details ? `<pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px;">${request.method_details}</pre>` : ''}
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-approve" onclick="approveWithdrawalRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
-                            Approve
-                        </button>
-                        <button class="btn-reject" onclick="rejectWithdrawalRequest('${request.request_id}')">
-                            Reject
-                        </button>
-                    </div>
+        console.log(`📊 Database returned ${withdrawalRequests?.length || 0} withdrawal requests`);
+
+        // Filter on client side
+        const pendingRequests = withdrawalRequests ? withdrawalRequests.filter(req => {
+            const status = String(req.status).trim().toLowerCase();
+            return status === 'pending';
+        }) : [];
+
+        console.log(`✅ After client filter: ${pendingRequests.length} pending withdrawal requests`);
+
+        // Update global data
+        adminData.withdrawalRequests = pendingRequests;
+
+        // Display results
+        if (pendingRequests.length === 0) {
+            container.innerHTML = `
+                <div class="no-requests">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>No Pending Requests</h3>
+                    <p>All withdrawal requests have been processed</p>
                 </div>
             `;
-        }).join('');
+        } else {
+            // Build UI
+            let html = '';
+            pendingRequests.forEach(request => {
+                const user = adminData.users?.find(u => u.user_id === request.user_id);
+                const displayName = user ? `${user.first_name} ${user.last_name}` : request.user_id;
+
+                html += `
+                    <div class="request-card withdrawal" id="req-${request.request_id}">
+                        <div class="request-header">
+                            <h3>${formatCurrency(request.amount)}</h3>
+                            <span class="request-status pending">Pending</span>
+                        </div>
+                        <div class="request-details">
+                            <p><strong>User:</strong> ${displayName}</p>
+                            <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
+                            <p><strong>Net Amount:</strong> ${formatCurrency(request.net_amount || request.amount)}</p>
+                            <p><strong>Fee:</strong> ${formatCurrency(request.fee || 0)}</p>
+                            <p><strong>Method:</strong> ${request.method || 'Bank Transfer'}</p>
+                            <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
+                        </div>
+                        <div class="request-actions">
+                            <button class="btn-approve" onclick="approveWithdrawalRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
+                                Approve
+                            </button>
+                            <button class="btn-reject" onclick="rejectWithdrawalRequest('${request.request_id}')">
+                                Reject
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
 
         // Update badge count
         updatePendingCounts();
 
     } catch (error) {
-        console.error('Error loading withdrawal requests:', error);
-        container.innerHTML = '<div class="error-requests">Error loading withdrawal requests</div>';
-        showAdminNotification('Failed to load withdrawal requests', 'error');
+        console.error('❌ Error in loadWithdrawalRequests:', error);
+        if (container) {
+            container.innerHTML = `
+                <div class="error-requests">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading</h3>
+                    <p>Failed to load withdrawal requests</p>
+                </div>
+            `;
+        }
     }
 }
-
-
 async function approveDepositRequest(requestId, amount, userId) {
     console.log('🚀 STARTING APPROVAL:', { requestId, amount, userId });
 
@@ -1281,9 +1313,9 @@ async function rejectDepositRequest(requestId) {
 
     try {
         const supabase = window.supabase.createClient(
-        'https://grfrcnhmnvasiotejiok.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
-    );
+            'https://grfrcnhmnvasiotejiok.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+        );
 
         // Remove from UI
         removeRequestFromUI(requestId, 'deposit');
