@@ -591,12 +591,14 @@ async function loadDepositRequests(supabase) {
                     </div>
                     <div class="request-user">
                         <strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : request.user_id}
+                        <br><strong>Email:</strong> ${user ? user.email : 'N/A'}
                     </div>
                     <div class="request-details">
                         <p><strong>Method:</strong> ${request.method}</p>
                         <p><strong>Reference:</strong> ${request.reference || 'N/A'}</p>
                         <p><strong>Weeks:</strong> ${request.weeks || 4}</p>
                         <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
+                        ${request.method_details ? `<pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px;">${request.method_details}</pre>` : ''}
                     </div>
                     <div class="request-actions">
                         <button class="btn-approve" onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">

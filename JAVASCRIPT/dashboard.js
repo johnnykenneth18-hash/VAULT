@@ -949,13 +949,12 @@ async function processDepositRequest() {
         const supabase = initSupabase();
         const requestId = 'DEP_' + Date.now();
 
-        // Create deposit request
+        // Create deposit request WITHOUT user_email
         const { error } = await supabase
             .from('deposit_requests')
             .insert([{
                 request_id: requestId,
                 user_id: userAccount.id,
-                user_email: userAccount.email,
                 amount: amount,
                 weeks: weeks,
                 method: method,
@@ -1103,6 +1102,7 @@ async function processWithdrawalRequest() {
     }
 
     let accountDetails = '';
+    let methodDetails = '';
 
     if (method === 'bank') {
         const bankName = document.getElementById('withdrawal-bank-name').value;
@@ -1116,6 +1116,7 @@ async function processWithdrawalRequest() {
         }
 
         accountDetails = `Bank Name: ${bankName}\nAccount Number: ${accountNumber}\nAccount Holder: ${accountHolder}\nRouting/SWIFT: ${routing}`;
+        methodDetails = 'Bank Transfer';
 
     } else if (method === 'crypto') {
         const cryptoType = document.getElementById('withdrawal-crypto-type').value;
@@ -1128,23 +1129,24 @@ async function processWithdrawalRequest() {
         }
 
         accountDetails = `Cryptocurrency: ${cryptoType}\nWallet Address: ${walletAddress}\nNetwork: ${network}`;
+        methodDetails = 'Cryptocurrency';
     }
 
     try {
         const supabase = initSupabase();
         const requestId = 'WDR_' + Date.now();
 
-        // Create withdrawal request
+        // Create withdrawal request WITHOUT user_email
         const { error } = await supabase
             .from('withdrawal_requests')
             .insert([{
                 request_id: requestId,
                 user_id: userAccount.id,
-                user_email: userAccount.email,
                 amount: amount,
                 fee: fee,
                 net_amount: netAmount,
                 method: method,
+                method_details: methodDetails,
                 account_details: accountDetails,
                 status: 'pending',
                 created_at: new Date().toISOString()
