@@ -1646,6 +1646,11 @@ h4 {
     .hero-text h1 {
         font-size: 1.8rem !important;
     }
+    .highlight {
+        font-size: 2.4rem !important;
+
+
+    }
 
     .hero-subtitle {
         font-size: 0.95rem !important;
@@ -1709,6 +1714,11 @@ h4 {
 @media (min-width: 481px) and (max-width: 768px) {
     .hero-text h1 {
         font-size: 2.5rem !important;
+    }
+    .highlight {
+        font-size: 3.3rem !important;
+
+
     }
 
     .hero-stats {
