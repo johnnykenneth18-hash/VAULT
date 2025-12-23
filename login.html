@@ -260,7 +260,7 @@
     </div>
 
     <script src="./JAVASCRIPT/supabase.js"></script>
-    <script src="./JAVASCRIPT/translator.js"></script>
+
 
 
 
@@ -560,61 +560,777 @@
     </script>
 
 
-    <!-- Add this before </body> tag in each page -->
-    <div id="google_translate_element" style="display: none;"></div>
+    <!-- ======================================== -->
+    <!-- PROFESSIONAL TRANSLATION INTERFACE -->
+    <!-- (Uses Browser Translation Without Layout Issues) -->
+    <!-- ======================================== -->
+    <div class="translation-wrapper">
+        <!-- Floating Translate Button -->
+        <button class="translate-floating-btn" id="translateFloatingBtn">
+            <i class="fas fa-language"></i>
+            <span class="btn-text">🌍 Translate</span>
+        </button>
+
+        <!-- Translation Panel (Hidden by default) -->
+        <div class="translation-panel" id="translationPanel">
+            <div class="panel-header">
+                <h4><i class="fas fa-globe-americas"></i> Website Translation</h4>
+                <button class="panel-close" id="panelClose">&times;</button>
+            </div>
+
+            <div class="panel-content">
+                <div class="translation-method browser-method">
+                    <div class="method-icon">
+                        <i class="fas fa-browser"></i>
+                    </div>
+                    <div class="method-content">
+                        <h5>Browser Translation (Recommended)</h5>
+                        <p>Use your browser's built-in translator for perfect results:</p>
+
+                        <div class="browser-instructions">
+                            <div class="instruction">
+                                <i class="fab fa-chrome"></i>
+                                <div>
+                                    <strong>Google Chrome / Microsoft Edge:</strong>
+                                    <p>Right-click anywhere on page → <em>"Translate to [Language]"</em></p>
+                                </div>
+                            </div>
+
+                            <div class="instruction">
+                                <i class="fab fa-firefox"></i>
+                                <div>
+                                    <strong>Mozilla Firefox:</strong>
+                                    <p>Click the translate icon <i class="fas fa-language"></i> in address bar</p>
+                                </div>
+                            </div>
+
+                            <div class="instruction">
+                                <i class="fab fa-safari"></i>
+                                <div>
+                                    <strong>Apple Safari:</strong>
+                                    <p>Settings → Advanced → <em>"Never translate [language]"</em></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="translation-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <span><strong>Tip:</strong> Banking terms may appear in English for accuracy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="translation-method manual-method">
+                    <div class="method-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="method-content">
+                        <h5>Quick Language Selection</h5>
+                        <p>Copy and paste this URL into Google Translate:</p>
+
+                        <div class="translate-url">
+                            <input type="text" readonly value="https://vault-investments.com" id="translateUrl">
+                            <button class="copy-url-btn" id="copyUrlBtn">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+
+                        <div class="language-buttons">
+                            <p>Common languages:</p>
+                            <div class="lang-btns-grid">
+                                <button class="lang-btn" data-lang="es">Español</button>
+                                <button class="lang-btn" data-lang="fr">Français</button>
+                                <button class="lang-btn" data-lang="de">Deutsch</button>
+                                <button class="lang-btn" data-lang="pt">Português</button>
+                                <button class="lang-btn" data-lang="ru">Русский</button>
+                                <button class="lang-btn" data-lang="zh">中文</button>
+                                <button class="lang-btn" data-lang="ar">العربية</button>
+                                <button class="lang-btn" data-lang="ja">日本語</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <button class="dismiss-btn" id="dismissTranslation">
+                    <i class="far fa-bell-slash"></i> Don't show again
+                </button>
+                <div class="translation-note">
+                    <i class="fas fa-info-circle"></i>
+                    <small>Translation preserves banking terms for accuracy</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Simple translator for internal pages
-        function initSimpleTranslator() {
-            // Check for saved language preference
-            const savedLang = localStorage.getItem('vault_translate_lang');
+        // ========================================
+        // TRANSLATION PANEL CONTROLLER
+        // ========================================
 
-            // Load Google Translate
-            const script = document.createElement('script');
-            script.src = `//translate.google.com/translate_a/element.js?cb=googleTranslateInit`;
-            document.head.appendChild(script);
+        document.addEventListener('DOMContentLoaded', function () {
+            const floatingBtn = document.getElementById('translateFloatingBtn');
+            const translationPanel = document.getElementById('translationPanel');
+            const panelClose = document.getElementById('panelClose');
+            const copyUrlBtn = document.getElementById('copyUrlBtn');
+            const dismissBtn = document.getElementById('dismissTranslation');
+            const translateUrl = document.getElementById('translateUrl');
+            const langButtons = document.querySelectorAll('.lang-btn');
 
-            window.googleTranslateInit = function () {
-                new google.translate.TranslateElement({
-                    pageLanguage: 'en',
-                    includedLanguages: 'en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi',
-                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                    autoDisplay: false
-                }, 'google_translate_element');
+            // Set current URL
+            if (translateUrl) {
+                translateUrl.value = window.location.href;
+            }
 
-                // Apply saved language
-                if (savedLang) {
-                    setTimeout(() => {
-                        const combo = document.querySelector('.goog-te-combo');
-                        if (combo) {
-                            combo.value = savedLang;
-                            combo.dispatchEvent(new Event('change'));
-                        }
-                    }, 1000);
+            // Auto-show panel for non-English users (once per session)
+            const userLang = navigator.language || navigator.userLanguage;
+            const primaryLang = userLang.split('-')[0];
+
+            if (primaryLang !== 'en' &&
+                !sessionStorage.getItem('translation_shown') &&
+                !localStorage.getItem('translation_disabled')) {
+
+                setTimeout(() => {
+                    showTranslationPanel();
+                    sessionStorage.setItem('translation_shown', 'true');
+                }, 2000);
+            }
+
+            // Toggle panel with floating button
+            if (floatingBtn && translationPanel) {
+                floatingBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (translationPanel.classList.contains('show')) {
+                        hideTranslationPanel();
+                    } else {
+                        showTranslationPanel();
+                    }
+                });
+            }
+
+            // Close panel
+            if (panelClose) {
+                panelClose.addEventListener('click', hideTranslationPanel);
+            }
+
+            // Close panel when clicking outside
+            document.addEventListener('click', function (event) {
+                if (!translationPanel.contains(event.target) &&
+                    !floatingBtn.contains(event.target) &&
+                    translationPanel.classList.contains('show')) {
+                    hideTranslationPanel();
                 }
-            };
+            });
+
+            // Copy URL to clipboard
+            if (copyUrlBtn && translateUrl) {
+                copyUrlBtn.addEventListener('click', function () {
+                    translateUrl.select();
+                    document.execCommand('copy');
+
+                    // Show copied feedback
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    this.style.background = '#4cc9f0';
+
+                    setTimeout(() => {
+                        this.innerHTML = originalHTML;
+                        this.style.background = '';
+                    }, 1500);
+                });
+            }
+
+            // Language buttons - Open Google Translate with URL
+            langButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const lang = this.dataset.lang;
+                    const langNames = {
+                        'es': 'Spanish', 'fr': 'French', 'de': 'German', 'pt': 'Portuguese',
+                        'ru': 'Russian', 'zh': 'Chinese', 'ar': 'Arabic', 'ja': 'Japanese'
+                    };
+
+                    // Open Google Translate with current page
+                    const url = `https://translate.google.com/translate?hl=${lang}&sl=en&tl=${lang}&u=${encodeURIComponent(window.location.href)}`;
+                    window.open(url, '_blank', 'noopener,noreferrer');
+
+                    // Show feedback
+                    showTranslationFeedback(`Opening in ${langNames[lang] || lang}...`);
+                });
+            });
+
+            // Dismiss translation permanently
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', function () {
+                    localStorage.setItem('translation_disabled', 'true');
+                    hideTranslationPanel();
+                    floatingBtn.style.display = 'none';
+                    showTranslationFeedback('Translation helper disabled');
+                });
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                // Ctrl+Shift+T or Cmd+Shift+T for translation
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+                    e.preventDefault();
+                    if (translationPanel.classList.contains('show')) {
+                        hideTranslationPanel();
+                    } else {
+                        showTranslationPanel();
+                    }
+                }
+
+                // Escape to close
+                if (e.key === 'Escape' && translationPanel.classList.contains('show')) {
+                    hideTranslationPanel();
+                }
+            });
+        });
+
+        function showTranslationPanel() {
+            const panel = document.getElementById('translationPanel');
+            const btn = document.getElementById('translateFloatingBtn');
+
+            if (panel && btn) {
+                panel.classList.add('show');
+                btn.classList.add('active');
+                btn.querySelector('.btn-text').textContent = 'Close';
+            }
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initSimpleTranslator);
+        function hideTranslationPanel() {
+            const panel = document.getElementById('translationPanel');
+            const btn = document.getElementById('translateFloatingBtn');
+
+            if (panel && btn) {
+                panel.classList.remove('show');
+                btn.classList.remove('active');
+                btn.querySelector('.btn-text').textContent = '🌍 Translate';
+            }
+        }
+
+        function showTranslationFeedback(message) {
+            // Remove existing feedback
+            const existing = document.querySelector('.translation-feedback');
+            if (existing) existing.remove();
+
+            // Create feedback element
+            const feedback = document.createElement('div');
+            feedback.className = 'translation-feedback';
+            feedback.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(feedback);
+
+            // Auto-remove after 2 seconds
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, 2000);
+        }
+
+        // Add translation styles
+        const translationStyles = document.createElement('style');
+        translationStyles.textContent = `
+            /* ======================================== */
+            /* TRANSLATION INTERFACE STYLES */
+            /* ======================================== */
+            
+            .translation-wrapper {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9998;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            
+            /* Floating Button */
+            .translate-floating-btn {
+                background: linear-gradient(135deg, #4361ee, #3a0ca3);
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 25px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 600;
+                box-shadow: 0 5px 20px rgba(67, 97, 238, 0.3);
+                transition: all 0.3s ease;
+                font-size: 14px;
+                z-index: 9999;
+                position: relative;
+            }
+            
+            .translate-floating-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            }
+            
+            .translate-floating-btn.active {
+                background: linear-gradient(135deg, #3a0ca3, #7209b7);
+            }
+            
+            .translate-floating-btn i {
+                font-size: 16px;
+            }
+            
+            /* Translation Panel */
+            .translation-panel {
+                position: absolute;
+                bottom: 100%;
+                right: 0;
+                margin-bottom: 10px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                border: 1px solid #eaeaea;
+                width: 400px;
+                max-width: 90vw;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(10px);
+                transition: all 0.3s ease;
+                z-index: 10000;
+                overflow: hidden;
+            }
+            
+            .translation-panel.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            
+            /* Panel Header */
+            .panel-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                background: linear-gradient(135deg, #4361ee, #3a0ca3);
+                color: white;
+            }
+            
+            .panel-header h4 {
+                margin: 0;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .panel-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                line-height: 1;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background 0.3s;
+            }
+            
+            .panel-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            /* Panel Content */
+            .panel-content {
+                padding: 20px;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            
+            .translation-method {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 25px;
+                padding-bottom: 25px;
+                border-bottom: 1px solid #eaeaea;
+            }
+            
+            .translation-method:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+            
+            .method-icon {
+                width: 40px;
+                height: 40px;
+                background: #f0f7ff;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #4361ee;
+                flex-shrink: 0;
+                font-size: 18px;
+            }
+            
+            .method-content {
+                flex: 1;
+            }
+            
+            .method-content h5 {
+                margin: 0 0 8px 0;
+                color: #333;
+                font-size: 15px;
+            }
+            
+            .method-content p {
+                margin: 0 0 15px 0;
+                color: #666;
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            
+            /* Browser Instructions */
+            .browser-instructions {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .instruction {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .instruction:last-child {
+                margin-bottom: 0;
+            }
+            
+            .instruction i {
+                font-size: 20px;
+                color: #4361ee;
+                margin-top: 2px;
+                flex-shrink: 0;
+            }
+            
+            .instruction strong {
+                display: block;
+                color: #333;
+                font-size: 13px;
+                margin-bottom: 3px;
+            }
+            
+            .instruction p {
+                margin: 0;
+                color: #666;
+                font-size: 12px;
+                line-height: 1.4;
+            }
+            
+            .translation-tip {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px;
+                background: #fff9e6;
+                border-radius: 6px;
+                border-left: 3px solid #ff9e00;
+                font-size: 12px;
+            }
+            
+            .translation-tip i {
+                color: #ff9e00;
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+            
+            .translation-tip span {
+                color: #666;
+            }
+            
+            /* URL Copy Section */
+            .translate-url {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .translate-url input {
+                flex: 1;
+                padding: 8px 12px;
+                border: 2px solid #eaeaea;
+                border-radius: 6px;
+                font-size: 12px;
+                font-family: monospace;
+                background: #f8f9fa;
+                color: #333;
+            }
+            
+            .copy-url-btn {
+                background: #4361ee;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 600;
+                transition: background 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                white-space: nowrap;
+            }
+            
+            .copy-url-btn:hover {
+                background: #3a0ca3;
+            }
+            
+            /* Language Buttons */
+            .language-buttons p {
+                margin-bottom: 10px;
+                font-size: 13px;
+                color: #666;
+            }
+            
+            .lang-btns-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .lang-btn {
+                padding: 8px 12px;
+                background: white;
+                border: 2px solid #eaeaea;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 12px;
+                color: #333;
+                transition: all 0.3s;
+                text-align: center;
+            }
+            
+            .lang-btn:hover {
+                border-color: #4361ee;
+                background: #f0f7ff;
+                color: #4361ee;
+            }
+            
+            /* Panel Footer */
+            .panel-footer {
+                padding: 15px 20px;
+                background: #f8f9fa;
+                border-top: 1px solid #eaeaea;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .dismiss-btn {
+                background: none;
+                border: none;
+                color: #666;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                padding: 5px 10px;
+                border-radius: 4px;
+                transition: background 0.3s;
+            }
+            
+            .dismiss-btn:hover {
+                background: rgba(0, 0, 0, 0.05);
+            }
+            
+            .translation-note {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 11px;
+                color: #999;
+            }
+            
+            .translation-note i {
+                font-size: 12px;
+            }
+            
+            /* Feedback Toast */
+            .translation-feedback {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 10001;
+                animation: slideInRight 0.3s ease;
+                border-left: 4px solid #4cc9f0;
+            }
+            
+            .translation-feedback i {
+                color: #4cc9f0;
+                font-size: 16px;
+            }
+            
+            .translation-feedback span {
+                color: #333;
+                font-size: 14px;
+            }
+            
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .translation-wrapper {
+                    bottom: 10px;
+                    right: 10px;
+                }
+                
+                .translate-floating-btn {
+                    padding: 10px 15px;
+                }
+                
+                .translate-floating-btn .btn-text {
+                    display: none;
+                }
+                
+                .translate-floating-btn i {
+                    margin: 0;
+                    font-size: 18px;
+                }
+                
+                .translation-panel {
+                    width: 320px;
+                    right: -50px;
+                }
+                
+                .lang-btns-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .panel-footer {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: flex-start;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .translation-panel {
+                    width: 280px;
+                    right: -80px;
+                }
+                
+                .translation-method {
+                    flex-direction: column;
+                }
+                
+                .method-icon {
+                    align-self: flex-start;
+                }
+            }
+            
+            /* Dark Mode */
+            @media (prefers-color-scheme: dark) {
+                .translation-panel {
+                    background: #1a1a2e;
+                    border-color: #2d4059;
+                }
+                
+                .method-content h5 {
+                    color: #e1e1e1;
+                }
+                
+                .method-content p {
+                    color: #b0b0b0;
+                }
+                
+                .browser-instructions {
+                    background: #0f3460;
+                }
+                
+                .instruction strong {
+                    color: #e1e1e1;
+                }
+                
+                .instruction p {
+                    color: #b0b0b0;
+                }
+                
+                .translation-tip {
+                    background: #2d2d42;
+                    border-left-color: #ff9e00;
+                }
+                
+                .translation-tip span {
+                    color: #b0b0b0;
+                }
+                
+                .translate-url input {
+                    background: #0f3460;
+                    border-color: #2d4059;
+                    color: #e1e1e1;
+                }
+                
+                .lang-btn {
+                    background: #0f3460;
+                    border-color: #2d4059;
+                    color: #e1e1e1;
+                }
+                
+                .lang-btn:hover {
+                    background: #16213e;
+                    border-color: #4361ee;
+                }
+                
+                .panel-footer {
+                    background: #0f3460;
+                    border-color: #2d4059;
+                }
+                
+                .dismiss-btn {
+                    color: #b0b0b0;
+                }
+                
+                .dismiss-btn:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                }
+                
+                .translation-note {
+                    color: #888;
+                }
+                
+                .translation-feedback {
+                    background: #1a1a2e;
+                    border-left-color: #4cc9f0;
+                }
+                
+                .translation-feedback span {
+                    color: #e1e1e1;
+                }
+            }
+        `;
+        document.head.appendChild(translationStyles);
     </script>
-
-    <style>
-        /* Minimal styles for internal pages */
-        .goog-te-banner-frame {
-            display: none !important;
-        }
-
-        .skiptranslate {
-            display: none !important;
-        }
-
-        body {
-            top: 0 !important;
-        }
-    </style>
-
-
 </body>
 
 </html>
