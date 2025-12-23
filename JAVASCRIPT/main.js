@@ -204,7 +204,7 @@ function updateAuthButtons(isLoggedIn, user = null) {
         }
 
         if (signupBtn) {
-            signupBtn.innerHTML = 'Get Started';
+            signupBtn.innerHTML = 'Sign up';
             signupBtn.onclick = function () {
                 window.location.href = 'register.html';
             };
