@@ -695,12 +695,25 @@ async function approveDepositRequest(requestId, amount, userId) {
 
         if (requestError) throw requestError;
 
-        // Update user balance
+        // Get current user balance first
+        const { data: currentUser, error: userError } = await supabase
+            .from('users')
+            .select('balance, total_deposits')
+            .eq('user_id', userId)
+            .single();
+
+        if (userError) throw userError;
+
+        // Calculate new values
+        const newBalance = (parseFloat(currentUser.balance) || 0) + parseFloat(amount);
+        const newTotalDeposits = (parseFloat(currentUser.total_deposits) || 0) + parseFloat(amount);
+
+        // Update user balance using direct values
         await supabase
             .from('users')
             .update({
-                balance: supabase.raw('balance + ?', [amount]),
-                total_deposits: supabase.raw('total_deposits + ?', [amount]),
+                balance: newBalance,
+                total_deposits: newTotalDeposits,
                 updated_at: new Date().toISOString()
             })
             .eq('user_id', userId);
@@ -729,7 +742,7 @@ async function approveDepositRequest(requestId, amount, userId) {
 
     } catch (error) {
         console.error('Error approving deposit:', error);
-        showAdminNotification('Failed to approve deposit', 'error');
+        showAdminNotification('Failed to approve deposit: ' + error.message, 'error');
     }
 }
 
@@ -792,12 +805,25 @@ async function approveWithdrawalRequest(requestId, amount, userId) {
 
         if (requestError) throw requestError;
 
-        // Update user balance
+        // Get current user balance first
+        const { data: currentUser, error: userError } = await supabase
+            .from('users')
+            .select('balance, total_withdrawals')
+            .eq('user_id', userId)
+            .single();
+
+        if (userError) throw userError;
+
+        // Calculate new values
+        const newBalance = (parseFloat(currentUser.balance) || 0) - parseFloat(amount);
+        const newTotalWithdrawals = (parseFloat(currentUser.total_withdrawals) || 0) + parseFloat(amount);
+
+        // Update user balance using direct values
         await supabase
             .from('users')
             .update({
-                balance: supabase.raw('balance - ?', [amount]),
-                total_withdrawals: supabase.raw('total_withdrawals + ?', [amount]),
+                balance: newBalance,
+                total_withdrawals: newTotalWithdrawals,
                 updated_at: new Date().toISOString()
             })
             .eq('user_id', userId);
@@ -828,7 +854,7 @@ async function approveWithdrawalRequest(requestId, amount, userId) {
 
     } catch (error) {
         console.error('Error approving withdrawal:', error);
-        showAdminNotification('Failed to approve withdrawal', 'error');
+        showAdminNotification('Failed to approve withdrawal: ' + error.message, 'error');
     }
 }
 
