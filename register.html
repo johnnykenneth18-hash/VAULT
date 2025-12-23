@@ -329,6 +329,7 @@
             <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
         </div>
     </div>
+    <script src="./JAVASCRIPT/translator.js"></script>
 
     <script>
         // DEBUG: Check if Supabase is loaded
@@ -580,6 +581,61 @@
             checkExistingSession();
         });
     </script>
+
+
+    <!-- Add this before </body> tag in each page -->
+    <div id="google_translate_element" style="display: none;"></div>
+
+    <script>
+        // Simple translator for internal pages
+        function initSimpleTranslator() {
+            // Check for saved language preference
+            const savedLang = localStorage.getItem('vault_translate_lang');
+
+            // Load Google Translate
+            const script = document.createElement('script');
+            script.src = `//translate.google.com/translate_a/element.js?cb=googleTranslateInit`;
+            document.head.appendChild(script);
+
+            window.googleTranslateInit = function () {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element');
+
+                // Apply saved language
+                if (savedLang) {
+                    setTimeout(() => {
+                        const combo = document.querySelector('.goog-te-combo');
+                        if (combo) {
+                            combo.value = savedLang;
+                            combo.dispatchEvent(new Event('change'));
+                        }
+                    }, 1000);
+                }
+            };
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initSimpleTranslator);
+    </script>
+
+    <style>
+        /* Minimal styles for internal pages */
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+
+        .skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+    </style>
 </body>
 
 </html>

@@ -824,6 +824,115 @@
     <!-- Load Supabase before your script -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="./JAVASCRIPT/dashboard.js"></script>
+    <script src="./JAVASCRIPT/translator.js"></script>
+
+
+    <!-- Add this to dashboard.html before </body> -->
+    <div id="google_translate_element" class="translate-widget"></div>
+
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                // 50+ languages (add more as needed)
+                includedLanguages: 'af,am,ar,az,be,bg,bn,bs,ca,ceb,co,cs,cy,da,de,el,en,eo,es,et,eu,fa,fi,fr,fy,ga,gd,gl,gu,ha,haw,hi,hmn,hr,ht,hu,hy,id,ig,is,it,iw,ja,jw,ka,kk,km,kn,ko,ku,ky,la,lb,lo,lt,lv,mg,mi,mk,ml,mn,mr,ms,mt,my,ne,nl,no,ny,or,pa,pl,ps,pt,ro,ru,rw,sd,si,sk,sl,sm,sn,so,sq,sr,st,su,sv,sw,ta,te,tg,th,tl,tr,uk,ur,uz,vi,xh,yi,yo,zu,zh-CN,zh-TW',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+
+            // Better styling
+            const style = document.createElement('style');
+            style.innerHTML = `
+        /* Hide Google branding */
+        .goog-te-banner-frame, .goog-te-banner {
+            display: none !important;
+        }
+        
+        /* Floating widget */
+        .translate-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            border: 1px solid #eaeaea;
+        }
+        
+        /* Dropdown styling */
+        .goog-te-combo {
+            padding: 10px 35px 10px 15px;
+            border: 2px solid #eaeaea;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        .goog-te-combo:hover {
+            border-color: #4361ee;
+        }
+        
+        /* Language options */
+        .goog-te-menu2 {
+            max-width: 250px !important;
+            max-height: 400px !important;
+            overflow-y: auto !important;
+        }
+        
+        .goog-te-menu2-item {
+            padding: 10px 15px !important;
+            font-size: 14px !important;
+        }
+        
+        /* Hide top bar */
+        .skiptranslate {
+            display: none !important;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .translate-widget {
+                bottom: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+            
+            .goog-te-combo {
+                min-width: 120px;
+                font-size: 13px;
+                padding: 8px 30px 8px 12px;
+            }
+        }
+        
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            .translate-widget {
+                background: #1a1a2e;
+                border-color: #2d4059;
+            }
+            
+            .goog-te-combo {
+                background: #0f3460;
+                border-color: #2d4059;
+                color: #e1e1e1;
+            }
+        }
+        
+        /* Fix for translated page */
+        body {
+            top: 0 !important;
+        }
+    `;
+            document.head.appendChild(style);
+        }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 
