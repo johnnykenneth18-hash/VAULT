@@ -1449,6 +1449,65 @@ async function verifyDatabaseStatus() {
 
 
 
+async function debugUpdateIssue() {
+    console.log('🔍 DEBUGGING UPDATE ISSUE...');
+
+    const supabase = window.supabase.createClient(
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
+
+    const testId = 'DEP_1766459029151';
+
+    // 1. Check current exact status
+    const { data: current, error: checkError } = await supabase
+        .from('deposit_requests')
+        .select('status, request_id, user_id, amount, updated_at')
+        .eq('request_id', testId)
+        .single();
+
+    console.log('1. CURRENT RECORD:', current);
+
+    // 2. Try to update with a COMPLETELY DIFFERENT value
+    const weirdStatus = 'xyz_' + Date.now();
+    console.log('2. Trying update with status:', weirdStatus);
+
+    const { data: updateResult, error: updateError } = await supabase
+        .from('deposit_requests')
+        .update({
+            status: weirdStatus,
+            updated_at: new Date().toISOString()
+        })
+        .eq('request_id', testId)
+        .select();
+
+    console.log('Update result:', updateResult);
+    console.log('Update error:', updateError);
+
+    // 3. Check again
+    setTimeout(async () => {
+        const { data: after, error: afterError } = await supabase
+            .from('deposit_requests')
+            .select('status, request_id, updated_at')
+            .eq('request_id', testId)
+            .single();
+
+        console.log('3. AFTER UPDATE:', after);
+
+        if (after && after.status === weirdStatus) {
+            console.log('✅ UPDATE WORKED! Status changed to:', weirdStatus);
+        } else {
+            console.log('❌ UPDATE DID NOT WORK. Still:', after?.status);
+        }
+    }, 1000);
+
+    return { current, updateResult, updateError };
+}
+
+// Run in console: debugUpdateIssue()
+
+
+
 
 
 
