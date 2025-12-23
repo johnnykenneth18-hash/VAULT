@@ -604,7 +604,6 @@ async function debugDepositRequests() {
         'https://grfrcnhmnvasiotejiok.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
     );
-
     try {
         // Get ALL requests (no filter)
         const { data: allRequests, error } = await supabase
@@ -650,9 +649,6 @@ async function loadDepositRequests(supabase) {
     console.log('🔄 LOADING deposit requests WITH PROPER FILTERING...');
 
     try {
-        const SUPABASE_URL = 'https://grfrcnhmnvasiotejiok.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Show loading
         container.innerHTML = '<div class="loading-requests">Loading deposit requests...</div>';
@@ -768,7 +764,6 @@ async function debugCurrentState() {
         'https://grfrcnhmnvasiotejiok.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
     );
-
     // 1. Get ALL deposit requests
     const { data: allRequests, error: allError } = await supabase
         .from('deposit_requests')
@@ -1142,7 +1137,7 @@ async function approveDepositRequest(requestId, amount, userId) {
         setTimeout(async () => {
             const supabase = window.supabase.createClient(
                 'https://grfrcnhmnvasiotejiok.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5ND0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
             );
 
             // Clear the container
@@ -1286,9 +1281,9 @@ async function rejectDepositRequest(requestId) {
 
     try {
         const supabase = window.supabase.createClient(
-            'https://grfrcnhmnvasiotejiok.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
-        );
+        'https://grfrcnhmnvasiotejiok.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+    );
 
         // Remove from UI
         removeRequestFromUI(requestId, 'deposit');
