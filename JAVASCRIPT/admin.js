@@ -108,6 +108,13 @@ function activateDashboardSection() {
 // Load all data from Supabase
 async function loadAllData(supabase) {
     try {
+        // Initialize arrays if they don't exist
+        if (!adminData.users) adminData.users = [];
+        if (!adminData.depositRequests) adminData.depositRequests = [];
+        if (!adminData.withdrawalRequests) adminData.withdrawalRequests = [];
+        if (!adminData.transactions) adminData.transactions = [];
+        if (!adminData.adminPaymentMethods) adminData.adminPaymentMethods = [];
+
         // Load users
         const { data: users, error: usersError } = await supabase
             .from('users')
@@ -124,20 +131,20 @@ async function loadAllData(supabase) {
 
         if (!adminMethodsError) adminData.adminPaymentMethods = adminMethods || [];
 
-        // Load deposit requests
+        // Load deposit requests (only pending)
         const { data: deposits, error: depositsError } = await supabase
             .from('deposit_requests')
             .select('*')
-            .eq('status', 'pending')
+            .eq('status', 'pending')  // Only get pending
             .order('created_at', { ascending: false });
 
         if (!depositsError) adminData.depositRequests = deposits || [];
 
-        // Load withdrawal requests
+        // Load withdrawal requests (only pending)
         const { data: withdrawals, error: withdrawalsError } = await supabase
             .from('withdrawal_requests')
             .select('*')
-            .eq('status', 'pending')
+            .eq('status', 'pending')  // Only get pending
             .order('created_at', { ascending: false });
 
         if (!withdrawalsError) adminData.withdrawalRequests = withdrawals || [];
@@ -157,6 +164,7 @@ async function loadAllData(supabase) {
             .select('*');
 
         if (!settingsError && settings) {
+            adminData.settings = {};
             settings.forEach(setting => {
                 adminData.settings[setting.setting_key] = setting.setting_value;
             });
@@ -169,6 +177,9 @@ async function loadAllData(supabase) {
             withdrawals: adminData.withdrawalRequests.length,
             transactions: adminData.transactions.length
         });
+
+        // Update badge counts after loading
+        updatePendingCounts();
 
     } catch (error) {
         console.error('Error loading admin data:', error);
@@ -309,10 +320,12 @@ function updatePendingCounts() {
     const pendingWithdrawalsEl = document.getElementById('pending-withdrawals');
     const pendingRequestsEl = document.getElementById('pending-requests');
 
-    // These should now reflect the actual pending counts
-    const depositCount = adminData.depositRequests.length;
-    const withdrawalCount = adminData.withdrawalRequests.length;
+    // Handle cases where arrays might not be initialized
+    const depositCount = adminData.depositRequests ? adminData.depositRequests.length : 0;
+    const withdrawalCount = adminData.withdrawalRequests ? adminData.withdrawalRequests.length : 0;
     const totalPending = depositCount + withdrawalCount;
+
+    console.log('Pending counts:', { depositCount, withdrawalCount, totalPending }); // Debug log
 
     if (pendingDepositsEl) pendingDepositsEl.textContent = depositCount;
     if (pendingWithdrawalsEl) pendingWithdrawalsEl.textContent = withdrawalCount;
@@ -574,6 +587,9 @@ window.deleteAdminPaymentMethod = async function (id) {
 
 // REQUESTS SECTIONS
 function setupRequestsSections(supabase) {
+    // Store the supabase client globally or pass it properly
+    window.adminSupabase = supabase; // Store globally for use in other functions
+
     loadDepositRequests(supabase);
     loadWithdrawalRequests(supabase);
 }
@@ -597,6 +613,8 @@ async function loadDepositRequests(supabase) {
 
         // Update adminData
         adminData.depositRequests = depositRequests || [];
+
+        console.log('Loaded deposit requests:', depositRequests); // Debug log
 
         if (adminData.depositRequests.length === 0) {
             container.innerHTML = '<div class="no-requests">No pending deposit requests</div>';
@@ -643,10 +661,7 @@ async function loadDepositRequests(supabase) {
         showAdminNotification('Failed to load deposit requests', 'error');
     }
 }
-
 async function loadWithdrawalRequests(supabase) {
-    // Also add this in loadDepositRequests() after fetching:
-    console.log('Loaded deposit requests:', depositRequests);
     try {
         const container = document.getElementById('withdrawal-requests-list');
         if (!container) return;
@@ -665,6 +680,8 @@ async function loadWithdrawalRequests(supabase) {
 
         // Update adminData
         adminData.withdrawalRequests = withdrawalRequests || [];
+
+        console.log('Loaded withdrawal requests:', withdrawalRequests); // Debug log
 
         if (adminData.withdrawalRequests.length === 0) {
             container.innerHTML = '<div class="no-requests">No pending withdrawal requests</div>';
@@ -712,7 +729,6 @@ async function loadWithdrawalRequests(supabase) {
         showAdminNotification('Failed to load withdrawal requests', 'error');
     }
 }
-
 async function approveDepositRequest(requestId, amount, userId) {
     console.log('Approving deposit request:', {
         requestId: requestId,
