@@ -645,87 +645,101 @@ async function debugDepositRequests() {
 
 
 async function loadDepositRequests(supabase) {
-    console.log('🔄 LOADING deposit requests...');
+    console.log('🔄 LOADING deposit requests - FINAL FIX...');
 
     const container = document.getElementById('deposit-requests-list');
     if (!container) {
-        console.error('❌ Container #deposit-requests-list not found!');
+        console.error('❌ Container not found!');
         return;
     }
 
     try {
         // Show loading
-        container.innerHTML = '<div class="loading-requests">Loading deposit requests...</div>';
+        container.innerHTML = '<div class="loading-requests"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
-        // Get ONLY pending requests
-        const { data: depositRequests, error } = await supabase
+        // Get ALL requests first to debug
+        const { data: allRequests, error: allError } = await supabase
+            .from('deposit_requests')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (allError) {
+            console.error('❌ All requests error:', allError);
+            throw allError;
+        }
+
+        console.log('📊 ALL requests from database:', allRequests);
+
+        // Now get ONLY pending requests
+        const { data: pendingRequests, error } = await supabase
             .from('deposit_requests')
             .select('*')
             .eq('status', 'pending')
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('❌ Database error:', error);
+            console.error('❌ Pending requests error:', error);
             throw error;
         }
 
-        console.log(`📊 Database returned ${depositRequests?.length || 0} requests`);
-
-        // Debug: Log all returned requests
-        if (depositRequests && depositRequests.length > 0) {
-            console.log('📋 All returned requests:');
-            depositRequests.forEach((req, index) => {
-                console.log(`${index + 1}. ${req.request_id} - Status: "${req.status}" - Amount: $${req.amount}`);
-            });
-        }
-
-        // Filter on client side too (just to be safe)
-        const pendingRequests = depositRequests ? depositRequests.filter(req => {
-            // Trim and check status
-            const status = String(req.status).trim().toLowerCase();
-            return status === 'pending';
-        }) : [];
-
-        console.log(`✅ After client filter: ${pendingRequests.length} pending requests`);
+        console.log('📊 PENDING requests from database:', pendingRequests);
 
         // Update global data
-        adminData.depositRequests = pendingRequests;
+        adminData.depositRequests = pendingRequests || [];
 
         // Display results
-        if (pendingRequests.length === 0) {
+        if (!adminData.depositRequests || adminData.depositRequests.length === 0) {
             container.innerHTML = `
-                <div class="no-requests">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>No Pending Requests</h3>
-                    <p>All deposit requests have been processed</p>
+                <div class="no-requests" style="text-align: center; padding: 40px; color: #27ae60;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3>All Done!</h3>
+                    <p>No pending deposit requests</p>
+                    <div style="margin-top: 20px; font-size: 12px; color: #666;">
+                        Total requests in database: ${allRequests?.length || 0}<br>
+                        Approved requests: ${allRequests?.filter(r => r.status === 'approved').length || 0}
+                    </div>
                 </div>
             `;
+            console.log('✅ No pending requests to display');
         } else {
-            // Build UI
+            console.log(`✅ Building UI for ${adminData.depositRequests.length} pending requests`);
+
+            // Build UI - SIMPLE AND CORRECT
             let html = '';
-            pendingRequests.forEach(request => {
+            adminData.depositRequests.forEach((request, index) => {
+                console.log(`Building card ${index + 1}:`, request.request_id, request.status);
+
                 const user = adminData.users?.find(u => u.user_id === request.user_id);
                 const displayName = user ? `${user.first_name} ${user.last_name}` : request.user_id;
 
                 html += `
-                    <div class="request-card deposit" id="req-${request.request_id}">
+                    <div class="request-card deposit" 
+                         id="card-${request.request_id}"
+                         data-request-id="${request.request_id}"
+                         data-status="${request.status}">
                         <div class="request-header">
                             <h3>${formatCurrency(request.amount)}</h3>
-                            <span class="request-status pending">Pending</span>
+                            <span class="request-status ${request.status}">${request.status}</span>
+                            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                                ID: ${request.request_id}
+                            </div>
                         </div>
                         <div class="request-details">
                             <p><strong>User:</strong> ${displayName}</p>
+                            <p><strong>Email:</strong> ${user?.email || 'N/A'}</p>
                             <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
                             <p><strong>Method:</strong> ${request.method || 'Bank Transfer'}</p>
                             <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
                             ${request.reference ? `<p><strong>Reference:</strong> ${request.reference}</p>` : ''}
                         </div>
                         <div class="request-actions">
-                            <button class="btn-approve" onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
-                                Approve
+                            <button class="btn-approve" 
+                                    onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
+                                <i class="fas fa-check"></i> Approve
                             </button>
-                            <button class="btn-reject" onclick="rejectDepositRequest('${request.request_id}')">
-                                Reject
+                            <button class="btn-reject" 
+                                    onclick="rejectDepositRequest('${request.request_id}')">
+                                <i class="fas fa-times"></i> Reject
                             </button>
                         </div>
                     </div>
@@ -733,29 +747,25 @@ async function loadDepositRequests(supabase) {
             });
 
             container.innerHTML = html;
+            console.log(`✅ UI built with ${adminData.depositRequests.length} cards`);
         }
 
         // Update badge count
         updatePendingCounts();
 
     } catch (error) {
-        console.error('❌ Error in loadDepositRequests:', error);
+        console.error('❌ Error loading deposit requests:', error);
         if (container) {
             container.innerHTML = `
                 <div class="error-requests">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Error Loading</h3>
-                    <p>Failed to load deposit requests</p>
-                    <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Reload Page
-                    </button>
+                    <h3>Error</h3>
+                    <p>Failed to load: ${error.message}</p>
                 </div>
             `;
         }
     }
 }
-
-
 
 
 
@@ -1071,45 +1081,94 @@ async function loadWithdrawalRequests(supabase) {
         }
     }
 }
-async function approveDepositRequest(requestId, amount, userId) {
-    console.log('🚀 STARTING APPROVAL:', { requestId, amount, userId });
 
-    if (!confirm('Approve this deposit request?')) return;
+
+
+
+
+
+
+
+function testCurrentUI() {
+    console.log('👁️ TESTING CURRENT UI...');
+    
+    const container = document.getElementById('deposit-requests-list');
+    if (!container) {
+        console.log('❌ Container not found');
+        return;
+    }
+    
+    const cards = container.querySelectorAll('.request-card');
+    console.log(`Found ${cards.length} request cards in UI:`);
+    
+    cards.forEach((card, index) => {
+        const requestId = card.getAttribute('data-request-id') || card.id || 'unknown';
+        const status = card.getAttribute('data-status') || 'unknown';
+        console.log(`${index + 1}. Card ID: ${card.id}`);
+        console.log(`   Data request ID: ${requestId}`);
+        console.log(`   Data status: ${status}`);
+        console.log(`   HTML:`, card.outerHTML.substring(0, 200) + '...');
+    });
+    
+    // Check if buttons have correct onclick
+    const buttons = container.querySelectorAll('button');
+    console.log(`Found ${buttons.length} buttons:`);
+    buttons.forEach((btn, index) => {
+        const onclick = btn.getAttribute('onclick') || 'none';
+        console.log(`${index + 1}. ${btn.className}: ${onclick}`);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+async function approveDepositRequest(requestId, amount, userId) {
+    console.log('✅ APPROVING:', requestId);
+
+    if (!confirm(`Approve deposit of $${amount}?`)) return;
 
     try {
-        const SUPABASE_URL = 'https://grfrcnhmnvasiotejiok.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = window.supabase.createClient(
+            'https://grfrcnhmnvasiotejiok.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
+        );
 
-        // 1. FIRST: Remove from UI immediately (visual feedback)
-        removeRequestFromUI(requestId, 'deposit');
+        // 1. Remove from UI immediately
+        const card = document.getElementById(`card-${requestId}`);
+        if (card) {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '0.3';
+            card.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+                if (card.parentNode) {
+                    card.remove();
+                }
+            }, 300);
+        }
 
-        // 2. Update database status
-        console.log('📝 Updating database status to "approved"...');
-        const { data: updateResult, error: updateError } = await supabase
+        // 2. Update database
+        console.log('📝 Updating database...');
+        const { error: updateError } = await supabase
             .from('deposit_requests')
             .update({
                 status: 'approved',
                 updated_at: new Date().toISOString()
             })
-            .eq('request_id', requestId)
-            .select(); // Add .select() to get response data
+            .eq('request_id', requestId);
 
         if (updateError) {
-            console.error('❌ DATABASE UPDATE FAILED:', updateError);
-            console.error('Error details:', {
-                message: updateError.message,
-                code: updateError.code,
-                details: updateError.details,
-                hint: updateError.hint
-            });
-
-            // Show the error to user
-            showAdminNotification(`Update failed: ${updateError.message}`, 'error');
+            console.error('❌ Update error:', updateError);
+            showAdminNotification('Update failed: ' + updateError.message, 'error');
             return;
         }
 
-        console.log('✅ Database update successful:', updateResult);
+        console.log('✅ Database updated');
 
         // 3. Update user balance
         console.log('💰 Updating user balance...');
@@ -1123,7 +1182,7 @@ async function approveDepositRequest(requestId, amount, userId) {
             const newBalance = (parseFloat(user.balance) || 0) + parseFloat(amount);
             const newTotalDeposits = (parseFloat(user.total_deposits) || 0) + parseFloat(amount);
 
-            const { error: balanceError } = await supabase
+            await supabase
                 .from('users')
                 .update({
                     balance: newBalance,
@@ -1131,18 +1190,13 @@ async function approveDepositRequest(requestId, amount, userId) {
                     updated_at: new Date().toISOString()
                 })
                 .eq('user_id', userId);
-
-            if (balanceError) {
-                console.error('❌ Balance update error:', balanceError);
-            } else {
-                console.log('✅ User balance updated');
-            }
+            console.log('✅ User balance updated');
         }
 
-        // 4. Create transaction record
+        // 4. Create transaction
         console.log('📊 Creating transaction...');
         const transactionId = 'TXN_' + Date.now();
-        const { error: transactionError } = await supabase
+        await supabase
             .from('transactions')
             .insert([{
                 transaction_id: transactionId,
@@ -1154,52 +1208,25 @@ async function approveDepositRequest(requestId, amount, userId) {
                 description: `Deposit approved`,
                 transaction_date: new Date().toISOString()
             }]);
+        console.log('✅ Transaction created');
 
-        if (transactionError) {
-            console.error('❌ Transaction error:', transactionError);
-        } else {
-            console.log('✅ Transaction created');
-        }
+        // 5. Show success
+        showAdminNotification(`✅ Deposit of $${amount} approved!`, 'success');
 
-        // 5. SUCCESS!
-        // In approveDepositRequest(), after success:
-        showAdminNotification(`✅ Deposit approved! Refreshing...`, 'success');
-
-        // HARD refresh of the section
+        // 6. Refresh after delay
         setTimeout(async () => {
-            const supabase = window.supabase.createClient(
-                'https://grfrcnhmnvasiotejiok.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k'
-            );
-
-            // Clear the container
-            const container = document.getElementById('deposit-requests-list');
-            if (container) {
-                container.innerHTML = '<div class="loading-requests">Refreshing...</div>';
-            }
-
-            // Wait a moment for database to sync
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Reload ALL data
-            await loadAllData(supabase);
-
-            // Force reload this section
+            console.log('🔄 Refreshing UI...');
             await loadDepositRequests(supabase);
-
-            // Update everything
             updatePendingCounts();
             updateDashboardStats();
-
-            showAdminNotification('✅ Page refreshed!', 'success');
-
-        }, 500);
+        }, 1000);
 
     } catch (error) {
-        console.error('❌ UNEXPECTED ERROR:', error);
-        showAdminNotification('Unexpected error: ' + error.message, 'error');
+        console.error('❌ Approval error:', error);
+        showAdminNotification('Error: ' + error.message, 'error');
     }
 }
+
 
 // Helper function to remove request from UI
 function removeRequestFromUI(requestId, type = 'deposit') {
