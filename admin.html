@@ -297,6 +297,27 @@
                     <div class="requests-list" id="deposit-requests-list">
                         <!-- Deposit requests will be loaded here -->
                     </div>
+                    <!-- Add this inside the deposit-requests-section -->
+                    <div class="requests-tabs">
+                        <button class="tab-btn active" onclick="showRequestsTab('pending-deposits')">Pending</button>
+                        <button class="tab-btn" onclick="showRequestsTab('approved-deposits')">Approved</button>
+                        <button class="tab-btn" onclick="showRequestsTab('rejected-deposits')">Rejected</button>
+                    </div>
+
+                    <div class="requests-content">
+                        <div class="tab-content active" id="pending-deposits">
+                            <!-- Current pending requests will go here -->
+                            <div class="requests-list" id="deposit-requests-list"></div>
+                        </div>
+                        <div class="tab-content" id="approved-deposits">
+                            <!-- Approved requests will go here -->
+                            <div class="requests-list" id="approved-deposit-requests-list"></div>
+                        </div>
+                        <div class="tab-content" id="rejected-deposits">
+                            <!-- Rejected requests will go here -->
+                            <div class="requests-list" id="rejected-deposit-requests-list"></div>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- Withdrawal Requests Section -->
@@ -547,8 +568,8 @@
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="./JAVASCRIPT/admin.js"></script>
-    
-    
+
+
 
 </body>
 

@@ -307,9 +307,16 @@ function loadRecentActivity() {
 function updatePendingCounts() {
     const pendingDepositsEl = document.getElementById('pending-deposits');
     const pendingWithdrawalsEl = document.getElementById('pending-withdrawals');
+    const pendingRequestsEl = document.getElementById('pending-requests');
 
-    if (pendingDepositsEl) pendingDepositsEl.textContent = adminData.depositRequests.length;
-    if (pendingWithdrawalsEl) pendingWithdrawalsEl.textContent = adminData.withdrawalRequests.length;
+    // These should now reflect the actual pending counts
+    const depositCount = adminData.depositRequests.length;
+    const withdrawalCount = adminData.withdrawalRequests.length;
+    const totalPending = depositCount + withdrawalCount;
+
+    if (pendingDepositsEl) pendingDepositsEl.textContent = depositCount;
+    if (pendingWithdrawalsEl) pendingWithdrawalsEl.textContent = withdrawalCount;
+    if (pendingRequestsEl) pendingRequestsEl.textContent = totalPending;
 }
 
 // Users Management
@@ -576,6 +583,18 @@ async function loadDepositRequests(supabase) {
         const container = document.getElementById('deposit-requests-list');
         if (!container) return;
 
+        // Get only PENDING requests
+        const { data: depositRequests, error } = await supabase
+            .from('deposit_requests')
+            .select('*')
+            .eq('status', 'pending')  // Only show pending
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Update adminData
+        adminData.depositRequests = depositRequests || [];
+
         if (adminData.depositRequests.length === 0) {
             container.innerHTML = '<div class="no-requests">No pending deposit requests</div>';
             return;
@@ -614,6 +633,7 @@ async function loadDepositRequests(supabase) {
 
     } catch (error) {
         console.error('Error loading deposit requests:', error);
+        showAdminNotification('Failed to load deposit requests', 'error');
     }
 }
 
@@ -621,6 +641,18 @@ async function loadWithdrawalRequests(supabase) {
     try {
         const container = document.getElementById('withdrawal-requests-list');
         if (!container) return;
+
+        // Get only PENDING requests
+        const { data: withdrawalRequests, error } = await supabase
+            .from('withdrawal_requests')
+            .select('*')
+            .eq('status', 'pending')  // Only show pending
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Update adminData
+        adminData.withdrawalRequests = withdrawalRequests || [];
 
         if (adminData.withdrawalRequests.length === 0) {
             container.innerHTML = '<div class="no-requests">No pending withdrawal requests</div>';
@@ -637,6 +669,7 @@ async function loadWithdrawalRequests(supabase) {
                     </div>
                     <div class="request-user">
                         <strong>User:</strong> ${user ? user.first_name + ' ' + user.last_name : request.user_id}
+                        <br><strong>Email:</strong> ${user ? user.email : 'N/A'}
                     </div>
                     <div class="request-details">
                         <p><strong>Method:</strong> ${request.method}</p>
@@ -644,6 +677,7 @@ async function loadWithdrawalRequests(supabase) {
                         <p><strong>Net Amount:</strong> ${formatCurrency(request.net_amount)}</p>
                         <p><strong>Fee:</strong> ${formatCurrency(request.fee)}</p>
                         <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
+                        ${request.method_details ? `<pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px;">${request.method_details}</pre>` : ''}
                     </div>
                     <div class="request-actions">
                         <button class="btn-approve" onclick="approveWithdrawalRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
@@ -659,6 +693,7 @@ async function loadWithdrawalRequests(supabase) {
 
     } catch (error) {
         console.error('Error loading withdrawal requests:', error);
+        showAdminNotification('Failed to load withdrawal requests', 'error');
     }
 }
 
@@ -735,10 +770,11 @@ async function approveDepositRequest(requestId, amount, userId) {
 
         showAdminNotification('Deposit approved successfully!', 'success');
 
-        // Reload data
+        // Reload ALL data and refresh UI
         await loadAllData(supabase);
         loadDepositRequests(supabase);
         updateDashboardStats();
+        updatePendingCounts();
 
     } catch (error) {
         console.error('Error approving deposit:', error);
@@ -763,8 +799,11 @@ async function rejectDepositRequest(requestId) {
             .eq('request_id', requestId);
 
         showAdminNotification('Deposit request rejected', 'success');
+
+        // Reload data and refresh UI
         await loadAllData(supabase);
         loadDepositRequests(supabase);
+        updatePendingCounts();  // Update badge count
 
     } catch (error) {
         console.error('Error rejecting deposit:', error);
@@ -847,10 +886,14 @@ async function approveWithdrawalRequest(requestId, amount, userId) {
 
         showAdminNotification('Withdrawal approved successfully!', 'success');
 
-        // Reload data
+        // Reload ALL data and refresh UI
         await loadAllData(supabase);
         loadWithdrawalRequests(supabase);
         updateDashboardStats();
+        updatePendingCounts();
+
+
+
 
     } catch (error) {
         console.error('Error approving withdrawal:', error);
@@ -875,8 +918,11 @@ async function rejectWithdrawalRequest(requestId) {
             .eq('request_id', requestId);
 
         showAdminNotification('Withdrawal request rejected', 'success');
+
+        // Reload data and refresh UI
         await loadAllData(supabase);
         loadWithdrawalRequests(supabase);
+        updatePendingCounts();  // Update badge count
 
     } catch (error) {
         console.error('Error rejecting withdrawal:', error);
