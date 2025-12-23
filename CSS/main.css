@@ -64,7 +64,7 @@ h4 {
 .highlight {
     color: var(--primary-color);
     position: relative;
-    
+    font-size: 4rem !important;
 }
 
 .highlight::after {
@@ -1272,7 +1272,7 @@ h4 {
         font-size: 3rem;
     }
     .highlight{
-        font-size: 7rem !important;
+        font-size: 4rem !important;
     }
 
     h2 {
