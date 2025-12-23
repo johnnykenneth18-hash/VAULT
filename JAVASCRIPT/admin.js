@@ -244,10 +244,10 @@ function refreshSection(section) {
             loadAdminPaymentMethods();
             break;
         case 'deposit-requests':
-            loadDepositRequests(supabase);
+            loadDepositRequests(supabase);  // This will fetch fresh data
             break;
         case 'withdrawal-requests':
-            loadWithdrawalRequests(supabase);
+            loadWithdrawalRequests(supabase);  // This will fetch fresh data
             break;
         case 'settings':
             loadSettings();
@@ -583,7 +583,10 @@ async function loadDepositRequests(supabase) {
         const container = document.getElementById('deposit-requests-list');
         if (!container) return;
 
-        // Get only PENDING requests
+        // Show loading state
+        container.innerHTML = '<div class="loading-requests">Loading deposit requests...</div>';
+
+        // ALWAYS fetch fresh data from database
         const { data: depositRequests, error } = await supabase
             .from('deposit_requests')
             .select('*')
@@ -631,18 +634,27 @@ async function loadDepositRequests(supabase) {
             `;
         }).join('');
 
+        // Update badge count
+        updatePendingCounts();
+
     } catch (error) {
         console.error('Error loading deposit requests:', error);
+        container.innerHTML = '<div class="error-requests">Error loading deposit requests</div>';
         showAdminNotification('Failed to load deposit requests', 'error');
     }
 }
 
 async function loadWithdrawalRequests(supabase) {
+    // Also add this in loadDepositRequests() after fetching:
+    console.log('Loaded deposit requests:', depositRequests);
     try {
         const container = document.getElementById('withdrawal-requests-list');
         if (!container) return;
 
-        // Get only PENDING requests
+        // Show loading state
+        container.innerHTML = '<div class="loading-requests">Loading withdrawal requests...</div>';
+
+        // ALWAYS fetch fresh data from database
         const { data: withdrawalRequests, error } = await supabase
             .from('withdrawal_requests')
             .select('*')
@@ -691,13 +703,24 @@ async function loadWithdrawalRequests(supabase) {
             `;
         }).join('');
 
+        // Update badge count
+        updatePendingCounts();
+
     } catch (error) {
         console.error('Error loading withdrawal requests:', error);
+        container.innerHTML = '<div class="error-requests">Error loading withdrawal requests</div>';
         showAdminNotification('Failed to load withdrawal requests', 'error');
     }
 }
 
 async function approveDepositRequest(requestId, amount, userId) {
+    console.log('Approving deposit request:', {
+        requestId: requestId,
+        amount: amount,
+        userId: userId
+    });
+
+
     if (!confirm('Are you sure you want to approve this deposit request?')) return;
 
     try {
@@ -705,15 +728,8 @@ async function approveDepositRequest(requestId, amount, userId) {
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // First confirmation
-        const confirm1 = confirm('First confirmation: Approve this deposit?');
-        if (!confirm1) return;
-
-        const confirm2 = confirm('Second confirmation: Are you absolutely sure? This will update the user balance.');
-        if (!confirm2) return;
-
-        // Update deposit request status
-        await supabase
+        // Update deposit request status FIRST
+        const { error: updateError } = await supabase
             .from('deposit_requests')
             .update({
                 status: 'approved',
@@ -721,16 +737,9 @@ async function approveDepositRequest(requestId, amount, userId) {
             })
             .eq('request_id', requestId);
 
-        // Get the request details
-        const { data: request, error: requestError } = await supabase
-            .from('deposit_requests')
-            .select('*')
-            .eq('request_id', requestId)
-            .single();
+        if (updateError) throw updateError;
 
-        if (requestError) throw requestError;
-
-        // Get current user balance first
+        // Get current user balance
         const { data: currentUser, error: userError } = await supabase
             .from('users')
             .select('balance, total_deposits')
@@ -743,7 +752,7 @@ async function approveDepositRequest(requestId, amount, userId) {
         const newBalance = (parseFloat(currentUser.balance) || 0) + parseFloat(amount);
         const newTotalDeposits = (parseFloat(currentUser.total_deposits) || 0) + parseFloat(amount);
 
-        // Update user balance using direct values
+        // Update user balance
         await supabase
             .from('users')
             .update({
@@ -762,30 +771,19 @@ async function approveDepositRequest(requestId, amount, userId) {
                 user_id: userId,
                 type: 'deposit',
                 amount: amount,
-                method: request.method,
+                method: 'Admin Approved',
                 status: 'completed',
-                description: `Deposit approved: ${request.method}`,
+                description: `Deposit approved by admin`,
                 transaction_date: new Date().toISOString()
             }]);
 
         showAdminNotification('Deposit approved successfully!', 'success');
 
-        // CRITICAL: Force refresh the current section
-        const activeSection = document.querySelector('.admin-section.active');
-        const sectionId = activeSection ? activeSection.id : '';
+        // IMMEDIATELY reload the requests
+        await loadDepositRequests(supabase);
 
-        if (sectionId === 'deposit-requests-section') {
-            // If we're on the deposit requests page, reload it
-            await loadDepositRequests(supabase);
-        } else if (sectionId === 'withdrawal-requests-section') {
-            // If we're on the withdrawal requests page, reload it
-            await loadWithdrawalRequests(supabase);
-        }
-
-        // Always reload all data and update counts
-        await loadAllData(supabase);
+        // Update dashboard stats
         updateDashboardStats();
-        updatePendingCounts();
 
     } catch (error) {
         console.error('Error approving deposit:', error);
