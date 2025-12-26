@@ -1269,10 +1269,11 @@ h4 {
 /* Responsive Design */
 @media (max-width: 1024px) {
     h1 {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
-    .highlight{
-        font-size: 4rem !important;
+
+    .highlight {
+        font-size: 3.8rem !important;
     }
 
     h2 {
@@ -1380,7 +1381,11 @@ h4 {
     }
 
     h1 {
-        font-size: 2.5rem;
+        font-size: 2.4rem;
+    }
+
+    .highlight {
+        font-size: 2.7rem !important;
     }
 
     h2 {
@@ -1650,6 +1655,7 @@ h4 {
     .hero-text h1 {
         font-size: 1.8rem !important;
     }
+
     .highlight {
         font-size: 2.4rem !important;
 
@@ -1717,10 +1723,11 @@ h4 {
 /* Fix for tablet screens (481px to 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
     .hero-text h1 {
-        font-size: 2.rem !important;
+        font-size: 2.4rem !important;
     }
+
     .highlight {
-        font-size: 3.1rem !important;
+        font-size: 3.3rem !important;
 
 
     }
