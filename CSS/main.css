@@ -1717,7 +1717,7 @@ h4 {
 /* Fix for tablet screens (481px to 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
     .hero-text h1 {
-        font-size: 2.4rem !important;
+        font-size: 2.rem !important;
     }
     .highlight {
         font-size: 3.1rem !important;
