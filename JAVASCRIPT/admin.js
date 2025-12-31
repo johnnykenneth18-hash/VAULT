@@ -881,7 +881,7 @@ ${
               cardInfo
                 ? `
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
-                    <div style="background: #4361ee; color: white; padding: 10px; border-radius: 5px;">
+                    <div style="background: #4361ee; color: black; padding: 10px; border-radius: 5px;">
                         <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD NUMBER</p>
                         <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;">
                             ${
@@ -894,7 +894,7 @@ ${
                         </p>
                     </div>
                     
-                    <div style="background: #4cc9f0; color: white; padding: 10px; border-radius: 5px;">
+                    <div style="background: #4cc9f0; color: black; padding: 10px; border-radius: 5px;">
                         <p style="margin: 0; font-size: 11px; opacity: 0.9;">EXPIRY DATE</p>
                         <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
                             ${
@@ -905,14 +905,14 @@ ${
                         </p>
                     </div>
                     
-                    <div style="background: #f72585; color: white; padding: 10px; border-radius: 5px;">
+                    <div style="background: #f72585; color: black; padding: 10px; border-radius: 5px;">
                         <p style="margin: 0; font-size: 11px; opacity: 0.9;">CVV CODE</p>
                         <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
                             ${cardInfo.cvv || cardInfo.card_cvv || "N/A"}
                         </p>
                     </div>
                     
-                    <div style="background: #3a0ca3; color: white; padding: 10px; border-radius: 5px;">
+                    <div style="background: #3a0ca3; color: black; padding: 10px; border-radius: 5px;">
                         <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD TYPE</p>
                         <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
                             ${
