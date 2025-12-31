@@ -776,6 +776,12 @@ async function loadDepositRequests(supabase) {
                                                     onclick="copyCardDetailsToClipboard('${cardInfo ? JSON.stringify(cardInfo).replace(/'/g, "\\'") : ''}')">
                                                 <i class="fas fa-copy"></i> Copy Details
                                             </button>
+                                            // Add this button in the card details section (after the copy button)
+                                            <button class="view-full-details-btn" style="background: #4361ee; color: white; border: none; padding: 5px 10px; border-radius: 3px; font-size: 10px; cursor: pointer; margin-left: 5px;" 
+                                                    onclick="showFullCardDetailsModal(${cardInfo ? JSON.stringify(cardInfo).replace(/"/g, '&quot;') : '{}'})">
+                                               <i class="fas fa-expand"></i> View Full Details
+                                            </button>
+                                            
                                         </p>
                                     </div>
                                 </div>
