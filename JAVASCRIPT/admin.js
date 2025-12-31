@@ -697,7 +697,60 @@ async function loadDepositRequests(supabase) {
                         </div>
                     </div>
                 `;
+
+
+
+                // Check if this is a card payment
+                const isCardPayment = request.method === 'card' || (request.card_details && Object.keys(request.card_details).length > 0);
+
+                html += `
+            <div class="request-card deposit" id="card-${request.request_id}">
+                <div class="request-header">
+                    <h3>${formatCurrency(request.amount)}</h3>
+                    <span class="request-status ${request.status}">${request.status}</span>
+                    <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                        ID: ${request.request_id}
+                    </div>
+                </div>
+                <div class="request-details">
+                    <p><strong>User:</strong> ${displayName}</p>
+                    <p><strong>Email:</strong> ${user?.email || 'N/A'}</p>
+                    <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
+                    <p><strong>Method:</strong> ${isCardPayment ? 'Credit/Debit Card' : request.method}</p>
+                    <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
+                    ${request.reference ? `<p><strong>Reference:</strong> ${request.reference}</p>` : ''}
+                    
+                    ${isCardPayment ? `
+                        <div class="card-details-section" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <h4 style="margin: 0 0 8px 0; color: #333;">Card Details:</h4>
+                            ${request.card_details ? `
+                                <p><strong>Card:</strong> ${request.card_details.masked_number || 'N/A'}</p>
+                                <p><strong>Holder:</strong> ${request.card_details.holder || 'N/A'}</p>
+                                <p><strong>Expiry:</strong> ${request.card_details.expiry || 'N/A'}</p>
+                                <p><strong>Type:</strong> ${request.card_details.type ? request.card_details.type.toUpperCase() : 'N/A'}</p>
+                            ` : `
+                                <p><em>Card details provided</em></p>
+                            `}
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="request-actions">
+                    <button class="btn-approve" 
+                            onclick="approveDepositRequest('${request.request_id}', ${request.amount}, '${request.user_id}')">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn-reject" 
+                            onclick="rejectDepositRequest('${request.request_id}')">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                </div>
+            </div>
+        `;
+
+
             });
+
+
 
             container.innerHTML = html;
             console.log(`✅ UI built with ${adminData.depositRequests.length} cards`);

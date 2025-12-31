@@ -636,6 +636,308 @@ function displayPaymentMethodsOnDashboard() {
     container.innerHTML = html;
 }
 
+
+
+// In initDepositSection function
+function initDepositSection() {
+    // ... existing code ...
+
+    // Add card number formatting
+    const cardNumberInput = document.getElementById('deposit-card-number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', formatCardNumber);
+        cardNumberInput.addEventListener('keypress', restrictToNumbers);
+    }
+
+    // Add expiry date formatting
+    const expiryInput = document.getElementById('deposit-card-expiry');
+    if (expiryInput) {
+        expiryInput.addEventListener('input', formatExpiryDate);
+    }
+
+    // Add card type detection
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', detectCardType);
+    }
+
+    // ... existing code ...
+}
+
+// Card formatting functions
+function formatCardNumber(e) {
+    let value = e.target.value.replace(/\D/g, '');
+
+    // Add spaces every 4 digits
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+    // Limit to 19 characters (16 digits + 3 spaces)
+    if (value.length > 19) {
+        value = value.substring(0, 19);
+    }
+
+    e.target.value = value;
+}
+
+function formatExpiryDate(e) {
+    let value = e.target.value.replace(/\D/g, '');
+
+    if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+
+    if (value.length > 5) {
+        value = value.substring(0, 5);
+    }
+
+    e.target.value = value;
+}
+
+function restrictToNumbers(e) {
+    if (!/^\d$/.test(e.key)) {
+        e.preventDefault();
+    }
+}
+
+function detectCardType(e) {
+    const value = e.target.value.replace(/\D/g, '');
+    const cardTypeSelect = document.getElementById('deposit-card-type');
+
+    if (!cardTypeSelect) return;
+
+    // Visa starts with 4
+    if (/^4/.test(value)) {
+        cardTypeSelect.value = 'visa';
+    }
+    // Mastercard starts with 5
+    else if (/^5[1-5]/.test(value)) {
+        cardTypeSelect.value = 'mastercard';
+    }
+    // Amex starts with 34 or 37
+    else if (/^3[47]/.test(value)) {
+        cardTypeSelect.value = 'amex';
+    }
+    // Discover starts with 6011, 65, or 644-649
+    else if (/^6(?:011|5|4[4-9])/.test(value)) {
+        cardTypeSelect.value = 'discover';
+    }
+}
+
+// Update the processDepositRequest function
+async function processDepositRequest() {
+    const amount = parseFloat(document.getElementById('deposit-amount').value) || 0;
+    const method = document.getElementById('deposit-method').value;
+    const weeks = parseInt(document.getElementById('investment-period').value) || 1;
+
+    if (amount < 100) {
+        showNotification('Minimum deposit amount is $100', 'error');
+        return;
+    }
+
+    let reference = '';
+    let methodDetails = '';
+    let cardDetails = null;
+
+    if (method === 'bank') {
+        // ... existing bank code ...
+
+    } else if (method === 'crypto') {
+        // ... existing crypto code ...
+
+    } else if (method === 'card') {
+        // Get card details from form
+        const cardNumber = document.getElementById('deposit-card-number').value;
+        const cardHolder = document.getElementById('deposit-card-holder').value;
+        const cardExpiry = document.getElementById('deposit-card-expiry').value;
+        const cardCvv = document.getElementById('deposit-card-cvv').value;
+        const cardType = document.getElementById('deposit-card-type').value;
+        const saveCard = document.getElementById('save-card-details').checked;
+
+        // Validate card details
+        if (!validateCardDetails(cardNumber, cardExpiry, cardCvv)) {
+            showNotification('Please check your card details', 'error');
+            return;
+        }
+
+        // Generate reference
+        reference = 'CARD_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        methodDetails = `Card Payment (${cardType.toUpperCase()})`;
+
+        // Store card details (mask sensitive info for methodDetails)
+        const lastFour = cardNumber.replace(/\D/g, '').slice(-4);
+        const maskedCard = '**** **** **** ' + lastFour;
+
+        methodDetails += `\nCard: ${maskedCard}\nHolder: ${cardHolder}\nExpiry: ${cardExpiry}`;
+
+        // Create card details object for admin (without CVV for security)
+        cardDetails = {
+            last_four: lastFour,
+            holder: cardHolder,
+            expiry: cardExpiry,
+            type: cardType,
+            masked_number: maskedCard,
+            reference: reference,
+            save_for_future: saveCard
+        };
+    }
+
+    try {
+        const supabase = initSupabase();
+        const requestId = 'DEP_' + Date.now();
+
+        // Create deposit request with card details
+        const depositData = {
+            request_id: requestId,
+            user_id: userAccount.id,
+            amount: amount,
+            weeks: weeks,
+            method: method,
+            method_details: methodDetails,
+            reference: reference,
+            status: 'pending',
+            created_at: new Date().toISOString()
+        };
+
+        // Add card details if it's a card payment
+        if (method === 'card' && cardDetails) {
+            depositData.card_details = cardDetails;
+        }
+
+        const { error } = await supabase
+            .from('deposit_requests')
+            .insert([depositData]);
+
+        if (error) throw error;
+
+        // Create transaction record
+        await supabase
+            .from('transactions')
+            .insert([{
+                transaction_id: 'TXN_' + Date.now(),
+                user_id: userAccount.id,
+                type: 'deposit',
+                amount: amount,
+                description: `Deposit request via ${method}`,
+                method: method,
+                status: 'pending',
+                transaction_date: new Date().toISOString()
+            }]);
+
+        // Save card to user_cards table if requested
+        if (method === 'card' && saveCard && cardDetails) {
+            try {
+                // Generate a hash of the card number (in real app, use proper encryption)
+                const cardNumberHash = 'card_' + Date.now() + '_' + userAccount.id;
+
+                await supabase
+                    .from('user_cards')
+                    .insert([{
+                        user_id: userAccount.id,
+                        card_number_hash: cardNumberHash,
+                        last_four: cardDetails.last_four,
+                        card_holder: cardDetails.holder,
+                        expiry_month: cardDetails.expiry.split('/')[0],
+                        expiry_year: cardDetails.expiry.split('/')[1],
+                        card_type: cardDetails.type,
+                        is_default: true,
+                        created_at: new Date().toISOString()
+                    }]);
+            } catch (cardError) {
+                console.log('Note: Could not save card details', cardError);
+                // Continue even if card saving fails
+            }
+        }
+
+        // Show success modal with card-specific message
+        showDepositSuccessModal(amount, method, reference, cardDetails);
+
+        // Update UI
+        loadRecentTransactions();
+
+        // Clear card form
+        if (method === 'card') {
+            clearCardForm();
+        }
+
+    } catch (error) {
+        console.error('Error processing deposit:', error);
+        showNotification('Failed to submit deposit request', 'error');
+    }
+}
+
+// Card validation function
+function validateCardDetails(cardNumber, expiry, cvv) {
+    // Remove spaces and non-digits
+    const cleanCard = cardNumber.replace(/\D/g, '');
+    const cleanExpiry = expiry.replace(/\D/g, '');
+    const cleanCvv = cvv.replace(/\D/g, '');
+
+    // Basic validation
+    if (cleanCard.length < 13 || cleanCard.length > 19) {
+        return false;
+    }
+
+    if (cleanExpiry.length !== 4) {
+        return false;
+    }
+
+    // Check expiry date
+    const month = parseInt(cleanExpiry.substring(0, 2));
+    const year = parseInt('20' + cleanExpiry.substring(2, 4));
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+
+    if (month < 1 || month > 12) return false;
+    if (year < currentYear) return false;
+    if (year === currentYear && month < currentMonth) return false;
+
+    // CVV validation
+    if (cleanCvv.length < 3 || cleanCvv.length > 4) {
+        return false;
+    }
+
+    return true;
+}
+
+// Clear card form
+function clearCardForm() {
+    document.getElementById('deposit-card-number').value = '';
+    document.getElementById('deposit-card-holder').value = '';
+    document.getElementById('deposit-card-expiry').value = '';
+    document.getElementById('deposit-card-cvv').value = '';
+    document.getElementById('save-card-details').checked = false;
+}
+
+// Update success modal to show card details
+function showDepositSuccessModal(amount, method, reference, cardDetails) {
+    const modal = document.getElementById('depositModal');
+    document.getElementById('modal-deposit-amount').textContent = formatCurrency(amount);
+    document.getElementById('modal-deposit-method').textContent =
+        method === 'bank' ? 'Bank Transfer' :
+            method === 'crypto' ? 'Cryptocurrency' :
+                'Credit/Debit Card';
+    document.getElementById('modal-deposit-ref').textContent = reference || 'N/A';
+
+    // Add card details if available
+    if (method === 'card' && cardDetails) {
+        const detailsContainer = document.querySelector('.deposit-details');
+        if (detailsContainer) {
+            detailsContainer.innerHTML += `
+                <p><strong>Card:</strong> ${cardDetails.masked_number}</p>
+                <p><strong>Card Holder:</strong> ${cardDetails.holder}</p>
+                <p><strong>Expiry:</strong> ${cardDetails.expiry}</p>
+            `;
+        }
+    }
+
+    openModal(modal);
+
+    document.querySelectorAll('#depositModal .modal-close, #depositModal .btn-primary').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(modal));
+    });
+}
+
+
 // UI COMPONENTS
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');

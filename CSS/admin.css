@@ -1221,3 +1221,109 @@ body {
         opacity: 0;
     }
 }
+
+/* Card payment styles */
+.card-payment-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.card-payment-form h4 {
+    color: var(--dark-color);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-icons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.card-icons i {
+    font-size: 24px;
+    color: #666;
+    opacity: 0.6;
+}
+
+.card-icons i.fa-cc-visa {
+    color: #1a1f71;
+    opacity: 1;
+}
+
+.card-icons i.fa-cc-mastercard {
+    color: #eb001b;
+    opacity: 1;
+}
+
+.card-icons i.fa-cc-amex {
+    color: #2e77bc;
+    opacity: 1;
+}
+
+.card-icons i.fa-cc-discover {
+    color: #ff6000;
+    opacity: 1;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.security-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(76, 201, 240, 0.1);
+    border-radius: 6px;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.security-notice i {
+    color: #4cc9f0;
+    font-size: 1rem;
+}
+
+.card-details-section {
+    border: 1px solid #eaeaea;
+    border-left: 3px solid #4cc9f0;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .card-payment-form {
+        background: #0f3460;
+    }
+
+    .card-payment-form h4 {
+        color: #e1e1e1;
+    }
+
+    .security-notice {
+        background: rgba(76, 201, 240, 0.15);
+        color: #b0b0b0;
+    }
+
+    .card-details-section {
+        background: #0f3460;
+        border-color: #2d4059;
+    }
+}
