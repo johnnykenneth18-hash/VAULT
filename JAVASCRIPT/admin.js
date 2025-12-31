@@ -874,7 +874,7 @@ ${
             <i class="fas fa-credit-card"></i> COMPLETE CARD DETAILS FOR PROCESSING
         </h4>
         
-        <div style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 6px; position: relative; z-index: 2;">
+        <div style="background: rgba(41, 8, 189, 0.95); padding: 15px; border-radius: 6px; position: relative; z-index: 2;">
             ${
               cardInfo
                 ? `
