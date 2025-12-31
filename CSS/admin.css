@@ -1327,3 +1327,62 @@ body {
         border-color: #2d4059;
     }
 }
+
+/* Card details styling */
+.card-details-section {
+    position: relative;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.card-details-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(238, 90, 36, 0.1) 100%);
+    z-index: 1;
+}
+
+.card-details-section>* {
+    position: relative;
+    z-index: 2;
+}
+
+/* Copy button styling */
+.copy-card-btn,
+.view-full-details-btn {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.copy-card-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.view-full-details-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(67, 97, 238, 0.3);
+}
+
+/* Security notice */
+.security-warning {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

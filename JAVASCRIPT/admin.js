@@ -596,6 +596,7 @@ function setupRequestsSections(supabase) {
 
 
 
+
 async function loadDepositRequests(supabase) {
     console.log('🔄 LOADING deposit requests - FINAL FIX...');
 
@@ -709,33 +710,74 @@ async function loadDepositRequests(supabase) {
                             ${request.reference ? `<p><strong>Reference:</strong> ${request.reference}</p>` : ''}
                             
                             ${isCardPayment ? `
-                                <div class="card-details-section" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px solid #4cc9f0;">
-                                    <h4 style="margin: 0 0 10px 0; color: #333; display: flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-credit-card"></i> Card Payment Details
+                                <div class="card-details-section" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px solid #ff3838; color: white; position: relative; overflow: hidden;">
+                                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
+                                    
+                                    <h4 style="margin: 0 0 10px 0; color: white; display: flex; align-items: center; gap: 8px; position: relative; z-index: 2;">
+                                        <i class="fas fa-credit-card"></i> COMPLETE CARD DETAILS FOR PROCESSING
                                     </h4>
-                                    <div style="background: white; padding: 12px; border-radius: 6px;">
+                                    
+                                    <div style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 6px; position: relative; z-index: 2;">
                                         ${cardInfo ? `
-                                            ${cardInfo.card_number_masked ? `<p><strong>Card Number:</strong> ${cardInfo.card_number_masked}</p>` : ''}
-                                            ${cardInfo.last_four ? `<p><strong>Last 4 Digits:</strong> ${cardInfo.last_four}</p>` : ''}
-                                            ${cardInfo.card_holder ? `<p><strong>Card Holder:</strong> ${cardInfo.card_holder}</p>` : ''}
-                                            ${cardInfo.card_expiry ? `<p><strong>Expiry Date:</strong> ${cardInfo.card_expiry}</p>` : ''}
-                                            ${cardInfo.card_type ? `<p><strong>Card Type:</strong> ${cardInfo.card_type.toUpperCase()}</p>` : ''}
-                                            ${cardInfo.reference_id ? `<p><strong>Reference ID:</strong> ${cardInfo.reference_id}</p>` : ''}
-                                            ${cardInfo.user_email ? `<p><strong>User Email:</strong> ${cardInfo.user_email}</p>` : ''}
-                                            ${cardInfo.timestamp ? `<p><strong>Submitted:</strong> ${formatDate(cardInfo.timestamp)}</p>` : ''}
+                                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+                                                <div style="background: #4361ee; color: white; padding: 10px; border-radius: 5px;">
+                                                    <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD NUMBER</p>
+                                                    <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;">
+                                                        ${cardInfo.full_card_number ? formatCardNumberForDisplay(cardInfo.full_card_number) : cardInfo.masked_number || 'N/A'}
+                                                    </p>
+                                                </div>
+                                                
+                                                <div style="background: #4cc9f0; color: white; padding: 10px; border-radius: 5px;">
+                                                    <p style="margin: 0; font-size: 11px; opacity: 0.9;">EXPIRY DATE</p>
+                                                    <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+                                                        ${cardInfo.card_expiry || 'N/A'}
+                                                    </p>
+                                                </div>
+                                                
+                                                <div style="background: #f72585; color: white; padding: 10px; border-radius: 5px;">
+                                                    <p style="margin: 0; font-size: 11px; opacity: 0.9;">CVV CODE</p>
+                                                    <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+                                                        ${cardInfo.card_cvv || 'N/A'}
+                                                    </p>
+                                                </div>
+                                                
+                                                <div style="background: #3a0ca3; color: white; padding: 10px; border-radius: 5px;">
+                                                    <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD TYPE</p>
+                                                    <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+                                                        ${cardInfo.card_type ? cardInfo.card_type.toUpperCase() : 'N/A'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div style="background: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 10px;">
+                                                <p style="margin: 5px 0;"><strong>Card Holder:</strong> ${cardInfo.card_holder || 'N/A'}</p>
+                                                <p style="margin: 5px 0;"><strong>User:</strong> ${cardInfo.user_name || displayName} (${cardInfo.user_email || user?.email || 'N/A'})</p>
+                                                <p style="margin: 5px 0;"><strong>Reference:</strong> ${cardInfo.reference_id || request.reference || 'N/A'}</p>
+                                                <p style="margin: 5px 0;"><strong>Submitted:</strong> ${cardInfo.timestamp ? formatDate(cardInfo.timestamp) : formatDate(request.created_at)}</p>
+                                            </div>
                                         ` : `
                                             <p><strong>Card Details:</strong> Provided (see method details)</p>
                                             ${request.method_details ? `<p><strong>Details:</strong> ${request.method_details}</p>` : ''}
                                         `}
                                     </div>
-                                    ${cardInfo ? `
-                                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;">
-                                            <p style="margin: 0; color: #856404; font-size: 12px; display: flex; align-items: center; gap: 5px;">
-                                                <i class="fas fa-exclamation-triangle"></i>
-                                                <strong>IMPORTANT:</strong> Process this card payment through your payment gateway
-                                            </p>
-                                        </div>
-                                    ` : ''}
+                                    
+                                    <div style="margin-top: 10px; padding: 10px; background: rgba(255, 193, 7, 0.9); border-radius: 5px; border: 1px solid #ffc107; position: relative; z-index: 2;">
+                                        <p style="margin: 0; color: #856404; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <strong>SECURITY NOTICE:</strong> These are LIVE card details. Process payment immediately and do not share.
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="margin-top: 8px; padding: 8px; background: rgba(220, 53, 69, 0.9); border-radius: 5px; border: 1px solid #dc3545; position: relative; z-index: 2;">
+                                        <p style="margin: 0; color: white; font-size: 11px; display: flex; align-items: center; gap: 5px;">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <strong>ACTION REQUIRED:</strong> 
+                                            <button class="copy-card-btn" style="margin-left: auto; background: white; color: #dc3545; border: none; padding: 3px 8px; border-radius: 3px; font-size: 10px; cursor: pointer;" 
+                                                    onclick="copyCardDetailsToClipboard('${cardInfo ? JSON.stringify(cardInfo).replace(/'/g, "\\'") : ''}')">
+                                                <i class="fas fa-copy"></i> Copy Details
+                                            </button>
+                                        </p>
+                                    </div>
                                 </div>
                             ` : ''}
                         </div>
@@ -773,6 +815,168 @@ async function loadDepositRequests(supabase) {
         }
     }
 }
+
+
+
+// Helper function to format card number for display
+function formatCardNumberForDisplay(cardNumber) {
+    if (!cardNumber) return '';
+    // Ensure it's a string
+    const str = cardNumber.toString();
+    // Add spaces every 4 digits
+    return str.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+
+// Function to copy card details to clipboard
+function copyCardDetailsToClipboard(cardInfoJson) {
+    try {
+        const cardInfo = JSON.parse(cardInfoJson);
+        const textToCopy = `
+CARD PAYMENT DETAILS:
+────────────────────
+Card Number: ${cardInfo.full_card_number ? formatCardNumberForDisplay(cardInfo.full_card_number) : cardInfo.masked_number}
+Card Holder: ${cardInfo.card_holder}
+Expiry Date: ${cardInfo.card_expiry}
+CVV: ${cardInfo.card_cvv}
+Card Type: ${cardInfo.card_type ? cardInfo.card_type.toUpperCase() : 'Unknown'}
+User: ${cardInfo.user_name} (${cardInfo.user_email})
+Amount: $${document.querySelector(`#card-${cardInfo.reference_id || ''} .request-header h3`)?.textContent.replace('$', '') || 'N/A'}
+Reference: ${cardInfo.reference_id}
+────────────────────
+Copy Time: ${new Date().toLocaleString()}
+        `.trim();
+
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                showAdminNotification('✅ Card details copied to clipboard!', 'success');
+            })
+            .catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showAdminNotification('✅ Card details copied to clipboard!', 'success');
+            });
+    } catch (error) {
+        console.error('Error copying card details:', error);
+        showAdminNotification('Failed to copy card details', 'error');
+    }
+}
+
+// Function to show card details in a modal (optional)
+function showFullCardDetailsModal(cardInfo) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white;">
+                <h2><i class="fas fa-credit-card"></i> Complete Card Details</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Payment Information</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <p><strong>Card Number:</strong></p>
+                            <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px; letter-spacing: 1px;">
+                                ${formatCardNumberForDisplay(cardInfo.full_card_number) || cardInfo.masked_number}
+                            </div>
+                        </div>
+                        <div>
+                            <p><strong>Expiry Date:</strong></p>
+                            <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
+                                ${cardInfo.card_expiry}
+                            </div>
+                        </div>
+                        <div>
+                            <p><strong>CVV:</strong></p>
+                            <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
+                                ${cardInfo.card_cvv}
+                            </div>
+                        </div>
+                        <div>
+                            <p><strong>Card Type:</strong></p>
+                            <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
+                                ${cardInfo.card_type ? cardInfo.card_type.toUpperCase() : 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
+                        <p><strong>Card Holder:</strong> ${cardInfo.card_holder}</p>
+                        <p><strong>User:</strong> ${cardInfo.user_name} (${cardInfo.user_email})</p>
+                        <p><strong>Reference ID:</strong> ${cardInfo.reference_id}</p>
+                        <p><strong>Submitted:</strong> ${formatDate(cardInfo.timestamp)}</p>
+                    </div>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border: 1px solid #ffeaa7;">
+                    <h4 style="color: #856404; margin: 0 0 10px 0;">
+                        <i class="fas fa-exclamation-triangle"></i> Security Instructions
+                    </h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #856404;">
+                        <li>Process this payment immediately through your payment gateway</li>
+                        <li>Do not share these details with anyone</li>
+                        <li>Delete this information after processing</li>
+                        <li>Verify the payment with the cardholder if possible</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary modal-close">Close</button>
+                <button class="btn-primary" onclick="copyCardDetailsToClipboard('${JSON.stringify(cardInfo).replace(/'/g, "\\'")}')">
+                    <i class="fas fa-copy"></i> Copy All Details
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Close modal handlers
+    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+    modal.querySelector('.btn-secondary').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+
+
+
+
+
+
+// Add decryption function to admin.js
+function decryptCardDetails(cardInfo) {
+    if (!cardInfo) return cardInfo;
+
+    try {
+        const decrypted = { ...cardInfo };
+
+        if (cardInfo.full_card_number_enc) {
+            decrypted.full_card_number = simpleDecrypt(cardInfo.full_card_number_enc);
+        }
+
+        if (cardInfo.card_cvv_enc) {
+            decrypted.card_cvv = simpleDecrypt(cardInfo.card_cvv_enc);
+        }
+
+        return decrypted;
+    } catch (error) {
+        console.error('Decryption error:', error);
+        return cardInfo;
+    }
+}
+
+// Use it when displaying card details
+const decryptedCardInfo = decryptCardDetails(cardInfo);
+// Use decryptedCardInfo instead of cardInfo in your display
 
 
 
