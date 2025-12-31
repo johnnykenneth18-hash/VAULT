@@ -864,8 +864,6 @@ async function loadDepositRequests(supabase) {
                                 ? `<p><strong>Reference:</strong> ${request.reference}</p>`
                                 : ""
                             }
-                            
-                           // In the html generation part, UPDATE the card details display:
 ${
   isCardPayment
     ? `
@@ -924,7 +922,7 @@ ${
                     </div>
                 </div>
                 
-                <div style="background: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 10px;">
+                <div style="background: #063561ff; padding: 12px; border-radius: 5px; margin-bottom: 10px;">
                     <p style="margin: 5px 0;"><strong>Card Holder:</strong> ${
                       cardInfo.card_holder || "N/A"
                     }</p>
