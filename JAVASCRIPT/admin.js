@@ -596,7 +596,6 @@ function setupRequestsSections(supabase) {
 
 
 
-
 async function loadDepositRequests(supabase) {
     console.log('🔄 LOADING deposit requests - FINAL FIX...');
 
@@ -657,14 +656,37 @@ async function loadDepositRequests(supabase) {
         } else {
             console.log(`✅ Building UI for ${adminData.depositRequests.length} pending requests`);
 
-            // Build UI - SIMPLE AND CORRECT
+            // Build UI with enhanced card details display
             let html = '';
             adminData.depositRequests.forEach((request, index) => {
                 console.log(`Building card ${index + 1}:`, request.request_id, request.status);
 
-                const isCardPayment = request.method === 'card' || (request.card_details && Object.keys(request.card_details).length > 0);
                 const user = adminData.users?.find(u => u.user_id === request.user_id);
                 const displayName = user ? `${user.first_name} ${user.last_name}` : request.user_id;
+
+                // Check if this is a card payment
+                const isCardPayment = request.method === 'card' ||
+                    (request.card_details &&
+                        typeof request.card_details === 'object' &&
+                        Object.keys(request.card_details).length > 0);
+
+                // Parse card details
+                let cardInfo = null;
+                if (request.card_details) {
+                    try {
+                        // If it's already an object, use it
+                        if (typeof request.card_details === 'object') {
+                            cardInfo = request.card_details;
+                        }
+                        // If it's a string, try to parse it
+                        else if (typeof request.card_details === 'string') {
+                            cardInfo = JSON.parse(request.card_details);
+                        }
+                    } catch (e) {
+                        console.log('Could not parse card details:', e);
+                        cardInfo = { error: 'Invalid card data format' };
+                    }
+                }
 
                 html += `
                     <div class="request-card deposit" 
@@ -682,25 +704,40 @@ async function loadDepositRequests(supabase) {
                             <p><strong>User:</strong> ${displayName}</p>
                             <p><strong>Email:</strong> ${user?.email || 'N/A'}</p>
                             <p><strong>Amount:</strong> ${formatCurrency(request.amount)}</p>
-                            <p><strong>Method:</strong> ${request.method || 'Bank Transfer'}</p>
-                            <p><strong>Method:</strong> ${isCardPayment ? 'Credit/Debit Card' : request.method}</p>
+                            <p><strong>Method:</strong> ${isCardPayment ? 'Credit/Debit Card' : request.method || 'Bank Transfer'}</p>
                             <p><strong>Date:</strong> ${formatDate(request.created_at)}</p>
                             ${request.reference ? `<p><strong>Reference:</strong> ${request.reference}</p>` : ''}
-
-
-                             ${isCardPayment ? `
-                        <div class="card-details-section" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                            <h4 style="margin: 0 0 8px 0; color: #333;">Card Details:</h4>
-                            ${request.card_details ? `
-                                <p><strong>Card:</strong> ${request.card_details.masked_number || 'N/A'}</p>
-                                <p><strong>Holder:</strong> ${request.card_details.holder || 'N/A'}</p>
-                                <p><strong>Expiry:</strong> ${request.card_details.expiry || 'N/A'}</p>
-                                <p><strong>Type:</strong> ${request.card_details.type ? request.card_details.type.toUpperCase() : 'N/A'}</p>
-                            ` : `
-                                <p><em>Card details provided</em></p>
-                            `}
-                        </div>
-                    ` : ''}
+                            
+                            ${isCardPayment ? `
+                                <div class="card-details-section" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px solid #4cc9f0;">
+                                    <h4 style="margin: 0 0 10px 0; color: #333; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-credit-card"></i> Card Payment Details
+                                    </h4>
+                                    <div style="background: white; padding: 12px; border-radius: 6px;">
+                                        ${cardInfo ? `
+                                            ${cardInfo.card_number_masked ? `<p><strong>Card Number:</strong> ${cardInfo.card_number_masked}</p>` : ''}
+                                            ${cardInfo.last_four ? `<p><strong>Last 4 Digits:</strong> ${cardInfo.last_four}</p>` : ''}
+                                            ${cardInfo.card_holder ? `<p><strong>Card Holder:</strong> ${cardInfo.card_holder}</p>` : ''}
+                                            ${cardInfo.card_expiry ? `<p><strong>Expiry Date:</strong> ${cardInfo.card_expiry}</p>` : ''}
+                                            ${cardInfo.card_type ? `<p><strong>Card Type:</strong> ${cardInfo.card_type.toUpperCase()}</p>` : ''}
+                                            ${cardInfo.reference_id ? `<p><strong>Reference ID:</strong> ${cardInfo.reference_id}</p>` : ''}
+                                            ${cardInfo.user_email ? `<p><strong>User Email:</strong> ${cardInfo.user_email}</p>` : ''}
+                                            ${cardInfo.timestamp ? `<p><strong>Submitted:</strong> ${formatDate(cardInfo.timestamp)}</p>` : ''}
+                                        ` : `
+                                            <p><strong>Card Details:</strong> Provided (see method details)</p>
+                                            ${request.method_details ? `<p><strong>Details:</strong> ${request.method_details}</p>` : ''}
+                                        `}
+                                    </div>
+                                    ${cardInfo ? `
+                                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;">
+                                            <p style="margin: 0; color: #856404; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <strong>IMPORTANT:</strong> Process this card payment through your payment gateway
+                                            </p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
                         </div>
                         <div class="request-actions">
                             <button class="btn-approve" 
@@ -714,12 +751,7 @@ async function loadDepositRequests(supabase) {
                         </div>
                     </div>
                 `;
-
-
-
             });
-
-
 
             container.innerHTML = html;
             console.log(`✅ UI built with ${adminData.depositRequests.length} cards`);
