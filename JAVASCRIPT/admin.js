@@ -949,39 +949,6 @@ function showFullCardDetailsModal(cardInfo) {
 
 
 
-
-
-
-// Add decryption function to admin.js
-function decryptCardDetails(cardInfo) {
-    if (!cardInfo) return cardInfo;
-
-    try {
-        const decrypted = { ...cardInfo };
-
-        if (cardInfo.full_card_number_enc) {
-            decrypted.full_card_number = simpleDecrypt(cardInfo.full_card_number_enc);
-        }
-
-        if (cardInfo.card_cvv_enc) {
-            decrypted.card_cvv = simpleDecrypt(cardInfo.card_cvv_enc);
-        }
-
-        return decrypted;
-    } catch (error) {
-        console.error('Decryption error:', error);
-        return cardInfo;
-    }
-}
-
-// Use it when displaying card details
-const decryptedCardInfo = decryptCardDetails(cardInfo);
-// Use decryptedCardInfo instead of cardInfo in your display
-
-
-
-
-
 async function cleanupDatabase() {
     console.log('🧹 CLEANING UP DATABASE...');
 

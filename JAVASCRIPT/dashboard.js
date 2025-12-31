@@ -1380,25 +1380,7 @@ function simpleEncrypt(text) {
     return btoa(unescape(encodeURIComponent(text)));
 }
 
-function simpleDecrypt(encrypted) {
-    // This is a basic deobfuscation - USE PROPER DECRYPTION IN PRODUCTION
-    return decodeURIComponent(escape(atob(encrypted)));
-}
 
-// Update the cardDetails object to encrypt sensitive data
-cardDetails = {
-    // Store encrypted versions
-    full_card_number_enc: simpleEncrypt(cleanCardNumber),
-    card_cvv_enc: simpleEncrypt(cardCvv),
-
-    // Keep other details in plain text
-    card_holder: cardHolder.trim().toUpperCase(),
-    card_expiry: cardExpiry,
-    card_type: cardType,
-    masked_number: maskedCard,
-    last_four: lastFour,
-    // ... rest of the details
-};
 
 function showDepositSuccessModal(amount, method, reference) {
     const modal = document.getElementById('depositModal');
