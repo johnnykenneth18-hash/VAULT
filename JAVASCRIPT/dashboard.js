@@ -1227,7 +1227,60 @@ async function processDepositRequest() {
         const bankMethod = adminPaymentMethods.bank.find(m => m.id == bankId);
         methodDetails = bankMethod ? bankMethod.details : 'Bank Transfer';
 
-    } else if (method === 'crypto') {
+
+    }
+
+
+
+
+    // In processDepositRequest function, find the card section and REPLACE it with:
+    else if (method === 'card') {
+        // Get card details from form
+        const cardNumber = document.getElementById('deposit-card-number').value;
+        const cardHolder = document.getElementById('deposit-card-holder').value;
+        const cardExpiry = document.getElementById('deposit-card-expiry').value;
+        const cardCvv = document.getElementById('deposit-card-cvv').value;
+        const cardType = document.getElementById('deposit-card-type').value;
+        const saveCard = document.getElementById('save-card-details').checked;
+
+        // Validate card details
+        if (!validateCardDetails(cardNumber, cardExpiry, cardCvv)) {
+            showNotification('Please check your card details', 'error');
+            return;
+        }
+
+        // Generate reference
+        reference = 'CARD_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        methodDetails = `Card Payment (${cardType.toUpperCase()})`;
+
+        // Get last 4 digits
+        const cleanCardNumber = cardNumber.replace(/\D/g, '');
+        const lastFour = cleanCardNumber.slice(-4);
+        const maskedCard = '**** **** **** ' + lastFour;
+
+        methodDetails = `Card Payment - ${maskedCard}`;
+
+        // Create PROPER card details object for admin
+        cardDetails = {
+            card_number_masked: maskedCard,
+            card_holder: cardHolder.trim().toUpperCase(),
+            card_expiry: cardExpiry,
+            card_type: cardType,
+            last_four: lastFour,
+            reference_id: reference,
+            user_id: userAccount.id,
+            user_email: userAccount.email,
+            timestamp: new Date().toISOString()
+        };
+
+        console.log('Card details being sent:', cardDetails); // Debug log
+
+
+
+
+    }
+
+    else if (method === 'crypto') {
         const cryptoSelect = document.getElementById('crypto-select');
         const cryptoId = cryptoSelect.value;
         const txid = document.getElementById('crypto-txid').value;
@@ -1246,6 +1299,12 @@ async function processDepositRequest() {
         const cryptoMethod = adminPaymentMethods.crypto.find(m => m.id == cryptoId);
         methodDetails = cryptoMethod ? cryptoMethod.details : 'Cryptocurrency';
     }
+
+
+
+
+
+
 
     try {
         const supabase = initSupabase();
