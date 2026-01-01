@@ -1253,9 +1253,11 @@ function showDepositSuccessModal(
   const detailsContainer = modal.querySelector(".deposit-details");
   if (detailsContainer) {
     let detailsHTML = `
-      <p><strong>Amount:</strong> ${formatCurrency(amount)}</p>
-      <p><strong>Method:</strong> ${methodText}</p>
-      <p><strong>Reference:</strong> ${reference || "N/A"}</p>
+      <div style="color: black !important;>
+         <p><strong>Amount:</strong> ${formatCurrency(amount)}</p>
+         <p><strong>Method:</strong> ${methodText}</p>
+         <p><strong>Reference:</strong> ${reference || "N/A"}</p>
+      </div>
     `;
 
     if (method === "card" && cardDetails) {
