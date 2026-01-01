@@ -2944,11 +2944,11 @@ select {
     
     /* Fix section text colors */
     .payment-methods-section h2 {
-        color: #e1e1e1 !important;
+        color: #0e0d0d !important;
     }
     
     .payment-methods-section p {
-        color: #b0b0b0 !important;
+        color: #110f0f !important;
     }
 }
 
