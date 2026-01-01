@@ -2281,3 +2281,429 @@ select {
         min-height: 60px !important;
     }
 }
+
+/* ======================================== */
+/* CRITICAL FIX: Payment Methods Display Border Radius */
+/* ======================================== */
+
+.methods-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    overflow: visible !important;
+}
+
+.method-card-display {
+    background: #f8f9fa;
+    border-radius: var(--border-radius) !important;
+    padding: 20px;
+    border: 1px solid #eaeaea;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+/* Ensure ALL corners have border radius */
+.method-card-display::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.method-details-display {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #eaeaea;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Fix for mobile */
+@media screen and (max-width: 767px) {
+    .methods-display {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+        padding: 0 10px;
+        margin: 0 -10px;
+        width: calc(100% + 20px);
+    }
+    
+    .method-card-display {
+        margin: 0;
+        border-radius: var(--border-radius) !important;
+        padding: 15px;
+    }
+    
+    .method-details-display {
+        padding: 12px;
+        font-size: 0.85rem;
+        max-height: 120px;
+    }
+}
+
+/* ======================================== */
+/* FIX for Deposit/Withdrawal Method Fields Visibility */
+/* ======================================== */
+
+/* Clear inline styles on mobile */
+@media screen and (max-width: 767px) {
+    #bank-fields,
+    #crypto-fields,
+    #card-fields,
+    #withdrawal-bank-fields,
+    #withdrawal-crypto-fields {
+        display: none !important;
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    #bank-fields.active,
+    #crypto-fields.active,
+    #card-fields.active,
+    #withdrawal-bank-fields.active,
+    #withdrawal-crypto-fields.active {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        max-height: 1000px !important;
+        overflow: visible !important;
+    }
+}
+
+/* Ensure method fields are visible when active */
+.method-fields.active {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    align-items: start;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border: 1px solid #eaeaea;
+}
+
+/* Mobile layout for method fields */
+@media screen and (max-width: 767px) {
+    .method-fields.active {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+        padding: 15px;
+    }
+}
+
+
+
+
+/* ======================================== */
+/* NOTIFICATION SYSTEM FIX */
+/* ======================================== */
+
+/* Remove old notification styles */
+.notification-popup {
+    display: none !important;
+}
+
+/* New fixed notification system */
+.notification-system {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    max-width: 350px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.notification-toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    pointer-events: all;
+    animation: slideInRight 0.3s ease forwards;
+    transform: translateX(120%);
+    opacity: 0;
+    border-left: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-toast::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    opacity: 0.3;
+}
+
+.notification-toast.success {
+    border-left-color: var(--success-color);
+    background: linear-gradient(to right, rgba(76, 201, 240, 0.05), white);
+}
+
+.notification-toast.success::before {
+    background: var(--success-color);
+}
+
+.notification-toast.error {
+    border-left-color: var(--danger-color);
+    background: linear-gradient(to right, rgba(247, 37, 133, 0.05), white);
+}
+
+.notification-toast.error::before {
+    background: var(--danger-color);
+}
+
+.notification-toast.info {
+    border-left-color: var(--primary-color);
+    background: linear-gradient(to right, rgba(67, 97, 238, 0.05), white);
+}
+
+.notification-toast.info::before {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning {
+    border-left-color: var(--warning-color);
+    background: linear-gradient(to right, rgba(255, 158, 0, 0.05), white);
+}
+
+.notification-toast.warning::before {
+    background: var(--warning-color);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+.notification-toast.fade-out {
+    animation: slideOutRight 0.3s ease forwards;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+}
+
+.notification-toast.success .notification-icon {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-icon {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-icon {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-icon {
+    background: var(--warning-color);
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: var(--dark-color);
+}
+
+.notification-content p {
+    font-size: 14px;
+    margin: 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.3s;
+}
+
+.notification-close:hover {
+    color: var(--danger-color);
+}
+
+/* Progress bar for auto-dismiss */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+.notification-progress-bar {
+    height: 100%;
+    width: 100%;
+    transform: scaleX(1);
+    transform-origin: left;
+    animation: progressBar 3s linear forwards;
+}
+
+.notification-toast.success .notification-progress-bar {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-progress-bar {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-progress-bar {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-progress-bar {
+    background: var(--warning-color);
+}
+
+@keyframes progressBar {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 767px) {
+    .notification-system {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        max-width: none;
+    }
+
+    .notification-toast {
+        padding: 14px 16px;
+        margin-bottom: 8px;
+    }
+
+    .notification-content h4 {
+        font-size: 14px;
+    }
+
+    .notification-content p {
+        font-size: 13px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .notification-toast {
+        background: #1a1a2e;
+        color: #e1e1e1;
+        border-left-color: var(--primary-color);
+    }
+
+    .notification-toast.success {
+        background: linear-gradient(to right, rgba(76, 201, 240, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.error {
+        background: linear-gradient(to right, rgba(247, 37, 133, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.info {
+        background: linear-gradient(to right, rgba(67, 97, 238, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.warning {
+        background: linear-gradient(to right, rgba(255, 158, 0, 0.1), #1a1a2e);
+    }
+
+    .notification-content h4 {
+        color: #e1e1e1;
+    }
+
+    .notification-content p {
+        color: #b0b0b0;
+    }
+
+    .notification-close {
+        color: #b0b0b0;
+    }
+
+    .notification-close:hover {
+        color: #f72585;
+    }
+
+    .notification-progress {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}

@@ -869,11 +869,11 @@ function initDepositSection() {
   // Payment method change
   if (depositMethod) {
     depositMethod.addEventListener("change", function () {
+      console.log("Deposit method changed to:", this.value);
       updateDepositMethodFields(this.value);
       updateDepositPreview();
     });
   }
-
   const cardNumberInput = document.getElementById("deposit-card-number");
   if (cardNumberInput) {
     cardNumberInput.addEventListener("input", formatCardNumber);
@@ -901,19 +901,46 @@ function initDepositSection() {
   // Initial update
   updateDepositPreview();
   if (depositMethod) updateDepositMethodFields(depositMethod.value);
+
+  // Initialize with correct method on page load
+  const initialMethod = document.getElementById("deposit-method").value;
+  console.log("Initial deposit method:", initialMethod);
+  updateDepositMethodFields(initialMethod);
 }
 
+// ========================================
+// CRITICAL FIX: Update deposit method fields function
+// ========================================
 function updateDepositMethodFields(method) {
-  // Hide all fields
-  ["bank-fields", "crypto-fields", "card-fields"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
+  console.log("🔄 Updating deposit method to:", method);
+
+  // Hide ALL deposit method fields first
+  const depositMethodFields = ["bank-fields", "crypto-fields", "card-fields"];
+  depositMethodFields.forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.classList.remove("active");
+      field.style.display = "none";
+      field.style.opacity = "0";
+      field.style.visibility = "hidden";
+      field.style.height = "0";
+      field.style.overflow = "hidden";
+    }
   });
 
-  // Show selected fields
-  const selectedFields = document.getElementById(`${method}-fields`);
-  if (selectedFields) {
-    selectedFields.style.display = "block";
+  // Show selected method fields
+  const selectedField = document.getElementById(`${method}-fields`);
+  if (selectedField) {
+    console.log("✅ Showing fields for:", method);
+    selectedField.classList.add("active");
+    selectedField.style.display = "block";
+    selectedField.style.opacity = "1";
+    selectedField.style.visibility = "visible";
+    selectedField.style.height = "auto";
+    selectedField.style.overflow = "visible";
+
+    // Force reflow for mobile browsers
+    selectedField.offsetHeight;
   }
 
   // Update preview
@@ -1005,8 +1032,8 @@ async function processDepositRequest() {
     return;
   }
 
-  let reference = '';
-  let methodDetails = '';
+  let reference = "";
+  let methodDetails = "";
   let cardDetails = null;
 
   if (method === "card") {
@@ -1075,28 +1102,27 @@ async function processDepositRequest() {
       JSON.stringify(cardDetails, null, 2)
     );
   } else if (method === "bank") {
-    const bankSelect = document.getElementById('bank-select');
+    const bankSelect = document.getElementById("bank-select");
     const bankId = bankSelect.value;
-    const depositRef = document.getElementById('deposit-reference').value;
+    const depositRef = document.getElementById("deposit-reference").value;
 
     if (!bankId) {
-      showNotification('Please select a bank', 'error');
+      showNotification("Please select a bank", "error");
       return;
     }
 
     if (!depositRef.trim()) {
-      showNotification('Please enter transaction reference', 'error');
+      showNotification("Please enter transaction reference", "error");
       return;
     }
 
     reference = depositRef;
     const bankMethod = adminPaymentMethods.bank.find((m) => m.id == bankId);
-    methodDetails = bankMethod ? bankMethod.details : 'Bank Transfer';
-
+    methodDetails = bankMethod ? bankMethod.details : "Bank Transfer";
   } else if (method === "crypto") {
-    const cryptoSelect = document.getElementById('crypto-select');
+    const cryptoSelect = document.getElementById("crypto-select");
     const cryptoId = cryptoSelect.value;
-    const txid = document.getElementById('crypto-txid').value;
+    const txid = document.getElementById("crypto-txid").value;
 
     if (!cryptoId) {
       showNotification('Please select a cryptocurrency", "error');
@@ -1104,7 +1130,7 @@ async function processDepositRequest() {
     }
 
     if (!txid.trim()) {
-      showNotification('Please enter transaction ID', 'error');
+      showNotification("Please enter transaction ID", "error");
       return;
     }
 
@@ -1112,7 +1138,7 @@ async function processDepositRequest() {
     const cryptoMethod = adminPaymentMethods.crypto.find(
       (m) => m.id == cryptoId
     );
-    methodDetails = cryptoMethod ? cryptoMethod.details : 'Cryptocurrency';
+    methodDetails = cryptoMethod ? cryptoMethod.details : "Cryptocurrency";
   }
 
   try {
@@ -1303,6 +1329,7 @@ function initWithdrawalSection() {
   // Withdrawal method change
   if (withdrawalMethod) {
     withdrawalMethod.addEventListener("change", function () {
+      console.log("Withdrawal method changed to:", this.value);
       updateWithdrawalMethodFields(this.value);
     });
   }
@@ -1320,19 +1347,47 @@ function initWithdrawalSection() {
 
   updateWithdrawalPreview();
   if (withdrawalMethod) updateWithdrawalMethodFields(withdrawalMethod.value);
+
+  // Initialize with correct method on page load
+  const initialWithdrawalMethod =
+    document.getElementById("withdrawal-method").value;
+  console.log("Initial withdrawal method:", initialWithdrawalMethod);
+  updateWithdrawalMethodFields(initialWithdrawalMethod);
 }
 
 function updateWithdrawalMethodFields(method) {
-  // Hide all fields
-  ["withdrawal-bank-fields", "withdrawal-crypto-fields"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
+  console.log("🔄 Updating withdrawal method to:", method);
+
+  // Hide ALL withdrawal method fields first
+  const withdrawalMethodFields = [
+    "withdrawal-bank-fields",
+    "withdrawal-crypto-fields",
+  ];
+  withdrawalMethodFields.forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.classList.remove("active");
+      field.style.display = "none";
+      field.style.opacity = "0";
+      field.style.visibility = "hidden";
+      field.style.height = "0";
+      field.style.overflow = "hidden";
+    }
   });
 
-  // Show selected fields
-  const selectedFields = document.getElementById(`withdrawal-${method}-fields`);
-  if (selectedFields) {
-    selectedFields.style.display = "block";
+  // Show selected method fields
+  const selectedField = document.getElementById(`withdrawal-${method}-fields`);
+  if (selectedField) {
+    console.log("✅ Showing fields for:", method);
+    selectedField.classList.add("active");
+    selectedField.style.display = "block";
+    selectedField.style.opacity = "1";
+    selectedField.style.visibility = "visible";
+    selectedField.style.height = "auto";
+    selectedField.style.overflow = "visible";
+
+    // Force reflow for mobile browsers
+    selectedField.offsetHeight;
   }
 }
 
