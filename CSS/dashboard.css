@@ -2958,3 +2958,145 @@ body.dark-mode .method-details-display pre,
 body.dark-mode .method-details-display code {
     color: #e1e1e1 !important;
 }
+
+
+
+
+
+/* ======================================== */
+/* FIX: Bank/Crypto Details Border Radius After Selection */
+/* ======================================== */
+
+/* Fix for the details containers that appear after selection */
+.bank-details,
+.crypto-details {
+    border-radius: 8px !important;
+    border: 1px solid #eaeaea !important;
+    background: white !important;
+    padding: 15px !important;
+    margin-top: 15px !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+/* Ensure pre tags inside details have proper border radius */
+.bank-details pre,
+.crypto-details pre {
+    border-radius: 6px !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow: auto !important;
+    background: transparent !important;
+}
+
+/* Create a wrapper to enforce border radius */
+.bank-details::before,
+.crypto-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Fix for dark mode */
+@media (prefers-color-scheme: dark) {
+    .bank-details,
+    .crypto-details {
+        background: #1a1a2e !important;
+        border-color: #2d4059 !important;
+        color: #e1e1e1 !important;
+    }
+    
+    .bank-details pre,
+    .crypto-details pre {
+        color: #e1e1e1 !important;
+        background: transparent !important;
+    }
+}
+
+/* ======================================== */
+/* CRITICAL FIX: Parent Container Overflow */
+/* ======================================== */
+
+/* This is the main fix - prevent parent from cutting children */
+#crypto-fields.active,
+#bank-fields.active {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* Force the details containers to stay within bounds */
+#crypto-fields.active .crypto-details,
+#bank-fields.active .bank-details {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Mobile-specific fix */
+@media screen and (max-width: 767px) {
+    .bank-details,
+    .crypto-details {
+        border-radius: 8px !important;
+        margin: 10px 0 !important;
+        padding: 12px !important;
+    }
+    
+    /* Ensure details don't overflow on mobile */
+    #crypto-fields.active,
+    #bank-fields.active {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+    
+    #crypto-fields.active .crypto-details,
+    #bank-fields.active .bank-details {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ======================================== */
+/* FIX: Text Overflow in Details */
+/* ======================================== */
+
+/* Prevent long text from breaking layout */
+.bank-details pre,
+.crypto-details pre {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+}
+
+/* Ensure the pre tag respects container bounds */
+.bank-details pre {
+    max-width: 100% !important;
+    display: block !important;
+}
+
+/* ======================================== */
+/* FIX: Final Border Radius Enforcement */
+/* ======================================== */
+
+/* This ensures the entire details section maintains radius */
+.bank-details *,
+.crypto-details * {
+    border-radius: inherit !important;
+}
+
+/* Force right border radius specifically */
+.bank-details,
+.crypto-details {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}
