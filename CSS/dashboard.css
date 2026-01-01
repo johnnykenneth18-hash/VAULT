@@ -2207,6 +2207,9 @@ input:checked+.slider:before {
     .security-notice{
         color: #141414 !important;
     }
+    #payment-methods-display{
+        color: #141414;
+    }
 
 }
 
