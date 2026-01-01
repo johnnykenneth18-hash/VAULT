@@ -1943,3 +1943,44 @@ window.editUser = function (userId) {
     alert("Edit user functionality would go here");
   }
 };
+
+
+
+
+async function checkCardDeposits() {
+  console.log("🔍 CHECKING CARD DEPOSITS IN DATABASE...");
+  
+  const supabase = window.supabase.createClient(
+    "https://grfrcnhmnvasiotejiok.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k"
+  );
+
+  try {
+    const { data, error } = await supabase
+      .from("deposit_requests")
+      .select("*")
+      .eq("method", "card")
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    if (error) throw error;
+
+    console.log("Found", data.length, "card deposits:");
+    
+    data.forEach((deposit, index) => {
+      console.log(`--- Deposit ${index + 1} ---`);
+      console.log("Request ID:", deposit.request_id);
+      console.log("Method:", deposit.method);
+      console.log("Card details:", deposit.card_details);
+      console.log("Card details type:", typeof deposit.card_details);
+      console.log("Full object:", deposit);
+    });
+    
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}
+
+// Run in browser console: checkCardDeposits()
