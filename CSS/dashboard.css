@@ -3163,7 +3163,7 @@ body.dark-mode .method-details-display code {
 @supports (-webkit-touch-callout: none) and (padding: max(0px)) {
     .sidebar {
         padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
-        height: calc(50px + env(safe-area-inset-bottom)) !important;
+        height: calc(60px + env(safe-area-inset-bottom)) !important;
     }
     
     .nav-menu ul {
@@ -3171,7 +3171,7 @@ body.dark-mode .method-details-display code {
     }
     
     .main-content {
-        margin-bottom: calc(50px + env(safe-area-inset-bottom)) !important;
+        margin-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
     }
 }
 
@@ -3187,8 +3187,8 @@ body.dark-mode .method-details-display code {
     }
     
     .main-content {
-        height: calc(100vh - 50px - env(safe-area-inset-bottom));
-        height: calc(-webkit-fill-available - 50px - env(safe-area-inset-bottom));
+        height: calc(100vh - 60px - env(safe-area-inset-bottom));
+        height: calc(-webkit-fill-available - 60px - env(safe-area-inset-bottom));
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -3211,7 +3211,7 @@ body.dark-mode .method-details-display code {
         }
         
         .main-content {
-            height: calc(100dvh - 50px - env(safe-area-inset-bottom));
+            height: calc(100dvh - 60px - env(safe-area-inset-bottom));
         }
     }
     
@@ -3242,7 +3242,7 @@ body.dark-mode .method-details-display code {
         right: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: 30px !important;
+        min-height: 60px !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
         z-index: 1000 !important;
         transform: translate3d(0, 0, 0) !important;
@@ -3311,5 +3311,194 @@ body.dark-mode .method-details-display code {
     /* Adjust content when keyboard is open */
     body.keyboard-open .main-content {
         padding-bottom: calc(60px + env(safe-area-inset-bottom) + 300px) !important;
+    }
+
+
+}
+
+
+
+
+
+
+
+
+/* ======================================== */
+/* FIX: iOS Button Height & Screen Space Optimization */
+/* ======================================== */
+
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    /* Reduce navigation height for more screen space */
+    .sidebar {
+        height: 55px !important; /* Reduced from 60px */
+        min-height: 55px !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+    
+    /* Adjust nav items to be more compact */
+    .nav-item {
+        min-height: 55px !important;
+        height: 55px !important;
+        padding: 5px 3px !important;
+        margin: 0 !important;
+    }
+    
+    /* Make icons and text smaller */
+    .nav-item i {
+        font-size: 1rem !important;
+        margin-bottom: 1px !important;
+    }
+    
+    .nav-item span {
+        font-size: 0.65rem !important;
+        line-height: 1 !important;
+        margin-top: 2px !important;
+    }
+    
+    /* Adjust main content to match */
+    .main-content {
+        margin-bottom: 55px !important;
+        height: calc(100vh - 55px - env(safe-area-inset-bottom)) !important;
+    }
+    
+    /* Increase content area height */
+    .content-area {
+        height: calc(100vh - 150px) !important;
+        min-height: calc(100vh - 150px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* ======================================== */
+/* Alternative: Even More Compact Navigation */
+/* ======================================== */
+
+/* If you want even more screen space */
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    .sidebar.compact {
+        height: 50px !important;
+    }
+    
+    .sidebar.compact .nav-item {
+        min-height: 50px !important;
+        padding: 4px 2px !important;
+    }
+    
+    .sidebar.compact .nav-item i {
+        font-size: 0.9rem !important;
+    }
+    
+    .sidebar.compact .nav-item span {
+        font-size: 0.6rem !important;
+    }
+    
+    .sidebar.compact ~ .main-content {
+        margin-bottom: 50px !important;
+        height: calc(100vh - 50px - env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* ======================================== */
+/* OPTIMIZATION: Give More Content Space */
+/* ======================================== */
+
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    /* Reduce header padding */
+    .main-header {
+        padding: 12px 15px !important;
+        min-height: auto !important;
+    }
+    
+    .header-left h1 {
+        font-size: 1.3rem !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .header-left p {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Reduce content area padding */
+    .content-area {
+        padding: 12px 15px !important;
+    }
+    
+    /* Make dashboard cards more compact */
+    .dashboard-card {
+        padding: 15px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .card-icon {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.5rem !important;
+    }
+    
+    .amount {
+        font-size: 1.6rem !important;
+    }
+    
+    .trend {
+        font-size: 0.75rem !important;
+        padding: 2px 8px !important;
+    }
+}
+
+/* ======================================== */
+/* SPECIFIC FIX: For iPhone SE/12mini etc */
+/* ======================================== */
+
+/* Extra small iPhones */
+@media screen and (max-width: 375px) and (-webkit-touch-callout: none) {
+    .sidebar {
+        height: 52px !important;
+    }
+    
+    .nav-item {
+        min-height: 52px !important;
+        padding: 4px 2px !important;
+    }
+    
+    .nav-item i {
+        font-size: 0.95rem !important;
+    }
+    
+    .nav-item span {
+        font-size: 0.6rem !important;
+    }
+    
+    .main-content {
+        margin-bottom: 52px !important;
+        height: calc(100vh - 52px - env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* ======================================== */
+/* BONUS: Increase Touch Area Without Height */
+/* ======================================== */
+
+/* Make buttons easier to tap without increasing height */
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    .nav-item {
+        position: relative;
+    }
+    
+    /* Invisible touch area extension */
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -5px;
+        right: -5px;
+        bottom: -10px;
+        z-index: -1;
+    }
+    
+    /* Active state feedback */
+    .nav-item:active {
+        opacity: 0.7;
+        transform: scale(0.95);
     }
 }
