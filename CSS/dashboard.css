@@ -2191,6 +2191,16 @@ input:checked+.slider:before {
         color: #e0e0e0 !important;
         border-color: #264063 !important;
     }
+    .instruction-text{
+        color: #141414;
+    }
+    .instruction-box{
+        color: #141414 !important;
+    }
+    .security-notice{
+        color: #141414 !important;
+    }
+
 }
 
 /* FIX 8: Ensure deposit/withdrawal method switching works on mobile */
@@ -2819,4 +2829,232 @@ select {
         border-color: #2d4059 !important;
         color: #e1e1e1 !important;
     }
+}
+
+
+/* ======================================== */
+/* CRITICAL FIX: Select Dropdown Border Radius */
+/* ======================================== */
+
+/* Fix select elements inside method fields */
+#crypto-select,
+#bank-select,
+#withdrawal-method,
+#deposit-method {
+    border-radius: 8px !important;
+    border: 2px solid #eaeaea !important;
+    background: white !important;
+    padding: 12px 15px !important;
+    font-size: 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+    padding-right: 45px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Focus state */
+#crypto-select:focus,
+#bank-select:focus {
+    outline: none !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1) !important;
+    border-radius: 8px !important;
+}
+
+/* Fix for dark mode */
+@media (prefers-color-scheme: dark) {
+    #crypto-select,
+    #bank-select,
+    #withdrawal-method,
+    #deposit-method {
+        background: #0f3460 !important;
+        border-color: #2d4059 !important;
+        color: #e1e1e1 !important;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e1e1e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    }
+    
+    #crypto-select:focus,
+    #bank-select:focus {
+        border-color: #4cc9f0 !important;
+        box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2) !important;
+    }
+}
+
+/* ======================================== */
+/* FIX: Parent Container to Prevent Overflow */
+/* ======================================== */
+
+/* Ensure parent containers don't cut off children */
+.method-fields .form-group {
+    position: relative;
+    overflow: visible !important;
+}
+
+/* Force the select to maintain border radius */
+.method-fields .form-group select {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+/* Create a wrapper to ensure border radius */
+.method-fields .form-group::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ======================================== */
+/* MOBILE-SPECIFIC FIX FOR SELECT DROPDOWNS */
+/* ======================================== */
+
+@media screen and (max-width: 767px) {
+    /* Fix select dropdowns on mobile */
+    #crypto-select,
+    #bank-select {
+        border-radius: 8px !important;
+        padding: 14px 15px !important;
+        min-height: 48px !important;
+        font-size: 16px !important;
+        background-position: right 12px center !important;
+    }
+    
+    /* Ensure the select doesn't overflow its container */
+    .method-fields .form-group {
+        overflow: visible !important;
+    }
+    
+    /* Fix for iOS Safari */
+    @supports (-webkit-touch-callout: none) {
+        #crypto-select,
+        #bank-select {
+            border-radius: 8px !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+        }
+    }
+    
+    /* Fix for Android */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+        #crypto-select,
+        #bank-select {
+            border-radius: 8px !important;
+        }
+    }
+}
+
+/* ======================================== */
+/* FIX: Select Dropdown Options */
+/* ======================================== */
+
+/* Style the dropdown options */
+#crypto-select option,
+#bank-select option {
+    border-radius: 0 !important;
+    padding: 10px !important;
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Dark mode for options */
+@media (prefers-color-scheme: dark) {
+    #crypto-select option,
+    #bank-select option {
+        background: #1a1a2e !important;
+        color: #e1e1e1 !important;
+    }
+}
+
+/* ======================================== */
+/* FIX: Ensure Entire Method Fields Maintain Border Radius */
+/* ======================================== */
+
+/* Add a pseudo-element to enforce border radius */
+#crypto-fields.active,
+#bank-fields.active {
+    position: relative;
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+}
+
+#crypto-fields.active::before,
+#bank-fields.active::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: var(--border-radius);
+    border: 1px solid #eaeaea;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Dark mode border */
+@media (prefers-color-scheme: dark) {
+    #crypto-fields.active::before,
+    #bank-fields.active::before {
+        border-color: #2d4059 !important;
+    }
+}
+
+/* ======================================== */
+/* FIX: Input Fields in Method Sections */
+/* ======================================== */
+
+/* Ensure all inputs in method fields have proper border radius */
+#crypto-fields input,
+#bank-fields input,
+#card-fields input,
+#withdrawal-bank-fields input,
+#withdrawal-crypto-fields input {
+    border-radius: 8px !important;
+    border: 2px solid #eaeaea !important;
+    padding: 12px 15px !important;
+    font-size: 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Focus states */
+#crypto-fields input:focus,
+#bank-fields input:focus {
+    outline: none !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1) !important;
+    border-radius: 8px !important;
+}
+
+/* ======================================== */
+/* FINAL FIX: Force Border Radius on All Elements */
+/* ======================================== */
+
+/* This ensures ALL children maintain the border radius */
+#crypto-fields *,
+#bank-fields * {
+    border-radius: inherit !important;
+}
+
+/* Specifically for the select which might be resisting */
+#crypto-select,
+#bank-select {
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
 }
