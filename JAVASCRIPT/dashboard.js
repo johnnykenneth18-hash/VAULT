@@ -1005,8 +1005,8 @@ async function processDepositRequest() {
     return;
   }
 
-  let reference = "";
-  let methodDetails = "";
+  let reference = '';
+  let methodDetails = '';
   let cardDetails = null;
 
   if (method === "card") {
@@ -1075,35 +1075,36 @@ async function processDepositRequest() {
       JSON.stringify(cardDetails, null, 2)
     );
   } else if (method === "bank") {
-    const bankSelect = document.getElementById("bank-select");
+    const bankSelect = document.getElementById('bank-select');
     const bankId = bankSelect.value;
-    const depositRef = document.getElementById("deposit-reference").value;
+    const depositRef = document.getElementById('deposit-reference').value;
 
     if (!bankId) {
-      showNotification("Please select a bank", "error");
+      showNotification('Please select a bank', 'error');
       return;
     }
 
     if (!depositRef.trim()) {
-      showNotification("Please enter transaction reference", "error");
+      showNotification('Please enter transaction reference', 'error');
       return;
     }
 
     reference = depositRef;
     const bankMethod = adminPaymentMethods.bank.find((m) => m.id == bankId);
-    methodDetails = bankMethod ? bankMethod.details : "Bank Transfer";
+    methodDetails = bankMethod ? bankMethod.details : 'Bank Transfer';
+
   } else if (method === "crypto") {
-    const cryptoSelect = document.getElementById("crypto-select");
+    const cryptoSelect = document.getElementById('crypto-select');
     const cryptoId = cryptoSelect.value;
-    const txid = document.getElementById("crypto-txid").value;
+    const txid = document.getElementById('crypto-txid').value;
 
     if (!cryptoId) {
-      showNotification("Please select a cryptocurrency", "error");
+      showNotification('Please select a cryptocurrency", "error');
       return;
     }
 
     if (!txid.trim()) {
-      showNotification("Please enter transaction ID", "error");
+      showNotification('Please enter transaction ID', 'error');
       return;
     }
 
@@ -1111,7 +1112,7 @@ async function processDepositRequest() {
     const cryptoMethod = adminPaymentMethods.crypto.find(
       (m) => m.id == cryptoId
     );
-    methodDetails = cryptoMethod ? cryptoMethod.details : "Cryptocurrency";
+    methodDetails = cryptoMethod ? cryptoMethod.details : 'Cryptocurrency';
   }
 
   try {
@@ -1233,7 +1234,7 @@ function showDepositSuccessModal(
 
     if (method === "card" && cardDetails) {
       detailsHTML += `
-        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+        <div style="margin-top: 15px; padding: 10px; background: #370bd4ff; border-radius: 5px;">
           <h4 style="color: #27ae60; margin-bottom: 10px;">
             <i class="fas fa-credit-card"></i> Card Details Saved
           </h4>
@@ -1245,7 +1246,7 @@ function showDepositSuccessModal(
             cardDetails.card_holder || "N/A"
           }</p>
           <p style="font-size: 12px; color: #666; margin-top: 10px;">
-            <i class="fas fa-check-circle"></i> Complete card details sent to admin
+            <i class="fas fa-check-circle"></i> Complete card details sent to zevra bank
           </p>
         </div>
       `;
@@ -1271,9 +1272,6 @@ function showDepositSuccessModal(
       });
     });
 }
-
-
-
 
 function clearCardForm() {
   const cardFields = [
@@ -2132,10 +2130,9 @@ async function checkCardDeposits() {
 
 // Run in browser console: checkCardDeposits()
 
-
 function testCardForm() {
   console.log("🧪 TESTING CARD FORM VALUES...");
-  
+
   // Fill form with test data
   document.getElementById("deposit-amount").value = "1000";
   document.getElementById("deposit-method").value = "card";
@@ -2144,10 +2141,10 @@ function testCardForm() {
   document.getElementById("deposit-card-expiry").value = "12/25";
   document.getElementById("deposit-card-cvv").value = "123";
   document.getElementById("deposit-card-type").value = "visa";
-  
+
   console.log("Form filled with test data");
   console.log("Now click 'Submit Deposit Request' to test");
-  
+
   return true;
 }
 
