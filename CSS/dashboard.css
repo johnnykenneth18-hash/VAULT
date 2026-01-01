@@ -2179,6 +2179,12 @@ input:checked+.slider:before {
     .form-group label {
         color: #141414 !important;
     }
+    .depo{
+        color: #e9e8e8;
+    }
+    .pay{
+        color: #e2e2e2;
+    }
 
     .modal-content {
         background: #1a1a2e !important;
