@@ -3163,7 +3163,7 @@ body.dark-mode .method-details-display code {
 @supports (-webkit-touch-callout: none) and (padding: max(0px)) {
     .sidebar {
         padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
-        height: calc(60px + env(safe-area-inset-bottom)) !important;
+        height: calc(50px + env(safe-area-inset-bottom)) !important;
     }
     
     .nav-menu ul {
@@ -3171,7 +3171,7 @@ body.dark-mode .method-details-display code {
     }
     
     .main-content {
-        margin-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+        margin-bottom: calc(50px + env(safe-area-inset-bottom)) !important;
     }
 }
 
@@ -3187,8 +3187,8 @@ body.dark-mode .method-details-display code {
     }
     
     .main-content {
-        height: calc(100vh - 60px - env(safe-area-inset-bottom));
-        height: calc(-webkit-fill-available - 60px - env(safe-area-inset-bottom));
+        height: calc(100vh - 50px - env(safe-area-inset-bottom));
+        height: calc(-webkit-fill-available - 50px - env(safe-area-inset-bottom));
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -3211,7 +3211,7 @@ body.dark-mode .method-details-display code {
         }
         
         .main-content {
-            height: calc(100dvh - 60px - env(safe-area-inset-bottom));
+            height: calc(100dvh - 50px - env(safe-area-inset-bottom));
         }
     }
     
@@ -3242,7 +3242,7 @@ body.dark-mode .method-details-display code {
         right: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: 60px !important;
+        min-height: 50px !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
         z-index: 1000 !important;
         transform: translate3d(0, 0, 0) !important;
