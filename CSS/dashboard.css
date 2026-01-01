@@ -1667,8 +1667,8 @@ input:checked+.slider:before {
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        height: 60px !important;
-        padding: 0 !important;
+        height: 70px !important;
+        padding-bottom: env(safe-area-inset-bottom); /* For iOS */
         z-index: 1000 !important;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         flex-direction: row !important;
@@ -1700,12 +1700,13 @@ input:checked+.slider:before {
 
     .nav-item {
         flex-direction: column !important;
-        padding: 8px 5px !important;
+        padding: 12px 5px !important;
         border-left: none !important;
         border-top: 3px solid transparent !important;
         width: 100% !important;
         text-align: center !important;
         margin: 0 !important;
+        min-height: 70px;
     }
 
     .nav-item:hover,
@@ -1717,7 +1718,7 @@ input:checked+.slider:before {
     }
 
     .nav-item span {
-        font-size: 0.7rem !important;
+        font-size: 0.75rem !important;
         margin-top: 3px !important;
         display: block !important;
     }
@@ -1729,7 +1730,7 @@ input:checked+.slider:before {
 
     /* Main content adjustment */
     .main-content {
-        margin-bottom: 60px !important;
+        margin-bottom: 70px !important;
         width: 100% !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
     }
