@@ -2155,6 +2155,9 @@ input:checked+.slider:before {
     .header-left p {
         color: #b0b0b0 !important;
     }
+    .section-header h2{
+        color: #dbdbdb !important;
+    }
 
     .deposit-form,
     .withdrawal-form,
@@ -2180,10 +2183,10 @@ input:checked+.slider:before {
         color: #141414 !important;
     }
     .depo{
-        color: #e9e8e8;
+        color: #e9e8e8 !important;
     }
     .pay{
-        color: #e2e2e2;
+        color: #e2e2e2  !important;
     }
 
     .modal-content {
