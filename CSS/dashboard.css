@@ -2182,12 +2182,10 @@ input:checked+.slider:before {
     .form-group label {
         color: #141414 !important;
     }
-    .form-group label .depo{
+    .form-group2 label{
         color: #e9e8e8 !important;
     }
-    .form-group label .pay{
-        color: #e2e2e2  !important;
-    }
+    
 
     .modal-content {
         background: #1a1a2e !important;
