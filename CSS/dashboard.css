@@ -3242,7 +3242,7 @@ body.dark-mode .method-details-display code {
         right: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: 50px !important;
+        min-height: 30px !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
         z-index: 1000 !important;
         transform: translate3d(0, 0, 0) !important;
