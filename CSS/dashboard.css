@@ -2748,3 +2748,798 @@ a, button, input, select, textarea {
         background: #3a0ca3;
     }
 }
+
+
+
+
+
+
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 0;
+        background: white;
+        min-height: 100vh;
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+
+    /* Sidebar - Convert to bottom navigation */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 60px;
+        padding: 0;
+        z-index: 1000;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        flex-direction: row;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .nav-menu {
+        display: flex;
+        width: 100%;
+        padding: 0;
+    }
+
+    .nav-menu ul {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        padding: 8px 5px;
+        border-left: none;
+        border-top: 3px solid transparent;
+        width: 100%;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+        border-left: none;
+        border-top-color: var(--primary-color);
+        padding-left: 5px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-item span {
+        font-size: 0.7rem;
+        margin-top: 2px;
+        display: block;
+    }
+
+    .nav-item i {
+        font-size: 1rem;
+        width: auto;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    /* Main content - Add bottom padding for navigation */
+    .main-content {
+        margin-bottom: 60px;
+        width: 100%;
+    }
+
+    .main-header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .header-left h1 {
+        font-size: 1.4rem;
+        margin-bottom: 3px;
+    }
+
+    .header-left p {
+        font-size: 0.85rem;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .logout-btn {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+
+    .notification {
+        font-size: 1.1rem;
+    }
+
+    .current-time {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        order: -1;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Content area */
+    .content-area {
+        padding: 15px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .dashboard-card {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .amount {
+        font-size: 1.5rem;
+    }
+
+    .trend {
+        font-size: 0.8rem;
+    }
+
+    /* Payment Methods Section - Mobile */
+    .payment-methods-section {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .payment-methods-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+
+    .payment-methods-section p {
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+    }
+
+    .methods-display {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .method-card-display {
+        padding: 15px;
+    }
+
+    .method-card-display h4 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .method-details-display {
+        padding: 10px;
+        font-size: 0.8rem;
+        max-height: 120px;
+    }
+
+    /* Deposit & Withdrawal Forms */
+    .deposit-container,
+    .withdrawal-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .deposit-form,
+    .withdrawal-form {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 12px 15px;
+        font-size: 16px;
+        /* Prevents iOS zoom */
+    }
+
+    /* Method fields */
+    .method-fields {
+        padding: 15px;
+    }
+
+    .bank-details,
+    .crypto-details {
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 14px 20px;
+        font-size: 16px;
+        /* Larger touch target */
+        min-height: 44px;
+        /* Minimum touch target size */
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* History section */
+    .history-controls {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filter-group select,
+    .filter-group input[type="date"] {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .history-table-container {
+        padding: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scrolling on iOS */
+    }
+
+    .history-table {
+        font-size: 0.85rem;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 10px 8px;
+    }
+
+    .summary-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Partnership section */
+    .partnership-stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .partnership-card {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .referral-link {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .referral-link input {
+        width: 100%;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .step {
+        padding: 15px;
+    }
+
+    /* Accounts section */
+    .accounts-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .account-card {
+        padding: 20px;
+    }
+
+    .account-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .account-balance {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .account-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 12px;
+        min-height: 44px;
+    }
+
+    /* Quick buttons */
+    .quick-buttons {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .quick-btn {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+        min-height: 44px;
+    }
+
+    /* Modals */
+    .modal {
+        padding: 10px;
+        align-items: flex-end;
+        /* For bottom sheet effect on mobile */
+    }
+
+    .modal-content {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 25px 20px;
+        max-height: 80vh;
+    }
+
+    /* Hide hover effects for touch devices */
+    .dashboard-card:hover,
+    .btn:hover,
+    .nav-item:hover,
+    .quick-btn:hover,
+    .method-card-display:hover {
+        transform: none;
+    }
+
+    /* Remove text selection on tap */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Prevent text size adjustment on orientation change */
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
+
+
+
+
+/* Samsung Galaxy Fold and similar */
+@media screen and (max-width: 280px) {
+    .container {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .nav-item {
+        padding: 8px 3px;
+    }
+
+    .nav-item i {
+        font-size: 0.9rem;
+    }
+
+    .nav-item span {
+        font-size: 0.65rem;
+    }
+
+    .dashboard-card {
+        padding: 12px;
+    }
+
+    .amount {
+        font-size: 1.3rem;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+
+    /* Payment Methods - Small Foldable */
+    .method-card-display {
+        padding: 12px;
+    }
+
+    .method-details-display {
+        padding: 8px;
+        font-size: 0.75rem;
+    }
+}
+
+
+
+
+/* Reset and fix all select elements */
+#bank-select,
+#crypto-select,
+#withdrawal-method,
+#deposit-method {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: white;
+    color: #333;
+    border: 2px solid #eaeaea;
+    border-radius: 8px;
+    padding: 12px 45px 12px 15px;
+    font-size: 1rem;
+    width: 100%;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    min-height: 46px;
+}
+
+.method-fields {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    /* Reference field is wider */
+    gap: 15px;
+    align-items: start;
+}
+
+
+
+
+
+
+
+
+
+
+/* ======================================== */
+/* NOTIFICATION SYSTEM FIX */
+/* ======================================== */
+
+/* Remove old notification styles */
+.notification-popup {
+    display: none !important;
+}
+
+/* New fixed notification system */
+.notification-system {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    max-width: 350px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.notification-toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    pointer-events: all;
+    animation: slideInRight 0.3s ease forwards;
+    transform: translateX(120%);
+    opacity: 0;
+    border-left: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-toast::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    opacity: 0.3;
+}
+
+.notification-toast.success {
+    border-left-color: var(--success-color);
+    background: linear-gradient(to right, rgba(76, 201, 240, 0.05), white);
+}
+
+.notification-toast.success::before {
+    background: var(--success-color);
+}
+
+.notification-toast.error {
+    border-left-color: var(--danger-color);
+    background: linear-gradient(to right, rgba(247, 37, 133, 0.05), white);
+}
+
+.notification-toast.error::before {
+    background: var(--danger-color);
+}
+
+.notification-toast.info {
+    border-left-color: var(--primary-color);
+    background: linear-gradient(to right, rgba(67, 97, 238, 0.05), white);
+}
+
+.notification-toast.info::before {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning {
+    border-left-color: var(--warning-color);
+    background: linear-gradient(to right, rgba(255, 158, 0, 0.05), white);
+}
+
+.notification-toast.warning::before {
+    background: var(--warning-color);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+.notification-toast.fade-out {
+    animation: slideOutRight 0.3s ease forwards;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+}
+
+.notification-toast.success .notification-icon {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-icon {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-icon {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-icon {
+    background: var(--warning-color);
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: var(--dark-color);
+}
+
+.notification-content p {
+    font-size: 14px;
+    margin: 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.3s;
+}
+
+.notification-close:hover {
+    color: var(--danger-color);
+}
+
+/* Progress bar for auto-dismiss */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+.notification-progress-bar {
+    height: 100%;
+    width: 100%;
+    transform: scaleX(1);
+    transform-origin: left;
+    animation: progressBar 3s linear forwards;
+}
+
+.notification-toast.success .notification-progress-bar {
+    background: var(--success-color);
+}
+
+.notification-toast.error .notification-progress-bar {
+    background: var(--danger-color);
+}
+
+.notification-toast.info .notification-progress-bar {
+    background: var(--primary-color);
+}
+
+.notification-toast.warning .notification-progress-bar {
+    background: var(--warning-color);
+}
+
+@keyframes progressBar {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 767px) {
+    .notification-system {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        max-width: none;
+    }
+
+    .notification-toast {
+        padding: 14px 16px;
+        margin-bottom: 8px;
+    }
+
+    .notification-content h4 {
+        font-size: 14px;
+    }
+
+    .notification-content p {
+        font-size: 13px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .notification-toast {
+        background: #1a1a2e;
+        color: #e1e1e1;
+        border-left-color: var(--primary-color);
+    }
+
+    .notification-toast.success {
+        background: linear-gradient(to right, rgba(76, 201, 240, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.error {
+        background: linear-gradient(to right, rgba(247, 37, 133, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.info {
+        background: linear-gradient(to right, rgba(67, 97, 238, 0.1), #1a1a2e);
+    }
+
+    .notification-toast.warning {
+        background: linear-gradient(to right, rgba(255, 158, 0, 0.1), #1a1a2e);
+    }
+
+    .notification-content h4 {
+        color: #e1e1e1;
+    }
+
+    .notification-content p {
+        color: #b0b0b0;
+    }
+
+    .notification-close {
+        color: #b0b0b0;
+    }
+
+    .notification-close:hover {
+        color: #f72585;
+    }
+
+    .notification-progress {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
