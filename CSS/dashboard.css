@@ -2207,9 +2207,19 @@ input:checked+.slider:before {
     .security-notice{
         color: #141414 !important;
     }
-    .loading-methods{
-        color: #141414;
+
+    .methods-display{
+        color: #141414 !important;
     }
+
+    #payment-methods-display{
+        color: #141414 !important;
+    }
+    .loading-methods{
+        color: #141414 !important;
+    }
+
+    
 
 }
 
