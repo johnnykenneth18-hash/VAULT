@@ -3100,3 +3100,279 @@ body.dark-mode .method-details-display code {
     border-top-left-radius: 8px !important;
     border-bottom-left-radius: 8px !important;
 }
+
+
+
+
+
+
+
+
+/* ======================================== */
+/* FIX: iOS Bottom Navigation Scrolling Issue */
+/* ======================================== */
+
+/* Fix for iOS Safari - prevents nav from moving up */
+@supports (-webkit-touch-callout: none) {
+    /* iOS-specific fixes */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .sidebar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        z-index: 1000 !important;
+        transform: translate3d(0, 0, 0) !important;
+        will-change: transform !important;
+        -webkit-transform: translate3d(0, 0, 0) !important;
+        backface-visibility: hidden !important; 
+        -webkit-backface-visibility: hidden !important;
+    }
+    
+    /* Prevent the nav from moving when scrolling */
+    .sidebar {
+        -webkit-transform: translateZ(0) !important;
+        transform: translateZ(0) !important;
+        backface-visibility: hidden !important;
+    }
+    
+    /* Adjust main content for fixed nav */
+    .main-content {
+        margin-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+        height: calc(100vh - 60px - env(safe-area-inset-bottom)) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Fix for when Chrome navigation bar disappears */
+    .sidebar {
+        transition: transform 0.3s ease !important;
+    }
+    
+    /* Keep nav visible when keyboard appears */
+    body.keyboard-open .sidebar {
+        transform: translateY(0) !important;
+        -webkit-transform: translateY(0) !important;
+    }
+    
+    /* Prevent the address bar hiding effect */
+    html {
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    body {
+        height: 100% !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Fix for the hanging effect */
+    .container {
+        min-height: 100vh !important;
+        min-height: -webkit-fill-available !important;
+    }
+    
+    .main-content {
+        min-height: calc(100vh - 60px - env(safe-area-inset-bottom)) !important;
+        min-height: -webkit-fill-available !important;
+    }
+}
+
+/* ======================================== */
+/* Additional iOS Safari Fixes */
+/* ======================================== */
+
+/* Fix for iOS 15+ */
+@supports (padding: max(0px)) {
+    .sidebar {
+        padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        height: calc(60px + env(safe-area-inset-bottom)) !important;
+    }
+    
+    .main-content {
+        margin-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* Fix for the nav items specifically on iOS */
+@supports (-webkit-touch-callout: none) {
+    .nav-item {
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+    }
+    
+    .nav-menu ul {
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+}
+
+/* ======================================== */
+/* Prevent Address Bar Hiding/Showing Effects */
+/* ======================================== */
+
+/* This prevents the URL bar from affecting layout */
+@media screen and (max-width: 767px) {
+    body {
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    .container {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .sidebar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+    }
+    
+    .main-content {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 60px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* ======================================== */
+/* Alternative iOS Fix - More Aggressive */
+/* ======================================== */
+
+/* If the above doesn't work, try this more aggressive approach */
+@supports (-webkit-touch-callout: none) and (max-width: 767px) {
+    html, body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        border-radius: 0;
+        overflow: hidden;
+    }
+    
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        padding-bottom: env(safe-area-inset-bottom);
+        z-index: 1000;
+    }
+    
+    .main-content {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: calc(60px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 0;
+    }
+    
+    .content-area {
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+    }
+}
+
+/* ======================================== */
+/* Safe Area Insets for All iOS Devices */
+/* ======================================== */
+
+/* iPhone X and newer notch support */
+.sidebar {
+    padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+/* Add top padding for devices with notch */
+.main-header {
+    padding-top: env(safe-area-inset-top) !important;
+}
+
+/* Ensure content doesn't go under notch */
+.content-area {
+    padding-top: env(safe-area-inset-top) !important;
+}
+
+/* ======================================== */
+/* Final iOS Fix - Most Reliable */
+/* ======================================== */
+
+/* This is the most reliable fix for iOS scrolling issues */
+@supports (-webkit-touch-callout: none) {
+    /* Disable elastic scrolling on body */
+    body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    /* Make container scrollable instead */
+    .container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Keep nav absolutely fixed at bottom */
+    .sidebar {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+    }
+    
+    /* Adjust main content area */
+    .main-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 60px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 0;
+    }
+}
