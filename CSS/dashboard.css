@@ -2207,19 +2207,6 @@ input:checked+.slider:before {
     .security-notice{
         color: #141414 !important;
     }
-
-    .methods-display{
-        color: #141414 !important;
-    }
-
-    #payment-methods-display{
-        color: #141414 !important;
-    }
-    .loading-methods{
-        color: #141414 !important;
-        background-color: #0f3460;
-    }
-
     
 
 }
@@ -2917,4 +2904,57 @@ select {
     .checkbox-label {
         color: #b0b0b0 !important;
     }
+}
+
+
+
+/* ======================================== */
+/* FIX: Payment Methods Display Font Color in Dark Mode */
+/* ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    /* Fix for the method details display text color */
+    .method-details-display {
+        color: #e1e1e1 !important;
+        background: #1a1a2e !important;
+        border-color: #2d4059 !important;
+    }
+    
+    /* Fix for pre/code elements inside method details */
+    .method-details-display pre,
+    .method-details-display code {
+        color: #e1e1e1 !important;
+    }
+    
+    /* Ensure all text inside the method card is visible */
+    .method-card-display h4,
+    .method-card-display h4 i {
+        color: #e1e1e1 !important;
+    }
+    
+    .method-card-display h4 i {
+        color: #4cc9f0 !important;
+    }
+    
+    /* Fix loading text color */
+    .loading-methods,
+    .no-methods {
+        color: #b0b0b0 !important;
+    }
+    
+    /* Fix section text colors */
+    .payment-methods-section h2 {
+        color: #e1e1e1 !important;
+    }
+    
+    .payment-methods-section p {
+        color: #b0b0b0 !important;
+    }
+}
+
+/* If you're using a dark mode class instead of prefers-color-scheme */
+body.dark-mode .method-details-display,
+body.dark-mode .method-details-display pre,
+body.dark-mode .method-details-display code {
+    color: #e1e1e1 !important;
 }
