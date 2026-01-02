@@ -2656,55 +2656,25 @@ body {
 
 
 
-
-/* Add this to your CSS - This is the working fix */
+/* MINIMAL FIX FOR IOS FIXED BOTTOM NAV */
 @supports (-webkit-touch-callout: none) {
-  /* Use flexbox layout */
-  body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-  
-  .admin-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: -webkit-fill-available;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-  }
-  
-  .admin-main {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-top: env(safe-area-inset-top);
-  }
-  
+  /* Force GPU acceleration for fixed position */
   .admin-sidebar {
-    flex-shrink: 0;
-    position: relative;
-    background: var(--dark-color);
-    /* Extra padding ensures it's above Chrome bar */
-    padding-bottom: max(30px, env(safe-area-inset-bottom));
-    z-index: 1000;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    position: fixed !important;
+    bottom: 0 !important;
   }
   
-  /* Make sure logout button is accessible */
-  .admin-footer {
+  /* Prevent body scrolling from affecting fixed elements */
+  body, html {
     position: relative;
-    z-index: 1001;
+    height: 100%;
+    overflow: visible;
   }
   
-  .btn-logout {
-    position: relative;
-    z-index: 1002;
+  /* Ensure main content has space */
+  .admin-main {
+    padding-bottom: 160px !important; /* Extra space for nav */
   }
 }
-
-/* Additional JavaScript for dynamic adjustment */
