@@ -653,6 +653,30 @@
         </div>
     </div>
 
+
+
+
+
+    <script>
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            // Adjust for Chrome navigation bar
+            function adjustForChromeBar() {
+                const sidebar = document.querySelector('.admin-sidebar');
+                if (sidebar) {
+                    // Add extra padding when Chrome bar might be visible
+                    const isPortrait = window.innerHeight > window.innerWidth;
+                    const extraPadding = isPortrait ? '40px' : '20px';
+                    sidebar.style.paddingBottom = `calc(env(safe-area-inset-bottom) + ${extraPadding})`;
+                }
+            }
+
+            // Run on load and resize
+            adjustForChromeBar();
+            window.addEventListener('resize', adjustForChromeBar);
+            window.addEventListener('orientationchange', adjustForChromeBar);
+        }
+    </script>
+
     <script>
         // ========================================
         // TRANSLATION PANEL CONTROLLER
