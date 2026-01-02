@@ -1958,3 +1958,692 @@ body {
     margin: 0 !important;
   }
 }
+
+
+
+
+
+/* ========================================= */
+/* IMPROVED MOBILE RESPONSIVE FIXES */
+/* ========================================= */
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  input, select, textarea, button {
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+/* Improved Mobile Navigation */
+@media (max-width: 992px) {
+  .admin-container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Mobile Sidebar/Navigation Bar */
+  .admin-sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 0;
+    z-index: 1000;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--dark-color);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Show logout button in mobile */
+  .admin-footer {
+    display: block;
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .btn-logout {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+  /* Mobile Navigation Menu */
+  .admin-logo {
+    display: none;
+  }
+  
+  .admin-nav {
+    padding: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .admin-nav::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .admin-nav ul {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 10px 5px;
+    white-space: nowrap;
+    min-width: min-content;
+  }
+  
+  .nav-item {
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 10px;
+    margin: 0 2px;
+    border-left: none;
+    border-top: 3px solid transparent;
+    text-align: center;
+    min-width: 80px;
+    border-radius: 8px;
+  }
+  
+  .nav-item i {
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+  }
+  
+  .nav-item span:first-of-type {
+    font-size: 0.75rem;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    height: 2.4em;
+  }
+  
+  .badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    min-width: 18px;
+  }
+  
+  /* Main content adjustment */
+  .admin-main {
+    margin-left: 0;
+    margin-bottom: 140px; /* Space for nav + logout */
+    min-height: calc(100vh - 140px);
+  }
+  
+  /* Mobile header */
+  .admin-header {
+    padding: 15px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-left {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .header-left h1 {
+    font-size: 1.4rem;
+  }
+  
+  .header-right {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .admin-info, .current-time {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Mobile content area */
+  .admin-content {
+    padding: 15px;
+  }
+}
+
+/* iPhone & Small Phone Optimizations */
+@media (max-width: 576px) {
+  /* Adjust navigation for smaller screens */
+  .admin-nav ul {
+    padding: 8px 3px;
+  }
+  
+  .nav-item {
+    min-width: 70px;
+    padding: 6px 8px;
+    margin: 0 1px;
+  }
+  
+  .nav-item i {
+    font-size: 1rem;
+  }
+  
+  .nav-item span:first-of-type {
+    font-size: 0.7rem;
+  }
+  
+  /* Increase space for navigation */
+  .admin-main {
+    margin-bottom: 130px;
+  }
+  
+  /* Header adjustments */
+  .admin-header {
+    padding: 12px;
+  }
+  
+  .header-left h1 {
+    font-size: 1.3rem;
+  }
+  
+  .admin-info, .current-time {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+  
+  /* Stats grid */
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-card {
+    padding: 15px;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    font-size: 1.3rem;
+  }
+  
+  /* Payment Methods Fix */
+  .payment-methods {
+    margin-bottom: 25px;
+  }
+  
+  .payment-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+    margin-bottom: 15px;
+  }
+  
+  .methods-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px;
+  }
+  
+  .method-card {
+    padding: 15px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Fix payment method columns */
+  .method-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .method-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .method-header h4 {
+    font-size: 1rem;
+    word-break: break-word;
+  }
+  
+  .method-details {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .method-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .method-actions button {
+    width: 100%;
+  }
+  
+  /* Bank and Crypto Accounts */
+  .bank-accounts,
+  .crypto-accounts {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .accounts-list {
+    grid-template-columns: 1fr !important;
+    gap: 15px;
+  }
+  
+  .account-card {
+    padding: 15px;
+  }
+  
+  .account-card pre {
+    padding: 12px;
+    font-size: 0.85rem;
+    max-width: 100%;
+    overflow-x: auto;
+    word-break: break-all;
+  }
+  
+  /* Dashboard content */
+  .dashboard-content {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+  
+  .recent-activity,
+  .quick-actions {
+    padding: 15px;
+  }
+  
+  /* Quick actions grid */
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .action-btn {
+    padding: 15px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .action-btn i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+}
+
+/* Extra Small Devices (220px - 375px) */
+@media (max-width: 375px) {
+  body {
+    font-size: 14px;
+  }
+  
+  /* Ultra-compact navigation */
+  .admin-nav ul {
+    padding: 5px 2px;
+  }
+  
+  .nav-item {
+    min-width: 60px;
+    padding: 5px 6px;
+    margin: 0;
+  }
+  
+  .nav-item i {
+    font-size: 0.9rem;
+  }
+  
+  .nav-item span:first-of-type {
+    font-size: 0.65rem;
+    height: 2.6em;
+  }
+  
+  /* Adjust logout button area */
+  .admin-main {
+    margin-bottom: 125px;
+  }
+  
+  .admin-footer {
+    padding: 8px;
+  }
+  
+  .btn-logout {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+  
+  /* Header */
+  .admin-header {
+    padding: 10px;
+  }
+  
+  .header-left h1 {
+    font-size: 1.1rem;
+  }
+  
+  .admin-info, .current-time {
+    font-size: 0.75rem;
+    padding: 5px 6px;
+  }
+  
+  /* Payment methods - even smaller */
+  .method-card {
+    padding: 12px;
+  }
+  
+  .method-details {
+    font-size: 0.8rem;
+  }
+  
+  /* Quick actions - single column on very small */
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-btn {
+    padding: 12px 8px;
+  }
+}
+
+/* Landscape Mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .admin-sidebar {
+    position: fixed;
+    width: 100%;
+    height: auto;
+  }
+  
+  .admin-nav ul {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .nav-item {
+    min-width: 90px;
+  }
+  
+  .admin-main {
+    margin-bottom: 120px;
+  }
+  
+  /* Show logout button inline in landscape */
+  .admin-footer {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: auto;
+    border-top: none;
+    padding: 0;
+  }
+  
+  .btn-logout {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Horizontal Scrolling for Navigation on Very Wide Items */
+@media (max-width: 992px) {
+  .admin-nav ul {
+    /* Allow horizontal scroll if items don't fit */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .admin-nav ul::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .admin-nav ul::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+}
+
+/* Alternative: Side Navigation for Very Small Screens */
+@media (max-width: 320px) {
+  /* If horizontal scrolling is problematic, switch to vertical */
+  .admin-sidebar {
+    top: 0;
+    bottom: auto;
+    height: auto;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  
+  .admin-nav ul {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .nav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    min-width: 100%;
+    padding: 10px 15px;
+  }
+  
+  .nav-item i {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+  
+  .nav-item span:first-of-type {
+    height: auto;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+  }
+  
+  .admin-main {
+    margin-top: auto;
+    margin-bottom: 60px; /* Just for logout button */
+  }
+  
+  .admin-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* iPhone Notch/Safe Area Support */
+@supports (padding: max(0px)) {
+  @media (max-width: 992px) {
+    .admin-sidebar {
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    
+    .admin-main {
+      margin-bottom: calc(140px + env(safe-area-inset-bottom));
+    }
+  }
+  
+  .admin-header {
+    padding-left: max(15px, env(safe-area-inset-left));
+    padding-right: max(15px, env(safe-area-inset-right));
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .nav-item {
+    min-height: 60px;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-action,
+  .action-btn {
+    min-height: 44px;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    padding: 12px !important;
+  }
+  
+  /* Payment method buttons */
+  .method-actions button {
+    min-height: 40px;
+    padding: 10px !important;
+  }
+  
+  /* Remove hover effects */
+  .stat-card:hover,
+  .action-btn:hover {
+    transform: none;
+  }
+}
+
+/* Fix for iOS Safari scrolling */
+.admin-content {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Payment Methods Specific Fixes */
+@media (max-width: 576px) {
+  .payment-methods {
+    overflow: hidden;
+  }
+  
+  .methods-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .method-card {
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Long text handling */
+  .method-details {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Show full details on tap */
+  .method-card.active .method-details {
+    line-clamp: unset;
+    -webkit-line-clamp: unset;
+  }
+}
+
+/* Logout button visibility fix */
+@media (max-width: 992px) {
+  .admin-footer {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Modal adjustments for mobile */
+@media (max-width: 576px) {
+  .modal {
+    padding: 10px;
+    align-items: flex-end;
+  }
+  
+  .modal-content {
+    max-height: 80vh;
+    border-radius: 15px 15px 0 0;
+    animation: modalSlideUp 0.3s ease;
+  }
+  
+  @keyframes modalSlideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Fix translation interface positioning */
+@media (max-width: 768px) {
+  .translation-wrapper {
+    bottom: 150px !important; /* Above mobile nav */
+    right: 10px;
+    z-index: 1001;
+  }
+}
+
+/* Print styles */
+@media print {
+  .admin-sidebar,
+  .translation-wrapper,
+  .btn-logout,
+  .action-buttons {
+    display: none !important;
+  }
+  
+  .admin-main {
+    margin: 0 !important;
+  }
+}
